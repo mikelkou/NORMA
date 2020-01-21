@@ -85,7 +85,7 @@ pie_charts<- function(){
     tmp_selected_colors<- c(tmp_selected_colors, ccc[s[i]])
     group_color <- tmp_selected_colors
     group_color_fill <- adjustcolor(group_color, alpha.f = 0.2)
-  
+    
   fileConn <- file("output2.html", "w")
   cat(sprintf("<!DOCTYPE html>
 <head>
@@ -184,7 +184,7 @@ pie_charts<- function(){
   members_with_zeros<- as.matrix(members_with_NA_groups)
   members_with_zeros[is.na(members_with_zeros)] <- 0
   members_with_zeros<- as.data.frame(members_with_zeros)
-  print(members_with_zeros)
+  # print(members_with_zeros)
   
   groupss <- members_with_zeros %>% 
     group_by(id) %>% 
@@ -205,18 +205,20 @@ pie_charts<- function(){
   # print(Groupss)
   # print(nodes)
   # print(length(nodes))
-
-  # minx<-min(lay[,1])
-  # maxx<-max(lay[,1])
-  # miny<-min(lay[,2])
-  # maxy<-max(lay[,2])
   
+  minx<-min(lay[,1])
+  maxx<-max(lay[,1])
+  miny<-min(lay[,2])
+  maxy<-max(lay[,2])
+
   for (i in 1:length(nodes)){
-    # coor_x<-mapper(lay[i,1], minx, maxx, 25, 575)
-    # coor_y<-mapper(lay[i,2], miny, maxy, 25, 575)
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", sample(0:600, 1) , ", 'y':", sample(0:600, 1), ", 'fixed': true,\"proportions\": [\n",sep="")), file = fileConn)
-    print(length(Groupss[[i]]))
+    coor_x<-mapper(lay[i,1], minx, maxx, 25, 575)
+    coor_y<-mapper(lay[i,2], miny, maxy, 25, 575)
+    #sample(0:600, 1)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", coor_x , ", 'y':", coor_y, ", 'fixed': true,\"proportions\": [\n",sep="")), file = fileConn)
    for (j in 1:length(Groupss[[i]])) {
+     print("------_____------")
+     print(Groupss[s])
        if(j<length(Groupss[[i]])){
        cat(sprintf(paste("{\"group\":", which(annots %in% Groupss[[i]][j]), "," , "\"value\": 1},\n")), file = fileConn)
        }
@@ -238,22 +240,43 @@ pie_charts<- function(){
     "]
     };\n "), file = fileConn)
 		
-  cat(sprintf("var width = 960,
-			height = 500,
+  
+  cat(sprintf("var width = 1000,
+			height = 600,
 			radius = 25,
-			color = d3.scale.category10();
-		color(0);
-		color(1);
-		color(2);
-		color(3);
-		color(4);
-		color(5);
-		color(6);
-		color(7);
-		color(8);
-		color(9);
+			color = d3.scale.linear().domain([",sep=""), file = fileConn)
+  
+  vector_zero<- groupss$V2==0
+  length_vector_zero<- sum(vector_zero, na.rm = TRUE)
+  if(length_vector_zero!=0){
+    for(i in 0:x){
+    cat(sprintf(paste(i, "," ,sep="")), file = fileConn)}
+  }
+  if(length_vector_zero==0) {
+    for(i in 1:x){
+      cat(sprintf(paste(i, "," ,sep="")), file = fileConn)}
+  }
+  
+    cat(sprintf("]).range(["), file = fileConn)
 
-		var pie = d3.layout.pie()
+  
+  if(length_vector_zero!=0){
+    a<- cat(sprintf("\"#cccccc\","), file = fileConn)
+    rep(a, length_vector_zero)}
+    
+  for(i in 1:x){
+      if(length_vector_zero!=0){
+        cat(sprintf(paste( "\"", qual_col_pals[s[i]], "\"," ,sep="")), file = fileConn)
+    }
+    
+  if(length_vector_zero==0) {
+        cat(sprintf(paste( "\"", qual_col_pals[s[i]], "\"," ,sep="")), file = fileConn)
+      }
+  }
+  
+  cat(sprintf("])\n"), file = fileConn)
+
+  cat(sprintf("var pie = d3.layout.pie()
 			.sort(null)
 			.value(function(d) { return d.value; });
 
@@ -345,4 +368,4 @@ pie_charts<- function(){
   
   close(fileConn)
   }#if (length(s)) 
-}#function
+}#function 

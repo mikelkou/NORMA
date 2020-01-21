@@ -694,9 +694,9 @@ loadNetworkFromFile <- function() {
       
     
     output$tabVizPie_charts<-renderUI({
-      s = input$chooseGroups_rows_selected
+      s = input$chooseGroups2_rows_selected
       source("interactive_pie_charts.R", local = T)
-      # lay <- input$layouts
+      lay <- input$layouts2
       pie_charts()
       tags$iframe(
         srcdoc = paste(readLines('output2.html'), collapse = '\n'),
