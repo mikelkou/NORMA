@@ -169,6 +169,9 @@ pie_chartsInput <- function() {
   
   return(lay)
   
+  #Mikaela Git
+  
+  
   # g_virt = delete.edges(g_virt, which(E(g_virt)$to_be_deleted == T))
   # 
   # #Colors
