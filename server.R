@@ -630,12 +630,12 @@ loadNetworkFromFile <- function() {
       
       my_network<- as.data.frame(get.edgelist(g))
       my_network<- data.frame(from = my_network$V1, to = my_network$V2)
-    
-      visIgraph(g) %>%
-        visNodes(size = 25, shape = "circle") %>%
+      
+      visIgraph(as.undirected(g)) %>%
+        visNodes(size = 25, shape = "ellipse") %>%
         visOptions(highlightNearest = TRUE, 
                    nodesIdSelection = TRUE) %>%
-        visInteraction(keyboard = TRUE)
+        visInteraction(keyboard = TRUE, navigationButtons = TRUE, zoomView = TRUE, multiselect =TRUE, dragView = TRUE)
       
       
       

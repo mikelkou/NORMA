@@ -200,36 +200,54 @@ pie_charts<- function(){
   
   
   Groupss <- strsplit(groupss_as_charachter, ",")
-  # print(groupss)
-  # print("----")
-  # print(Groupss)
-  # print(nodes)
-  # print(length(nodes))
+  genes <- strsplit(annotation1[s[i], 2], ",")$Nodes
+  # print(genes)
+  # print("------_____------")
+  # print(annotation1[s])
+  
+  
   
   minx<-min(lay[,1])
   maxx<-max(lay[,1])
   miny<-min(lay[,2])
   maxy<-max(lay[,2])
 
+  pie_to_be_colored<-c(rep(F,length(nodes)))
+  
+  for (i in 1:length(nodes)){
+    pie_to_be_colored[i]<-any(is.element(Groupss[[i]], annotation1[s])) 
+  }
+  # print(annotation1[s])
+  # print(nodes)
+  # print(pie_to_be_colored)
+  print(s)
+  print(Groupss[s])
+  
   for (i in 1:length(nodes)){
     coor_x<-mapper(lay[i,1], minx, maxx, 25, 575)
     coor_y<-mapper(lay[i,2], miny, maxy, 25, 575)
-    #sample(0:600, 1)
     cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", coor_x , ", 'y':", coor_y, ", 'fixed': true,\"proportions\": [\n",sep="")), file = fileConn)
-   for (j in 1:length(Groupss[[i]])) {
-     print("------_____------")
-     print(Groupss[s])
-       if(j<length(Groupss[[i]])){
-       cat(sprintf(paste("{\"group\":", which(annots %in% Groupss[[i]][j]), "," , "\"value\": 1},\n")), file = fileConn)
-       }
-     if(Groupss[[i]]=="0"){
-       cat(sprintf(paste("{\"group\": 0," , "\"value\": 1}]},\n")), file = fileConn)
-     }
-     if(j==length(Groupss[[i]]) & Groupss[[i]]!="0"){
-       cat(sprintf(paste("{\"group\":", which(annots %in% Groupss[[i]][j]), "," , "\"value\": 1}]},\n")), file = fileConn)
-       }
-   }
+   
+    if(pie_to_be_colored[i]==F){
+      cat(sprintf(paste("{\"group\": 0," , "\"value\": 1}]},\n")), file = fileConn)
+    }
+    if(pie_to_be_colored[i]==T){
+      counter<-1
+      max_length<-length(intersect(Groupss[[i]], annotation1[s]))
+      for (j in 1:length(Groupss[[i]])) {
+        if(is.element(Groupss[[i]][j], annotation1[s]) == T){
+        if(counter<max_length){
+        cat(sprintf(paste("{\"group\":", which(annotation1[s] %in% Groupss[[i]][j]), "," , "\"value\": 1},\n")), file = fileConn)
+        }
+        if(counter==max_length){
+              cat(sprintf(paste("{\"group\":", which(annotation1[s] %in% Groupss[[i]][j]), "," , "\"value\": 1}]},\n")), file = fileConn)
+        }
+          counter<-counter+1
+        }
+      }
+    }
   }
+  
 
   cat(sprintf("],\n
 						\"links\":[\n"), file = fileConn)
@@ -246,35 +264,23 @@ pie_charts<- function(){
 			radius = 25,
 			color = d3.scale.linear().domain([",sep=""), file = fileConn)
   
+  
+  ##### Colors ####
+  for(i in 0:x){
+    cat(sprintf(paste(i, "," ,sep="")), file = fileConn)}
+  
   vector_zero<- groupss$V2==0
   length_vector_zero<- sum(vector_zero, na.rm = TRUE)
-  if(length_vector_zero!=0){
-    for(i in 0:x){
-    cat(sprintf(paste(i, "," ,sep="")), file = fileConn)}
-  }
-  if(length_vector_zero==0) {
-    for(i in 1:x){
-      cat(sprintf(paste(i, "," ,sep="")), file = fileConn)}
-  }
   
-    cat(sprintf("]).range(["), file = fileConn)
-
-  
-  if(length_vector_zero!=0){
-    a<- cat(sprintf("\"#cccccc\","), file = fileConn)
-    rep(a, length_vector_zero)}
-    
+  cat(sprintf("]).range([\"#cccccc\","), file = fileConn)
   for(i in 1:x){
-      if(length_vector_zero!=0){
-        cat(sprintf(paste( "\"", qual_col_pals[s[i]], "\"," ,sep="")), file = fileConn)
+      cat(sprintf(paste( "\"", qual_col_pals[s[i]], "\"," ,sep="")), file = fileConn)
     }
-    
-  if(length_vector_zero==0) {
-        cat(sprintf(paste( "\"", qual_col_pals[s[i]], "\"," ,sep="")), file = fileConn)
-      }
-  }
-  
   cat(sprintf("])\n"), file = fileConn)
+  ########################################
+  
+  
+  
 
   cat(sprintf("var pie = d3.layout.pie()
 			.sort(null)

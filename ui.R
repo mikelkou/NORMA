@@ -396,7 +396,7 @@ fixedPage(
                                  
                                  ##### JS code Trials ######
                                  uiOutput("interactive_convex_hulls"),
-                                 includeHTML("www/html_convex.html"),
+                                 # includeHTML("www/html_convex.html"),
                                  # plotOutput('tabVizConvex_hull', height="500"),
                                  eval(ui_dataTable_panel("chooseGroups"))
                                  
