@@ -99,6 +99,8 @@ pie_charts<- function(){
 
 	.nodelabel {
 	  font-family: \"arial\";
+	   font-size: 12px;
+
 	}
 
 	.link {
@@ -200,10 +202,38 @@ pie_charts<- function(){
   
   
   Groupss <- strsplit(groupss_as_charachter, ",")
-  genes <- strsplit(annotation1[s[i], 2], ",")$Nodes
-  # print(genes)
-  # print("------_____------")
-  # print(annotation1[s])
+  # genes <- strsplit(annotation1[s[i], 2], ",")$Nodes
+  
+  #### Expressions ####
+  
+  if (!is.null(fetchFirstSelectedStoredExpression())){
+    # expressions_pies<-read.delim("string_expression_colors.txt", header = F)
+    expressions_pies<-fetchFirstSelectedStoredExpression()
+    colnames(expressions_pies) <- c("id", "color")
+    express_order<- as.data.frame(members_with_NA_groups)
+    express_order<- as.data.frame(unique(express_order$id))
+    colnames(express_order) <- "id"
+    expressions_pies<-inner_join(express_order, expressions_pies, by = "id")
+    # print(expressions_pies)
+    expressions_pies$color<- as.character(expressions_pies$color)
+    expressions_pies$color[which(expressions_pies$color=="blue")] <- "0"
+    expressions_pies$color[which(expressions_pies$color=="orange")] <- "2"
+    expressions_pies$color[which(expressions_pies$color=="green")] <- "4"
+    expressions_pies$color[which(expressions_pies$color=="red")] <- "6"
+    expressions_pies$color[which(expressions_pies$color=="purple")] <- "8"
+    expressions_pies$color[which(expressions_pies$color=="gray")] <- "15"
+    # print(expressions_pies)
+  }
+  
+  if (is.null(fetchFirstSelectedStoredExpression())){
+    expressions_pies<- as.data.frame(members_with_NA_groups)
+    expressions_pies<- as.data.frame(unique(expressions_pies$id))
+    expressions_pies$color <- rep(c("15"))
+    colnames(expressions_pies) <- c("id", "color")
+  }
+  
+  
+  ###################
   
   
   
@@ -217,17 +247,18 @@ pie_charts<- function(){
   for (i in 1:length(nodes)){
     pie_to_be_colored[i]<-any(is.element(Groupss[[i]], annotation1[s])) 
   }
-  # print(annotation1[s])
-  # print(nodes)
-  # print(pie_to_be_colored)
-  print(s)
-  print(Groupss[s])
-  
+
   for (i in 1:length(nodes)){
     coor_x<-mapper(lay[i,1], minx, maxx, 25, 575)
     coor_y<-mapper(lay[i,2], miny, maxy, 25, 575)
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", coor_x , ", 'y':", coor_y, ", 'fixed': true,\"proportions\": [\n",sep="")), file = fileConn)
-   
+    
+    if(expression_colors_pies == T){
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", coor_x , ", 'y':", coor_y, ", 'fixed': true, \"color_value\":", expressions_pies$color[i], ",\"proportions\": [\n",sep="")), file = fileConn)
+    }
+    if(expression_colors_pies == F){
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", coor_x , ", 'y':", coor_y, ", 'fixed': true, \"color_value\":", 15, ",\"proportions\": [\n",sep="")), file = fileConn)
+    }
+    
     if(pie_to_be_colored[i]==F){
       cat(sprintf(paste("{\"group\": 0," , "\"value\": 1}]},\n")), file = fileConn)
     }
@@ -282,7 +313,29 @@ pie_charts<- function(){
   
   
 
-  cat(sprintf("var pie = d3.layout.pie()
+  cat(sprintf("var color_border = d3.scale.category20();
+              color_border(0);
+              color_border(1);
+              color_border(2);
+              color_border(3);
+              color_border(4);
+              color_border(5);
+              color_border(6);
+              color_border(7);
+              color_border(8);
+              color_border(9);
+			        color_border(10);
+              color_border(11);
+              color_border(12);
+              color_border(13);
+              color_border(14);
+              color_border(15);
+              color_border(16);
+              color_border(17);
+              color_border(18);
+              color_border(19);
+              
+  var pie = d3.layout.pie()
 			.sort(null)
 			.value(function(d) { return d.value; });
 
@@ -335,7 +388,7 @@ pie_charts<- function(){
 			.data(graph.nodes)
 			.enter().append(\"g\")
 			.attr(\"class\", \"node\")
-			.style(\"stroke\", function(d) { return color(d.color_value); })
+			.style(\"stroke\", function(d) { return color_border(d.color_value); })
 			.call(force.drag);
 			
 		var nodelabels = svg.selectAll(\".nodelabel\") 
@@ -366,7 +419,7 @@ pie_charts<- function(){
 				.attr(\"transform\", function(d) { return \"translate(\" + d.x + \",\" + d.y + \")\"});
 				
 			nodelabels.attr(\"x\", function(d) { return d.x; }) 
-				.attr(\"y\", function(d) { return d.y; });
+				.attr(\"y\", function(d) { return d.y+3; });
 		});
   </script>
 </body>

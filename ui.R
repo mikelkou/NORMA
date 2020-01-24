@@ -183,7 +183,7 @@ fixedPage(
         ),# tabPanel 'Welcome'
         
       tabPanel(
-            "Upload File(s)",
+            "Upload",
             icon = icon("upload"),
             sidebarLayout(
                 sidebarPanel(
@@ -303,14 +303,7 @@ fixedPage(
                         icon = icon("table"),
                         eval(ui_dataTable_panel('datasettab2'))
                         ),
-                      tabPanel("Interactive Network",
-                               div(
-                                 visNetworkOutput('tabVizIgraphSimple'),
-                                 # simpleNetworkOutput('tabVizIgraphSimple'),
-                                 class = 'box-panel-padding',
-                               ),
-                               class = 'box-panel',
-                      ),
+                      
                       tabPanel("Pie - Chart Nodes",
                                fluidRow(
                                  helpText("Select the layout you want in the analysis."),
@@ -414,6 +407,24 @@ fixedPage(
                 ) # mainPanel
             ) # sidebarLayout
         ), # tabPanel 'Upload File(s)'
+      
+      tabPanel("Network",
+               tabPanel("Interactive Network",
+                        div(
+                          visNetworkOutput('tabVizIgraphSimple'),
+                          # simpleNetworkOutput('tabVizIgraphSimple'),
+                          class = 'box-panel-padding',
+                        ),
+                        class = 'box-panel',
+               ),
+               mainPanel(
+                 conditionalPanel(
+                   condition = "input.availableNetworks == 0",
+                   bsAlert("tabUploadMainAlert"),
+                   uiOutput("uiStoredGraphsOutputSelectUpload_just_network")),
+               )),
+      tabPanel("Annotations"),
+      
         tabPanel(
             "Topology",
             icon = icon("globe", lib = "glyphicon"),

@@ -478,6 +478,15 @@ loadNetworkFromFile <- function() {
         return(selectInput("storedGraphsOutputSelectUpload", "Selected network", choices))
     })
     
+    output$uiStoredGraphsOutputSelectUpload_just_network <- renderUI({
+        input$btnAddNetwork
+        input$btnRemoveNetworks
+        choices <- getStoredNetsChoices()
+        if (is.null(choices)) 
+            return()
+        return(selectInput("storedGraphsOutputSelectUpload", "Selected network", choices))
+    })
+    
     #########################################################
     ### Annotation button ####
     
@@ -692,9 +701,17 @@ loadNetworkFromFile <- function() {
       datatable(annotation, extensions = 'Scroller', options = list( rownames=T,deferRender = TRUE, scrollY = 200, scroller = TRUE, rowCallback = JS(rowCallback_generated))) 
     })
       
-    
+    expression_colors_pies <- T
     output$tabVizPie_charts<-renderUI({
       s = input$chooseGroups2_rows_selected
+      
+      if(input$expressions_pies ==T){
+            expression_colors_pies = T
+          }
+          else if(input$expressions_pies == F){
+            expression_colors_pies = F
+          }
+        
       source("interactive_pie_charts.R", local = T)
       lay <- input$layouts2
       pie_charts()
@@ -705,7 +722,6 @@ loadNetworkFromFile <- function() {
     })
     
     label_selected_pies <- T
-    expression_colors_pies <- T
     some_labels_pies <- T
     # output$tabVizPie_charts <- renderPlot({
     #   s = input$chooseGroups2_rows_selected
@@ -768,8 +784,18 @@ loadNetworkFromFile <- function() {
       })
     
     ####### HTML trials ########
+    expression_colors <- T
+    
     output$interactive_convex_hulls<-renderUI({
       s = input$chooseGroups_rows_selected
+      
+      if(input$expressions ==T){
+            expression_colors = T
+            }
+          else if(input$expressions == F){
+            expression_colors = F
+            }
+        
       source("interactive_convex_hulls.R", local = T)
       lay <- input$layouts
       convex_hulls()
@@ -781,7 +807,6 @@ loadNetworkFromFile <- function() {
     
 ####################################
     label_selected <- T
-    expression_colors <- T
     some_labels<- T
     # output$tabVizConvex_hull <- renderPlot({
     #   s = input$chooseGroups_rows_selected

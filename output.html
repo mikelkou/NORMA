@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+  <meta charset="utf-8">
+              
+  <!-- Load d3.js -->
+  <!--<script type="text/javascript" src="d3.js"></script>-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+  
+  <style>
+  .node {
+    stroke: #fff;
+    stroke-width: 1.5px;
+  }
+  
+  .nodelabel {
+  font-family: "arial";
+  font-size: 12px;
+  }
+  
+  .link {
+    stroke: #999;
+    stroke-opacity: .6;
+  }
+  
+
+  </style>
+  	
+  <body>
+  	<script>
+  	//arrow keys for svg pan
+  	document.onkeydown = function(e) {
+		  e = e || window.event;
+		  switch(e.which || e.keyCode) {
+		  case 37: // left
+			var gg = document.getElementsByTagName("g")[0];
+			var transform_attribute = gg.getAttribute("transform"); //example: "translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)"
+			var transform_attribute_array = transform_attribute.split("(");
+      var transform_attribute_array2 = transform_attribute_array[1].split(",");
+			var scale_x = parseFloat(transform_attribute_array2[0]) - 10
+			var set_transform = transform_attribute_array[0].concat("(", scale_x, ",", transform_attribute_array2[1], "(", transform_attribute_array[2]); 
+			gg.setAttribute("transform", set_transform);
+			//alert("left pressed");
+			break;
+			case 38: // up
+			var gg = document.getElementsByTagName("g")[0];
+			var transform_attribute = gg.getAttribute("transform"); //example: "translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)"
+			var transform_attribute_array = transform_attribute.split("(");
+			var transform_attribute_array2 = transform_attribute_array[1].split(",");
+			var transform_attribute_array3 = transform_attribute_array2[1].split(")");
+			var scale_y = parseFloat(transform_attribute_array3[0]) - 10
+			var set_transform = transform_attribute_array[0].concat("(", transform_attribute_array2[0], ",", scale_y, ") scale(", transform_attribute_array[2]); 
+			gg.setAttribute("transform", set_transform);
+			//alert("up pressed");
+			break;
+			
+			case 39: // right
+			var gg = document.getElementsByTagName("g")[0];
+			var transform_attribute = gg.getAttribute("transform"); //example: "translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)"
+			var transform_attribute_array = transform_attribute.split("(");
+			var transform_attribute_array2 = transform_attribute_array[1].split(",");
+			var scale_x = parseFloat(transform_attribute_array2[0]) + 10
+			var set_transform = transform_attribute_array[0].concat("(", scale_x, ",", transform_attribute_array2[1], "(", transform_attribute_array[2]); 
+			gg.setAttribute("transform", set_transform);
+			//alert("right pressed");
+			break;
+			
+			case 40: // down
+			var gg = document.getElementsByTagName("g")[0];
+			var transform_attribute = gg.getAttribute("transform"); //example: "translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)"
+			var transform_attribute_array = transform_attribute.split("(");
+			var transform_attribute_array2 = transform_attribute_array[1].split(",");
+			var transform_attribute_array3 = transform_attribute_array2[1].split(")");
+			var scale_y = parseFloat(transform_attribute_array3[0]) + 10
+			var set_transform = transform_attribute_array[0].concat("(", transform_attribute_array2[0], ",", scale_y, ") scale(", transform_attribute_array[2]); 
+			gg.setAttribute("transform", set_transform);
+			//alert("down pressed");
+			break;
+			
+			default: return; // exit this handler for other keys
+			}
+			e.preventDefault(); // prevent the default action (scroll / move caret)
+		}
+  	
+  	var width = 1000,
+  		height = 600;
+            
+            
+            // The color functions: in this example I'm coloring all the convex hulls at the same layer the same to more easily see the result.
+		var color = d3.scale.category20();
+              color(0);
+              color(1);
+              color(2);
+              color(3);
+              color(4);
+              color(5);
+              color(6);
+              color(7);
+              color(8);
+              color(9);
+			        color(10);
+              color(11);
+              color(12);
+              color(13);
+              color(14);
+              color(15);
+              color(16);
+              color(17);
+              color(18);
+              color(19);
+          groupHullColor1 = '#1B9E77' ;
+groupHullColor2 = '#D95F02' ;
+groupHullColor3 = '#7570B3' ;
+groupHullColor4 = '#E7298A' ;
+groupHullColor5 = '#66A61E' ;
+groupHullColor6 = '#E6AB02' ;
+var force = d3.layout.force()
+    .charge(-120)
+    .linkDistance(30)
+    .size([width, height]);
+
+var zoomFlag = 0;
+
+var zoomFlag = 0;
+		var svg = d3.select("body").append("svg")
+			.attr("width", width)
+			.attr("height", height)
+			.call(d3.behavior.zoom().on("zoom", function () {
+			svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
+			//alert(d3.event.scale)
+			if (!zoomFlag && d3.event.scale < 0.6){
+				var nodelabels = g.selectAll(".nodelabel")
+				nodelabels.text("")
+				zoomFlag = 1
+			}
+			if (zoomFlag && d3.event.scale > 0.6){
+				var nodelabels = g.selectAll(".nodelabel")
+				.text(function(d){return d.name;});
+				zoomFlag = 0
+			}
+		  }))
+		  
+  .on("dblclick.zoom", null)
+  .on("mousedown.zoom", null)
+  .append("g");
+  
+var g = d3.select("g");
+
+// propertyValue depicts the size of the node while value the edge width, 'fixed': true to disable bouncy physics
+var theGraphData = {
+"nodes":[
+{"id":0,name:"BCL2L1","propertyValue":3,'x':261.912671138308, 'y':25, 'fixed': true, "color_value":15},
+{"id":1,name:"MDM4","propertyValue":3,'x':575, 'y':84.5443592531776, 'fixed': true, "color_value":15},
+{"id":2,name:"MDM2","propertyValue":3,'x':534.536155025678, 'y':245.048189343891, 'fixed': true, "color_value":15},
+{"id":3,name:"CHEK2","propertyValue":3,'x':343.692424460735, 'y':169.167481775687, 'fixed': true, "color_value":15},
+{"id":4,name:"TP53","propertyValue":3,'x':58.6218692939158, 'y':124.156662762461, 'fixed': true, "color_value":15},
+{"id":5,name:"EP300","propertyValue":3,'x':25, 'y':261.626991209694, 'fixed': true, "color_value":15},
+{"id":6,name:"CDKN2A","propertyValue":3,'x':399.470524481756, 'y':454.541518113247, 'fixed': true, "color_value":15},
+{"id":7,name:"ATM","propertyValue":3,'x':490.056239442039, 'y':366.952358734318, 'fixed': true, "color_value":15},
+{"id":8,name:"TP53BP2","propertyValue":3,'x':450.840342638066, 'y':575, 'fixed': true, "color_value":15},
+{"id":9,name:"CREBBP","propertyValue":3,'x':165.768076821945, 'y':526.771351918403, 'fixed': true, "color_value":15},
+{"id":10,name:"CDKN1A","propertyValue":3,'x':106.65371971595, 'y':373.495054185929, 'fixed': true, "color_value":15},
+],
+  "links":[
+{"source":10,"target":4,"value":1},
+{"source":4,"target":2,"value":1},
+{"source":1,"target":4,"value":1},
+{"source":0,"target":4,"value":1},
+{"source":3,"target":7,"value":1},
+{"source":4,"target":5,"value":1},
+{"source":7,"target":4,"value":1},
+{"source":4,"target":9,"value":1},
+{"source":1,"target":2,"value":1},
+{"source":3,"target":4,"value":1},
+{"source":8,"target":4,"value":1},
+{"source":6,"target":4,"value":1},
+{"source":6,"target":2,"value":1},
+{"source":7,"target":2,"value":1},
+{"source":5,"target":9,"value":1},
+{"source":1,"target":7,"value":1},
+{"source":3,"target":1,"value":1},
+{"source":3,"target":2,"value":1},
+{"source":6,"target":10,"value":1},
+{"source":6,"target":1,"value":1},
+{"source":5,"target":2,"value":1},
+{"source":10,"target":5,"value":1},
+{"source":9,"target":2,"value":1},
+{"source":10,"target":2,"value":1},
+{"source":6,"target":0,"value":1},
+{"source":0,"target":2,"value":1},
+{"source":6,"target":7,"value":1},
+{"source":10,"target":1,"value":1},
+{"source":10,"target":3,"value":1},
+{"source":10,"target":7,"value":1},
+{"source":10,"target":9,"value":1},
+{"source":10,"target":0,"value":1},
+{"source":6,"target":3,"value":1},
+{"source":7,"target":5,"value":1},
+{"source":8,"target":0,"value":1},
+{"source":6,"target":5,"value":1},
+{"source":0,"target":7,"value":1},
+{"source":1,"target":5,"value":1},
+{"source":7,"target":9,"value":1},
+{"source":3,"target":5,"value":1},
+{"source":8,"target":2,"value":1},
+{"source":3,"target":0,"value":1},
+{"source":6,"target":9,"value":1},
+{"source":8,"target":5,"value":1},
+{"source":0,"target":5,"value":1},
+{"source":1,"target":0,"value":1},
+]
+}
+
+graph = theGraphData
+
+// The data for grouping nodes.
+// The groups are not partitions, some nodes belong to more than one group.
+var group1 = [[0,1,2,3]],
+group2 = [[4,5]],
+group3 = [[6,7,8,2]],
+group4 = [[3,9,2]],
+group5 = [[4,0]],
+group6 = [[1,2]];
+var groupNodes1 = group1.map(function(group1,index){
+  return group1.map(function(member){return graph.nodes[member] });
+  });
+var groupNodes2 = group2.map(function(group2,index){
+  return group2.map(function(member){return graph.nodes[member] });
+  });
+var groupNodes3 = group3.map(function(group3,index){
+  return group3.map(function(member){return graph.nodes[member] });
+  });
+var groupNodes4 = group4.map(function(group4,index){
+  return group4.map(function(member){return graph.nodes[member] });
+  });
+var groupNodes5 = group5.map(function(group5,index){
+  return group5.map(function(member){return graph.nodes[member] });
+  });
+var groupNodes6 = group6.map(function(group6,index){
+  return group6.map(function(member){return graph.nodes[member] });
+  });
+
+var groupPath = function(d) {
+    var fakePoints = [];  
+    if (d.length == 1 || d.length == 2) {     // This adjusts convex hulls for groups with fewer than 3 nodes by adding virtual nodes.
+       fakePoints = [ [d[0].x + 0.001, d[0].y - 0.001],[d[0].x - 0.001, d[0].y + 0.001],[d[0].x - 0.001, d[0].y + 0.001]]; }     
+    d.forEach(function(element) { fakePoints = fakePoints.concat([   // "0.7071" is the sine and cosine of 45 degree for corner points.
+           [(element.x), (element.y + (2 + (4 * element.propertyValue)))],
+           [(element.x + 0.7071 * (2 + (4 * element.propertyValue))), (element.y + 0.7071 * (2 + (4 * element.propertyValue)))],
+           [(element.x + (2 + (4 * element.propertyValue))), (element.y)],
+           [(element.x + 0.7071 * (2 + (4 * element.propertyValue))), (element.y - 0.7071 * (2 + (4 * element.propertyValue)))],
+           [(element.x), (element.y - (2 + (4 * element.propertyValue)))],
+           [(element.x - 0.7071 * (2 + (4 * element.propertyValue))), (element.y - 0.7071 * (2 + (4 * element.propertyValue)))],
+           [(element.x - (2 + (4 * element.propertyValue))), (element.y)],
+           [(element.x - 0.7071 * (2 + (4 * element.propertyValue))), (element.y + 0.7071 * (2 + (4 * element.propertyValue)))]
+    ]); })
+    return "M" + d3.geom.hull( fakePoints ).join("L") + "Z";
+};
+
+var groupHullFill1 = function(d, i) { return groupHullColor1; };
+var groupHullFill2 = function(d, i) { return groupHullColor2; };
+var groupHullFill3 = function(d, i) { return groupHullColor3; };
+var groupHullFill4 = function(d, i) { return groupHullColor4; };
+var groupHullFill5 = function(d, i) { return groupHullColor5; };
+var groupHullFill6 = function(d, i) { return groupHullColor6; };
+force
+.nodes(graph.nodes)
+.links(graph.links)
+.start();
+
+var link = g.selectAll(".link")
+    .data(graph.links)
+	.enter().append("line")
+    .attr("class", "link")
+    .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+var node = g.selectAll(".node")
+    .data(graph.nodes)
+	.enter().append("circle")
+    .attr("class", "node")
+    .attr("r", function(d) { return 2 + (4 * d.propertyValue); })
+	  .style("fill", function(d) { return color(d.color_value); })
+    .style("stroke-width", 1.5)
+    .call(force.drag);
+  
+//node.append("title")
+//  .text(function(d) { return d.name; });
+    
+var nodelabels = svg.selectAll(".nodelabel") 
+  .data(graph.nodes)
+  .enter()
+  .append("text")
+  .attr({"x":function(d){return d.x;},
+        "y":function(d){return d.y;},
+        "class":"nodelabel",
+        "stroke":"black"})
+  .text(function(d){return d.name;});
+
+force.on("tick", function() {
+    // this updates the links, but they are UNDER the convex hulls because the hulls are recreated every tick
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node.attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+        
+    nodelabels.attr("x", function(d) { return d.x; }) 
+        .attr("y", function(d) { return d.y+3; }); 
+                  
+    // this updates the convex hulls
+    g.selectAll("path").remove()
+    
+                  
+
+  g.selectAll("path#group1")
+  .data(groupNodes1)
+  .attr("d", groupPath)
+  .enter().insert("path", "circle")
+  .style("fill", groupHullFill1)
+  .style("stroke", groupHullFill1)
+  .style("stroke-width", 35)
+  .style("stroke-linejoin", "round")
+  .style("opacity", .2)
+  .attr("ID","group")
+  .attr("d", groupPath);
+
+
+  g.selectAll("path#group2")
+  .data(groupNodes2)
+  .attr("d", groupPath)
+  .enter().insert("path", "circle")
+  .style("fill", groupHullFill2)
+  .style("stroke", groupHullFill2)
+  .style("stroke-width", 35)
+  .style("stroke-linejoin", "round")
+  .style("opacity", .2)
+  .attr("ID","group")
+  .attr("d", groupPath);
+
+
+  g.selectAll("path#group3")
+  .data(groupNodes3)
+  .attr("d", groupPath)
+  .enter().insert("path", "circle")
+  .style("fill", groupHullFill3)
+  .style("stroke", groupHullFill3)
+  .style("stroke-width", 35)
+  .style("stroke-linejoin", "round")
+  .style("opacity", .2)
+  .attr("ID","group")
+  .attr("d", groupPath);
+
+
+  g.selectAll("path#group4")
+  .data(groupNodes4)
+  .attr("d", groupPath)
+  .enter().insert("path", "circle")
+  .style("fill", groupHullFill4)
+  .style("stroke", groupHullFill4)
+  .style("stroke-width", 35)
+  .style("stroke-linejoin", "round")
+  .style("opacity", .2)
+  .attr("ID","group")
+  .attr("d", groupPath);
+
+
+  g.selectAll("path#group5")
+  .data(groupNodes5)
+  .attr("d", groupPath)
+  .enter().insert("path", "circle")
+  .style("fill", groupHullFill5)
+  .style("stroke", groupHullFill5)
+  .style("stroke-width", 35)
+  .style("stroke-linejoin", "round")
+  .style("opacity", .2)
+  .attr("ID","group")
+  .attr("d", groupPath);
+
+
+  g.selectAll("path#group6")
+  .data(groupNodes6)
+  .attr("d", groupPath)
+  .enter().insert("path", "circle")
+  .style("fill", groupHullFill6)
+  .style("stroke", groupHullFill6)
+  .style("stroke-width", 35)
+  .style("stroke-linejoin", "round")
+  .style("opacity", .2)
+  .attr("ID","group")
+  .attr("d", groupPath);
+
+ });
+ 
+
+	</script>
+</body>

@@ -104,6 +104,7 @@ convex_hulls<- function(){
   
   .nodelabel {
   font-family: \"arial\";
+  font-size: 12px;
   }
   
   .link {
@@ -175,11 +176,7 @@ convex_hulls<- function(){
             
             
             // The color functions: in this example I'm coloring all the convex hulls at the same layer the same to more easily see the result.
-		var color = d3.scale.category10();
-			//color = d3.scale.linear().domain([-2, 4]).range([\"#252525\", \"#cccccc\"]), //This is used to scale the gray color based on the propertyValue
-              groupHullColor1 = \"#e7c7c7\";
-              groupHullColor2 = \"#ffa700\";
-              groupHullColor3 = \"#9bc0ff\";
+		var color = d3.scale.category20();
               color(0);
               color(1);
               color(2);
@@ -190,12 +187,17 @@ convex_hulls<- function(){
               color(7);
               color(8);
               color(9);
-            
-            
-            
-            // The color functions: in this example I'm coloring all the convex hulls at the same layer the same to more easily see the result.
-var color = d3.scale.linear().domain([-2, 4]).range([\"#252525\", \"#cccccc\"]), //This is used to scale the gray color based on the propertyValue
-            "), file = fileConn)
+			        color(10);
+              color(11);
+              color(12);
+              color(13);
+              color(14);
+              color(15);
+              color(16);
+              color(17);
+              color(18);
+              color(19);
+          "), file = fileConn)
   
   for(i in 1:x){
     cat(sprintf(
@@ -256,13 +258,54 @@ var theGraphData = {
   maxx<-max(lay[,1])
   miny<-min(lay[,2])
   maxy<-max(lay[,2])
+  
+  
+  #### Expressions ####
+  
+  if (!is.null(fetchFirstSelectedStoredExpression())){
+    # expression<-read.delim("string_expression_colors.txt", header = F)
+    expression<-fetchFirstSelectedStoredExpression()
+    colnames(expression) <- c("id", "color")
+    express_order<- as.data.frame(members_with_NA_groups)
+    express_order<- as.data.frame(unique(express_order$id))
+    colnames(express_order) <- "id"
+    expression<-inner_join(express_order, expression, by = "id")
+    # print(expression)
+    expression$color<- as.character(expression$color)
+    expression$color[which(expression$color=="blue")] <- "0"
+    expression$color[which(expression$color=="orange")] <- "2"
+    expression$color[which(expression$color=="green")] <- "4"
+    expression$color[which(expression$color=="red")] <- "6"
+    expression$color[which(expression$color=="purple")] <- "8"
+    expression$color[which(expression$color=="gray")] <- "15"
+    print(expression)
+  }
+  
+  if (is.null(fetchFirstSelectedStoredExpression())){
+      expression<- as.data.frame(members_with_NA_groups)
+      expression<- as.data.frame(unique(expression$id))
+      expression$color <- rep(c("16"))
+      colnames(expression) <- c("id", "color")
+    }
+  
+  
+  ###################
+  
+  
+  
 
     for (i in 1:length(nodes)){
-    coor_x<-mapper(lay[i,1], minx, maxx, 25, 575)
-    coor_y<-mapper(lay[i,2], miny, maxy, 25, 575)
-    #sample(0:600, 1)
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", coor_x , ", 'y':", coor_y, ", 'fixed': true},\n",sep="")), file = fileConn)
-  }
+      coor_x<-mapper(lay[i,1], minx, maxx, 25, 575)
+      coor_y<-mapper(lay[i,2], miny, maxy, 25, 575)
+      #sample(0:600, 1)
+      if(expression_colors == T){
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", coor_x , ", 'y':", coor_y, ", 'fixed': true, \"color_value\":", expression$color[i], "},\n",sep="")), file = fileConn)
+      }
+      
+      if(expression_colors == F){
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", coor_x , ", 'y':", coor_y, ", 'fixed': true, \"color_value\":", 15, "},\n",sep="")), file = fileConn)
+      }
+    }
   
   cat(sprintf("],
   \"links\":[\n"), file= fileConn)
@@ -359,7 +402,7 @@ var node = g.selectAll(\".node\")
 	.enter().append(\"circle\")
     .attr(\"class\", \"node\")
     .attr(\"r\", function(d) { return 2 + (4 * d.propertyValue); })
-    .style(\"fill\", function(d) { return color(d.propertyValue); })
+	  .style(\"fill\", function(d) { return color(d.color_value); })
     .style(\"stroke-width\", 1.5)
     .call(force.drag);
   
@@ -387,7 +430,7 @@ force.on(\"tick\", function() {
         .attr(\"cy\", function(d) { return d.y; });
         
     nodelabels.attr(\"x\", function(d) { return d.x; }) 
-        .attr(\"y\", function(d) { return d.y; }); 
+        .attr(\"y\", function(d) { return d.y+3; }); 
                   
     // this updates the convex hulls
     g.selectAll(\"path\").remove()
