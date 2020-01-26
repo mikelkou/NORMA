@@ -202,11 +202,10 @@ pie_charts<- function(){
   
   
   Groupss <- strsplit(groupss_as_charachter, ",")
-  # genes <- strsplit(annotation1[s[i], 2], ",")$Nodes
-  
+
   #### Expressions ####
   
-  if (!is.null(fetchFirstSelectedStoredExpression())){
+  if (!is.null(getStoredExpressionChoices())){
     # expressions_pies<-read.delim("string_expression_colors.txt", header = F)
     expressions_pies<-fetchFirstSelectedStoredExpression()
     colnames(expressions_pies) <- c("id", "color")
@@ -225,7 +224,7 @@ pie_charts<- function(){
     # print(expressions_pies)
   }
   
-  if (is.null(fetchFirstSelectedStoredExpression())){
+  if (is.null(getStoredExpressionChoices())){
     expressions_pies<- as.data.frame(members_with_NA_groups)
     expressions_pies<- as.data.frame(unique(expressions_pies$id))
     expressions_pies$color <- rep(c("15"))

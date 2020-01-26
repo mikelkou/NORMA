@@ -262,7 +262,7 @@ var theGraphData = {
   
   #### Expressions ####
   
-  if (!is.null(fetchFirstSelectedStoredExpression())){
+  if (!is.null(getStoredExpressionChoices())){
     # expression<-read.delim("string_expression_colors.txt", header = F)
     expression<-fetchFirstSelectedStoredExpression()
     colnames(expression) <- c("id", "color")
@@ -270,7 +270,6 @@ var theGraphData = {
     express_order<- as.data.frame(unique(express_order$id))
     colnames(express_order) <- "id"
     expression<-inner_join(express_order, expression, by = "id")
-    # print(expression)
     expression$color<- as.character(expression$color)
     expression$color[which(expression$color=="blue")] <- "0"
     expression$color[which(expression$color=="orange")] <- "2"
@@ -278,15 +277,16 @@ var theGraphData = {
     expression$color[which(expression$color=="red")] <- "6"
     expression$color[which(expression$color=="purple")] <- "8"
     expression$color[which(expression$color=="gray")] <- "15"
-    print(expression)
+    # print(expression)
   }
   
-  if (is.null(fetchFirstSelectedStoredExpression())){
+  if (is.null(getStoredExpressionChoices())){
       expression<- as.data.frame(members_with_NA_groups)
       expression<- as.data.frame(unique(expression$id))
-      expression$color <- rep(c("16"))
+      expression$color <- rep(c("15"))
       colnames(expression) <- c("id", "color")
-    }
+  }
+  
   
   
   ###################
