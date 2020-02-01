@@ -7,7 +7,7 @@ convex_hulls<- function(){
                    "#FC8D62","#8DA0CB","#E78AC3","#A6D854","#FFD92F","#E5C494","#B3B3B3","#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3",
                    "#FDB462","#B3DE69","#FCCDE5","#D9D9D9","#BC80BD","#095F02")
   
-  g <- fetchFirstSelectedStoredIgraph()
+  g <- fetchFirstSelectedStoredIgraph_annotations_tab()
   if (is.null(g)) 
     return()
   dataset1<- get.edgelist(g)
@@ -18,7 +18,7 @@ convex_hulls<- function(){
   
   gName <- SelectedStoredNets()$name
   
-  annoation_graph <- fetchFirstSelectedStoredGroups()
+  annoation_graph <- fetchFirstSelectedStoredGroups2_annotations_tab()
   if (is.null(annoation_graph)) 
     return()
   annotName <- SelectedStoredAnnots()$name
@@ -89,7 +89,7 @@ convex_hulls<- function(){
       group_color <- tmp_selected_colors
       group_color_fill <- adjustcolor(group_color, alpha.f = 0.2)
       
-  cat(sprintf("<!DOCTYPE html>
+  cat(sprintf(paste("<!DOCTYPE html>
   <meta charset=\"utf-8\">
               
   <!-- Load d3.js -->
@@ -104,7 +104,7 @@ convex_hulls<- function(){
   
   .nodelabel {
   font-family: \"arial\";
-  font-size: 12px;
+  font-size: ",scaling_labels_convex(), "px;
   }
   
   .link {
@@ -122,7 +122,7 @@ convex_hulls<- function(){
 		  e = e || window.event;
 		  switch(e.which || e.keyCode) {
 		  case 37: // left
-			var gg = document.getElementsByTagName(\"g\")[0];
+			var gg = document.getElementsByTagName(\"svg\")[0];
 			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
 			var transform_attribute_array = transform_attribute.split(\"(\");
       var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
@@ -132,7 +132,7 @@ convex_hulls<- function(){
 			//alert(\"left pressed\");
 			break;
 			case 38: // up
-			var gg = document.getElementsByTagName(\"g\")[0];
+			var gg = document.getElementsByTagName(\"svg\")[0];
 			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
 			var transform_attribute_array = transform_attribute.split(\"(\");
 			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
@@ -144,7 +144,7 @@ convex_hulls<- function(){
 			break;
 			
 			case 39: // right
-			var gg = document.getElementsByTagName(\"g\")[0];
+			var gg = document.getElementsByTagName(\"svg\")[0];
 			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
 			var transform_attribute_array = transform_attribute.split(\"(\");
 			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
@@ -155,7 +155,7 @@ convex_hulls<- function(){
 			break;
 			
 			case 40: // down
-			var gg = document.getElementsByTagName(\"g\")[0];
+			var gg = document.getElementsByTagName(\"svg\")[0];
 			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
 			var transform_attribute_array = transform_attribute.split(\"(\");
 			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
@@ -197,7 +197,7 @@ convex_hulls<- function(){
               color(17);
               color(18);
               color(19);
-          "), file = fileConn)
+          ",sep="")), file = fileConn)
   
   for(i in 1:x){
     cat(sprintf(
@@ -215,6 +215,8 @@ var zoomFlag = 0;
 		var svg = d3.select(\"body\").append(\"svg\")
 			.attr(\"width\", width)
 			.attr(\"height\", height)
+			.attr(\"transform\", \"translate(5.684341886080802e-14,5.684341886080802e-14) scale(0.9999999999999999)\") //TODO
+
 			.call(d3.behavior.zoom().on(\"zoom\", function () {
 			svg.attr(\"transform\", \"translate(\" + d3.event.translate + \")\" + \" scale(\" + d3.event.scale + \")\")
 			//alert(d3.event.scale)
@@ -299,11 +301,11 @@ var theGraphData = {
       coor_y<-mapper(lay[i,2], miny, maxy, 25, 575)
       #sample(0:600, 1)
       if(expression_colors == T){
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", coor_x , ", 'y':", coor_y, ", 'fixed': true, \"color_value\":", expression$color[i], "},\n",sep="")), file = fileConn)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*scaling_coordinates_convex() , ", 'y':", coor_y*scaling_coordinates_convex(), ", 'fixed': true, \"color_value\":", expression$color[i], "},\n",sep="")), file = fileConn)
       }
       
       if(expression_colors == F){
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", coor_x , ", 'y':", coor_y, ", 'fixed': true, \"color_value\":", 15, "},\n",sep="")), file = fileConn)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*scaling_coordinates_convex() , ", 'y':", coor_y*scaling_coordinates_convex(), ", 'fixed': true, \"color_value\":", 15, "},\n",sep="")), file = fileConn)
       }
     }
   

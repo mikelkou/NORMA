@@ -277,7 +277,6 @@ fixedPage(
                 
                 mainPanel(
                   conditionalPanel(
-                    
                         condition = "input.availableNetworks == 0",
                         bsAlert("tabUploadMainAlert"),
                         uiOutput("uiStoredGraphsOutputSelectUpload")),
@@ -287,10 +286,7 @@ fixedPage(
                       bsAlert("tabUploadMainAlert2"),
                       uiOutput("uiStoredGraphsOutputSelectUpload2")),
                   
-                  conditionalPanel(
-                    condition = "input.availableExpressions == 0",
-                    bsAlert("tabUploadMainAlert3"),
-                    uiOutput("uiStoredGraphsOutputSelectUploadExpressions")),
+                  
                   
                     tabsetPanel(
                       tabPanel(
@@ -302,128 +298,182 @@ fixedPage(
                         "Table View of Annotation(s)",
                         icon = icon("table"),
                         eval(ui_dataTable_panel('datasettab2'))
-                        ),
+                        )
                       
-                      tabPanel("Pie - Chart Nodes",
-                               fluidRow(
-                                 helpText("Select the layout you want in the analysis."),
-                                 selectInput("layouts2",
-                                             "The layouts:",
-                                             choices = layouts_ui,
-                                             selected = selected_layouts,
-                                             multiple = FALSE
-                                 ),
-                                 hr(),
-                                 ###############
-                                 prettyCheckbox(inputId = "labels_pies",
-                                                label = "Show Labels",
-                                                thick = TRUE,
-                                                shape = "curve",
-                                                animation = "pulse",
-                                                status = "info",
-                                                inline = F,
-                                                value = T),
-                                 prettyCheckbox(inputId = "expressions_pies",
-                                                label = "Show expression colors",
-                                                thick = TRUE,
-                                                shape = "curve",
-                                                animation = "pulse",
-                                                status = "info",
-                                                inline = F,
-                                                value = F),
-                                 prettyCheckbox(inputId = "some_labels_pies",
-                                                label = "Show only chosen labels",
-                                                thick = TRUE,
-                                                shape = "curve",
-                                                animation = "pulse",
-                                                status = "info",
-                                                inline = F,
-                                                value = F),
-                                 # plotOutput('tabVizPie_charts'),
-                                 uiOutput('tabVizPie_charts'),
-                                 eval(ui_dataTable_panel("chooseGroups2")),
-                                     ),
-                               hr(),
-                               downloadButton("pie_chartsDownload"),
-                               class = 'box-panel-padding',
-                               class = 'box-panel'
-                               
-                        ),
-                      tabPanel("Convex Hull",
-                               fluidRow(
-                                 # Layouts #
-                                 helpText("Select the layout you want in the analysis."),
-                                 selectInput("layouts",
-                                   "The layouts:",
-                                   choices = layouts_ui,
-                                   selected = selected_layouts,
-                                   multiple = FALSE
-                                 ),
-                                 hr(),
-                                 ###############
-                                 
-                                 prettyCheckbox(inputId = "labels",
-                                                label = "Show Labels",
-                                                thick = TRUE,
-                                                shape = "curve",
-                                                animation = "pulse",
-                                                status = "info",
-                                                inline = F,
-                                                value = T),
-                                 prettyCheckbox(inputId = "expressions",
-                                                label = "Show expression colors",
-                                                thick = TRUE,
-                                                shape = "curve",
-                                                animation = "pulse",
-                                                status = "info",
-                                                inline = F,
-                                                value = F),
-                                 prettyCheckbox(inputId = "some_labels",
-                                                label = "Show only chosen labels",
-                                                thick = TRUE,
-                                                shape = "curve",
-                                                animation = "pulse",
-                                                status = "info",
-                                                inline = F,
-                                                value = F),
-                                 
-                                 ##### JS code Trials ######
-                                 uiOutput("interactive_convex_hulls"),
-                                 # includeHTML("www/html_convex.html"),
-                                 # plotOutput('tabVizConvex_hull', height="500"),
-                                 eval(ui_dataTable_panel("chooseGroups"))
-                                 
-                      ),
-                               hr(),
-                      
-                          downloadButton("convexDownload"),
-                          
-                          class = 'box-panel-padding',
-                          class = 'box-panel'
-                      
-                      
-                      ) #tabpanel
+                      # tabPanel("Convex Hull",
+                      #          fluidRow(
+                      #            
+                      #            ###############
+                      #            
+                      #            # prettyCheckbox(inputId = "labels",
+                      #            #                label = "Show Labels",
+                      #            #                thick = TRUE,
+                      #            #                shape = "curve",
+                      #            #                animation = "pulse",
+                      #            #                status = "info",
+                      #            #                inline = F,
+                      #            #                value = T),
+                      #           
+                      #            ##### JS code Trials ######
+                      # 
+                      #            
+                      # ),
+                      #          hr(),
+                      # 
+                      #     # downloadButton("convexDownload"),
+                      #     
+                      #     class = 'box-panel-padding',
+                      #     class = 'box-panel'
+                      # 
+                      # 
+                      # ) #tabpanel
                       ) #tabsetPanel
                 ) # mainPanel
             ) # sidebarLayout
         ), # tabPanel 'Upload File(s)'
       
       tabPanel("Network",
+               conditionalPanel(
+                 condition = "input.availableNetworks == 0",
+                 bsAlert("tabUploadMainAlert"),               
+                 uiOutput("uiLoadGraphOptionsOutput_just_network")),
+               br(),
+               br(),
+               br(),
+               br(),
+               tabsetPanel(
                tabPanel("Interactive Network",
-                        div(
+                        
                           visNetworkOutput('tabVizIgraphSimple'),
-                          # simpleNetworkOutput('tabVizIgraphSimple'),
                           class = 'box-panel-padding',
-                        ),
+                        
                         class = 'box-panel',
                ),
-               mainPanel(
+               
+               tabPanel("Modulariy/Clustering"
+               )
+               )#tabsetpanel
+               ),
+      tabPanel("Annotations",
+               conditionalPanel(
+                 condition = "input.availableNetworks == 0",
+                 bsAlert("tabUploadMainAlert"),               
+                 uiOutput("uiLoadGraphOptionsOutput_annotations_tab")),
+               conditionalPanel(
+                 condition = "input.availableAnnotations == 0",
+                 bsAlert("tabUploadMainAlert"),               
+                 uiOutput("uiLoadGraphOptionsOutput2_annotations_tab")),
                  conditionalPanel(
-                   condition = "input.availableNetworks == 0",
-                   bsAlert("tabUploadMainAlert"),
-                   uiOutput("uiStoredGraphsOutputSelectUpload_just_network")),
-               )),
-      tabPanel("Annotations"),
+                   condition = "input.availableExpressions == 0",
+                   bsAlert("tabUploadMainAlert3"),
+                   uiOutput("uiStoredGraphsOutputSelectUploadExpressions")),
+               br(),
+               tabsetPanel(
+                 
+               tabPanel("Convex Hull",
+                        br(),
+               # Layouts #
+               helpText("Select the layout for the analysis:"),
+               
+               selectInput("layouts",
+                           "The layouts:",
+                           choices = layouts_ui,
+                           selected = selected_layouts,
+                           multiple = FALSE
+               ),
+               hr(),
+               prettyCheckbox(inputId = "expressions",
+                              label = "Show expression colors",
+                              thick = TRUE,
+                              shape = "curve",
+                              animation = "pulse",
+                              status = "info",
+                              inline = F,
+                              value = F),
+               prettyCheckbox(inputId = "some_labels",
+                              label = "Show only chosen labels",
+                              thick = TRUE,
+                              shape = "curve",
+                              animation = "pulse",
+                              status = "info",
+                              inline = F,
+                              value = F),
+               hr(),
+               uiOutput("interactive_convex_hulls"),
+               eval(ui_dataTable_panel("chooseGroups")),
+               
+               div(style="display:inline-block",sliderInput(inputId="scaling_coordinates_convex", label="Scale the coordinates:",min = 1, max = 10,
+                                                            value = 1)),
+               div(style="display:inline-block",sliderInput("scaling_nodes_convex", "Adjust node size:",
+                                                            min = 0.2, max = 5,
+                                                            value = 2, step= 0.2)),
+               div(style="display:inline-block",sliderInput("scaling_labels_convex", "Adjust label size:",
+                                                            min = 0, max = 30,
+                                                            value = 10, step= 2))
+               
+               ),
+           
+               tabPanel("Pie - Chart Nodes",
+                        fluidRow(
+                          helpText("Select the layout you want in the analysis."),
+                          selectInput("layouts2",
+                                      "The layouts:",
+                                      choices = layouts_ui,
+                                      selected = selected_layouts,
+                                      multiple = FALSE
+                          ),
+                          hr(),
+                          ###############
+                          # prettyCheckbox(inputId = "labels_pies",
+                          #                label = "Show Labels",
+                          #                thick = TRUE,
+                          #                shape = "curve",
+                          #                animation = "pulse",
+                          #                status = "info",
+                          #                inline = F,
+                          #                value = T),
+                          prettyCheckbox(inputId = "expressions_pies",
+                                         label = "Show expression colors",
+                                         thick = TRUE,
+                                         shape = "curve",
+                                         animation = "pulse",
+                                         status = "info",
+                                         inline = F,
+                                         value = F),
+                          prettyCheckbox(inputId = "some_labels_pies",
+                                         label = "Show only chosen labels",
+                                         thick = TRUE,
+                                         shape = "curve",
+                                         animation = "pulse",
+                                         status = "info",
+                                         inline = F,
+                                         value = F),
+                          # plotOutput('tabVizPie_charts'),
+                          uiOutput('tabVizPie_charts'),
+                          eval(ui_dataTable_panel("chooseGroups2")),
+                        ),
+                        
+                        div(style="display:inline-block",sliderInput("scaling_coordinates_pies", "Scale the coordinates",
+                                                                     min = 1, max = 10,
+                                                                     value = 1)),
+                        div(style="display:inline-block",sliderInput("scaling_nodes_pies", "Adjust node size:",
+                                                                     min = 10, max = 30,
+                                                                     value = 15)),
+                        div(style="display:inline-block",sliderInput("scaling_labels_pies", "Adjust label size:",
+                                                                     min = 0, max = 30,
+                                                                     value = 10, step= 2)),
+                        
+                        
+                        hr(),
+                        # downloadButton("pie_chartsDownload"),
+                        class = 'box-panel-padding',
+                        class = 'box-panel'
+                        
+               )
+               
+               ) #tabsetPanel
+               
+               ),
       
         tabPanel(
             "Topology",

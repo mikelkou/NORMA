@@ -1,14 +1,14 @@
 pie_chartsInput <- function() {
   set.seed(123)
   
-  g <- fetchFirstSelectedStoredIgraph()
+  g <- fetchFirstSelectedStoredIgraph_annotations_tab()
   if (is.null(g))
     return()
   my_network <- as.data.frame(get.edgelist(g))
   my_network <- data.frame(from = my_network$V1, to = my_network$V2)
   
   gName <- SelectedStoredNets()$name
-  annoation_graph <- fetchFirstSelectedStoredGroups()
+  annoation_graph <- fetchFirstSelectedStoredGroups2_annotations_tab()
   
   if (is.null(annoation_graph))
     return()

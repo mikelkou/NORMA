@@ -8,7 +8,7 @@ pie_charts<- function(){
                    "#FC8D62","#8DA0CB","#E78AC3","#A6D854","#FFD92F","#E5C494","#B3B3B3","#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3",
                    "#FDB462","#B3DE69","#FCCDE5","#D9D9D9","#BC80BD","#095F02")
   
-  g <- fetchFirstSelectedStoredIgraph()
+  g <- fetchFirstSelectedStoredIgraph_annotations_tab()
   if (is.null(g)) 
     return()
   dataset1<- get.edgelist(g)
@@ -19,7 +19,7 @@ pie_charts<- function(){
   
   gName <- SelectedStoredNets()$name
   
-  annoation_graph <- fetchFirstSelectedStoredGroups()
+  annoation_graph <- fetchFirstSelectedStoredGroups2_annotations_tab()
   if (is.null(annoation_graph)) 
     return()
   annotName <- SelectedStoredAnnots()$name
@@ -87,7 +87,7 @@ pie_charts<- function(){
     group_color_fill <- adjustcolor(group_color, alpha.f = 0.2)
     
   fileConn <- file("output2.html", "w")
-  cat(sprintf("<!DOCTYPE html>
+  cat(sprintf(paste("<!DOCTYPE html>
 <head>
   <meta charset=\"utf-8\">
   <script src=\"https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js\"></script>
@@ -99,7 +99,7 @@ pie_charts<- function(){
 
 	.nodelabel {
 	  font-family: \"arial\";
-	   font-size: 12px;
+	   font-size:",scaling_labels_pies() ,"px;
 
 	}
 
@@ -117,7 +117,8 @@ pie_charts<- function(){
 			e = e || window.event;
 			switch(e.which || e.keyCode) {
 			case 37: // left
-			var gg = document.getElementsByTagName(\"g\")[0];
+			var gg = document.getElementsByTagName(\"svg\")[0]; //TODO
+
 			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
 			var transform_attribute_array = transform_attribute.split(\"(\");
 			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
@@ -128,7 +129,7 @@ pie_charts<- function(){
 			break;
 
 			case 38: // up
-			var gg = document.getElementsByTagName(\"g\")[0];
+			var gg = document.getElementsByTagName(\"svg\")[0]; //TODO
 			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
 			var transform_attribute_array = transform_attribute.split(\"(\");
 			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
@@ -140,7 +141,7 @@ pie_charts<- function(){
 			break;
 
 			case 39: // right
-			var gg = document.getElementsByTagName(\"g\")[0];
+			var gg = document.getElementsByTagName(\"svg\")[0]; //TODO
 			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
 			var transform_attribute_array = transform_attribute.split(\"(\");
 			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
@@ -151,7 +152,7 @@ pie_charts<- function(){
 			break;
 			
 			case 40: // down
-			var gg = document.getElementsByTagName(\"g\")[0];
+			var gg = document.getElementsByTagName(\"svg\")[0]; //TODO
 			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
 			var transform_attribute_array = transform_attribute.split(\"(\");
 			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
@@ -167,7 +168,7 @@ pie_charts<- function(){
 			e.preventDefault(); // prevent the default action (scroll / move caret)
 		} 
 		
-		var graph = { 	\"nodes\":[\n"), file = fileConn)
+		var graph = { 	\"nodes\":[\n", sep="")), file = fileConn)
 		
   if(length(nodes_with_NA_groups)>0){
     for (i in 1:length(nodes_with_NA_groups))
@@ -252,14 +253,14 @@ pie_charts<- function(){
     coor_y<-mapper(lay[i,2], miny, maxy, 25, 575)
     
     if(expression_colors_pies == T){
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", coor_x , ", 'y':", coor_y, ", 'fixed': true, \"color_value\":", expressions_pies$color[i], ",\"proportions\": [\n",sep="")), file = fileConn)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":", 3,",'x':", coor_x*scaling_coordinates_pies() , ", 'y':", coor_y*scaling_coordinates_pies(), ", 'fixed': true, \"color_value\":", expressions_pies$color[i], ",\"proportions\": [\n",sep="")), file = fileConn)
     }
     if(expression_colors_pies == F){
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":3,'x':", coor_x , ", 'y':", coor_y, ", 'fixed': true, \"color_value\":", 15, ",\"proportions\": [\n",sep="")), file = fileConn)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":", 3,",'x':", coor_x*scaling_coordinates_pies() , ", 'y':", coor_y*scaling_coordinates_pies(), ", 'fixed': true, \"color_value\":", 15, ",\"proportions\": [\n",sep="")), file = fileConn)
     }
     
     if(pie_to_be_colored[i]==F){
-      cat(sprintf(paste("{\"group\": 0," , "\"value\": 1}]},\n")), file = fileConn)
+      cat(sprintf(paste("{\"group\": 0," , "\"value\":", scaling_nodes_pies(), "}]},\n")), file = fileConn)
     }
     if(pie_to_be_colored[i]==T){
       counter<-1
@@ -267,10 +268,10 @@ pie_charts<- function(){
       for (j in 1:length(Groupss[[i]])) {
         if(is.element(Groupss[[i]][j], annotation1[s]) == T){
         if(counter<max_length){
-        cat(sprintf(paste("{\"group\":", which(annotation1[s] %in% Groupss[[i]][j]), "," , "\"value\": 1},\n")), file = fileConn)
+        cat(sprintf(paste("{\"group\":", which(annotation1[s] %in% Groupss[[i]][j]), "," , "\"value\":", scaling_nodes_pies(), "},\n")), file = fileConn)
         }
         if(counter==max_length){
-              cat(sprintf(paste("{\"group\":", which(annotation1[s] %in% Groupss[[i]][j]), "," , "\"value\": 1}]},\n")), file = fileConn)
+              cat(sprintf(paste("{\"group\":", which(annotation1[s] %in% Groupss[[i]][j]), "," , "\"value\":", scaling_nodes_pies(), "}]},\n")), file = fileConn)
         }
           counter<-counter+1
         }
@@ -339,7 +340,7 @@ pie_charts<- function(){
 			.value(function(d) { return d.value; });
 
 		var arc = d3.svg.arc()
-			.outerRadius(radius)
+			.outerRadius(function(d) { return d.value; })
 			.innerRadius(0);
 		
 		var zoomFlag = 0;
@@ -348,6 +349,7 @@ pie_charts<- function(){
 			.attr(\"width\", width)
 			.attr(\"height\", height)
 			//.style(\"border\", \"4px solid black\")
+			.attr(\"transform\", \"translate(5.684341886080802e-14,5.684341886080802e-14) scale(0.9999999999999999)\") //TODO
 			.call(d3.behavior.zoom().on(\"zoom\", function () {
 			svg.attr(\"transform\", \"translate(\" + d3.event.translate + \")\" + \" scale(\" + d3.event.scale + \")\")
 			//alert(d3.event.scale)

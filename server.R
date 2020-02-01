@@ -126,9 +126,11 @@ shinyServer(function(input, output, session) {
     reactiveVars$StoredExpressions <- data.frame(id = character(), name = character(), stringsAsFactors = F)
     reactiveVars$SelectedStoredExpressionIds <- c()
     #
-    reactiveVars$layoutCoord <- NULL
-    reactiveVars$plotData <- NULL
-    reactiveVars$last_intersection_data <- NULL
+    reactiveVars$StoredNetworks_just_network <- data.frame(id = character(), name = character(), stringsAsFactors = F)
+    reactiveVars$SelectedStoredNetworksIds_just_network <- c()
+    # reactiveVars$layoutCoord <- NULL
+    # reactiveVars$plotData <- NULL
+    # reactiveVars$last_intersection_data <- NULL
 
     session$onSessionEnded(function() {
         snets <- isolate(StoredNets())
@@ -259,7 +261,8 @@ loadNetworkFromFile <- function() {
                           paste("Drosophila")
                         })
                       )
-    })
+    }) 
+    
     
     #####################################################
     #Change of Annotation Name based on input choices
@@ -301,12 +304,14 @@ loadNetworkFromFile <- function() {
     })
     
     SelectedStoredNets <- function() {
-        if (length(reactiveVars$SelectedStoredNetworksIds) > 0) 
+        if (length(reactiveVars$SelectedStoredNetworksIds) > 0) {
+          # print(StoredNets()[which(reactiveVars$StoredNetworks$id %in% reactiveVars$SelectedStoredNetworksIds), ])
             return(StoredNets()[which(reactiveVars$StoredNetworks$id %in% 
-                reactiveVars$SelectedStoredNetworksIds), ]) else if (nrow(StoredNets()) == 0 || is.na(StoredNets()[1, ])) 
+                reactiveVars$SelectedStoredNetworksIds), ])} 
+         else if (nrow(StoredNets()) == 0 || is.na(StoredNets()[1, ])) 
             return(NULL) else {
             updateCheckboxGroupInput(session, "storedGraphsOutputMultipleSelectTopolopgy", "Selected network(s)", choices = getStoredNetsChoices(), selected = getStoredNetsChoices()[1])
-            return(StoredNets()[1, ])
+              return(StoredNets()[1, ])
         }
     }
     
@@ -332,11 +337,13 @@ loadNetworkFromFile <- function() {
             retVal <- readRDS(paste0(nid, ".rda"))
             attr(retVal, "id") <- nid
         }
+        # print(retVal)
         return(retVal)
     }
     
     fetchFirstSelectedStoredDataset <- reactive({
         ssn <- SelectedStoredNets()
+        # print(ssn)
         if (!is.null(ssn) && nrow(ssn) > 0) {
             return(fetchDataset(ssn[1, ]$id))
         } else {
@@ -427,21 +434,45 @@ loadNetworkFromFile <- function() {
             # attr(dataset, which = 'weighted') <- input$weighted1
             
             reactiveVars$StoredNetworks <- rbind(reactiveVars$StoredNetworks, df)
+            reactiveVars$StoredNetworks_just_network <- reactiveVars$StoredNetworks
+            reactiveVars$StoredNetworks_annotations_tab <- reactiveVars$StoredNetworks
+            
             saveRDS(dataset, paste0(nid, ".rda"))
             if (length(reactiveVars$SelectedStoredNetworksIds) == 0) {
                 reactiveVars$SelectedStoredNetworksIds <- c(nid)
             }
         } else createAlert(session, "tabUploadSideAlert", "fileUploadAlert", title = "ERROR !", style = "danger", content = paste0("An error occurred while trying to read your file. Please make sure that it is formatted according to the requirements."), append = FALSE)
       })
+
+    
     
     doRemNetwork <- observeEvent(input$btnRemoveNetworks, {
         if (!is.null(input$availableNetworks)) {
             reactiveVars$StoredNetworks <- reactiveVars$StoredNetworks[-which(reactiveVars$StoredNetworks$id %in% 
                 input$availableNetworks), ]
             nr <- nrow(reactiveVars$StoredNetworks)
-            if (nr > 0) 
-                reactiveVars$SelectedStoredNetworksIds <- reactiveVars$StoredNetworks[nr, ]$id
+            if (nr > 0) {
+                reactiveVars$SelectedStoredNetworksIds <- reactiveVars$StoredNetworks[nr, ]$id}
         }
+      
+      
+      if (!is.null(input$availableNetworks)) {
+        reactiveVars$StoredNetworks_just_network <- reactiveVars$StoredNetworks_just_network[-which(reactiveVars$StoredNetworks_just_network$id %in% 
+                                                                            input$availableNetworks), ]
+        nr <- nrow(reactiveVars$StoredNetworks_just_network)
+        if (nr > 0) {
+          reactiveVars$SelectedStoredNetworksIds_just_network <- reactiveVars$StoredNetworks_just_network[nr, ]$id}
+      }
+      
+      if (!is.null(input$availableNetworks)) {
+        reactiveVars$StoredNetworks_annotations_tab <- reactiveVars$StoredNetworks_annotations_tab[-which(reactiveVars$StoredNetworks_annotations_tab$id %in% 
+                                                                                                      input$availableNetworks), ]
+        nr <- nrow(reactiveVars$StoredNetworks_annotations_tab)
+        if (nr > 0) {
+          reactiveVars$SelectedStoredNetworksIds_annotations_tab <- reactiveVars$StoredNetworks_annotations_tab[nr, ]$id}
+      }
+      
+      
     })
     
     getStoredNetsChoices <- function() {
@@ -453,8 +484,9 @@ loadNetworkFromFile <- function() {
         return(choices)
     }
     
+   
+    
     # outputOptions(output, 'availableNetworks', suspendWhenHidden=FALSE)
-
     output$uiStoredGraphsOutputRadio <- renderUI({
         input$btnAddNetwork
         input$btnRemoveNetworks
@@ -478,14 +510,339 @@ loadNetworkFromFile <- function() {
         return(selectInput("storedGraphsOutputSelectUpload", "Selected network", choices))
     })
     
-    output$uiStoredGraphsOutputSelectUpload_just_network <- renderUI({
+    ### Duplicated upload for networks in network-tab ###
+    
+    output$uiLoadGraphOptionsOutput_just_network <-  renderUI({
         input$btnAddNetwork
         input$btnRemoveNetworks
-        choices <- getStoredNetsChoices()
-        if (is.null(choices)) 
-            return()
-        return(selectInput("storedGraphsOutputSelectUpload", "Selected network", choices))
+        choices <- getStoredNetsChoices_just_network()
+        if (is.null(choices))
+          return()
+        return(selectInput("storedGraphsOutputSelectUpload_just_network", "Selected network", choices))
+        
+      })
+      
+    
+    uploadTabSetSelectedNetwork_just_network <- observeEvent(input$storedGraphsOutputSelectUpload_just_network, {
+      reactiveVars$SelectedStoredNetworksIds_just_network <- c(input$storedGraphsOutputSelectUpload_just_network)
+    }, ignoreNULL = FALSE)
+    
+    fetchFirstSelectedStoredDataset_just_network <- reactive({
+      ssn <- SelectedStoredNets_just_network()
+      # print("---")
+      # print(ssn)
+      if (!is.null(ssn) && nrow(ssn) > 0) {
+        return(fetchDataset_just_network(ssn[1, ]$id))
+      } else {
+        return(NULL)
+      }
     })
+
+    fetchFirstSelectedStoredIgraph_just_network <- function() {
+      dataset <- fetchFirstSelectedStoredDataset_just_network()
+      # print(dataset)
+      if (is.null(dataset))
+        return(NULL) else return(convert_to_igraph(dataset))
+    }
+    
+    fetchDataset_just_network <- function(nid) {
+      retVal <- NULL
+      if (length(nid) > 0) {
+        retVal <- readRDS(paste0(nid, ".rda"))
+        attr(retVal, "id") <- nid
+      }
+      return(retVal)
+    }
+    
+    
+    
+    fetchAllSelectedStoredDataset_just_network <- function() {
+      ssn <- SelectedStoredNets_just_network()
+      ids <- c()
+      if (!is.null(ssn) && nrow(ssn) > 0) {
+        ret <- list()
+        for (i in 1:nrow(ssn)) {
+          ret[[i]] <- fetchDataset_just_network(ssn[i, ]$id)
+          ids <- c(ids, ssn[i, ]$id)
+        }
+        names(ret) <- ids
+        return(ret)
+      } else {
+        return(NULL)
+      }
+    }
+    
+    
+    fetchMaxNSelectedStoredDataset_just_network <- function(N) {
+      ssn <- SelectedStoredNets_just_network()
+      if (!is.null(ssn) && nrow(ssn) > 0) {
+        ret <- list()
+        for (i in 1:nrow(ssn)) {
+          if (i > N) 
+            break
+          ret[[i]] <- fetchDataset_just_network(ssn[i, ]$id)
+        }
+        return(ret)
+      } else {
+        return(NULL)
+      }
+    }
+    
+    getStoredNetsChoices_just_network <- function() {
+      snets <- StoredNets_just_network()
+      if (nrow(snets) == 0) 
+        return(NULL)
+      choices <- snets$id
+      names(choices) <- snets$name
+      return(choices)
+    }
+    
+    StoredNets_just_network <- reactive({
+      return(reactiveVars$StoredNetworks_just_network)
+    })
+    StoredNetsEmpty_just_network <- function() {
+      return(nrow(reactiveVars$StoredNetworks_just_network) == 0)
+    }
+    
+    SelectedStoredNets_just_network <- function() {
+      if (length(reactiveVars$SelectedStoredNetworksIds_just_network) > 0) {
+        # print(StoredNetworks_just_network()[which(reactiveVars$StoredNetworks_just_network$id %in% reactiveVars$SelectedStoredNetworksIds_just_network), ])
+        return(StoredNets_just_network()[which(reactiveVars$StoredNetworks_just_network$id %in% 
+                                                 reactiveVars$SelectedStoredNetworksIds_just_network), ])} 
+      else if (nrow(StoredNets_just_network()) == 0 || is.na(StoredNets_just_network()[1, ])) 
+        return(NULL) else {
+          updateCheckboxGroupInput(session, "uiLoadGraphOptionsOutput_just_network", "Selected network(s)", choices = getStoredNetsChoices_just_network(), selected = getStoredNetsChoices_just_network()[1])
+          return(StoredNets_just_network()[1, ])
+        }
+    }
+    
+ 
+    #########################################
+    
+    ### Duplicated upload for networks in annotation-tab ###
+    reactiveVars$StoredNetworks_annotations_tab <- data.frame(id = character(), name = character(), stringsAsFactors = F)
+    reactiveVars$SelectedStoredNetworksIds_annotations_tab <- c()
+    
+    fetchFirstSelectedStoredDataset_annotations_tab <- reactive({
+      ssn <- SelectedStoredNets_annotations_tab()
+      # print("---")
+      # print(ssn)
+      if (!is.null(ssn) && nrow(ssn) > 0) {
+        return(fetchDataset_annotations_tab(ssn[1, ]$id))
+      } else {
+        return(NULL)
+      }
+    })
+    
+    
+    fetchFirstSelectedStoredIgraph_annotations_tab <- function() {
+      dataset <- fetchFirstSelectedStoredDataset_annotations_tab()
+      # print(dataset)
+      if (is.null(dataset))
+        return(NULL) else return(convert_to_igraph(dataset))
+    }
+    
+    fetchDataset_annotations_tab <- function(nid) {
+      retVal <- NULL
+      if (length(nid) > 0) {
+        retVal <- readRDS(paste0(nid, ".rda"))
+        attr(retVal, "id") <- nid
+      }
+      return(retVal)
+    }
+    
+    
+    
+    fetchAllSelectedStoredDataset_annotations_tab <- function() {
+      ssn <- SelectedStoredNets_annotations_tab()
+      ids <- c()
+      if (!is.null(ssn) && nrow(ssn) > 0) {
+        ret <- list()
+        for (i in 1:nrow(ssn)) {
+          ret[[i]] <- fetchDataset_annotations_tab(ssn[i, ]$id)
+          ids <- c(ids, ssn[i, ]$id)
+        }
+        names(ret) <- ids
+        return(ret)
+      } else {
+        return(NULL)
+      }
+    }
+    
+    
+    fetchMaxNSelectedStoredDataset_annotations_tab <- function(N) {
+      ssn <- SelectedStoredNets_annotations_tab()
+      if (!is.null(ssn) && nrow(ssn) > 0) {
+        ret <- list()
+        for (i in 1:nrow(ssn)) {
+          if (i > N) 
+            break
+          ret[[i]] <- fetchDataset_annotations_tab(ssn[i, ]$id)
+        }
+        return(ret)
+      } else {
+        return(NULL)
+      }
+    }
+    
+    output$uiLoadGraphOptionsOutput_annotations_tab <-  renderUI({
+      input$btnAddNetwork
+      input$btnRemoveNetworks
+      choices <- getStoredNetsChoices_annotations_tab()
+      if (is.null(choices))
+        return()
+      return(selectInput("storedGraphsOutputSelectUpload_annotations_tab", "Selected network", choices))
+      
+    })
+    
+    
+    uploadTabSetSelectedNetwork_annotations_tab <- observeEvent(input$storedGraphsOutputSelectUpload_annotations_tab, {
+      reactiveVars$SelectedStoredNetworksIds_annotations_tab <- c(input$storedGraphsOutputSelectUpload_annotations_tab)
+    }, ignoreNULL = FALSE)
+    
+    
+    
+    
+    getStoredNetsChoices_annotations_tab <- function() {
+      snets <- StoredNets_annotations_tab()
+      if (nrow(snets) == 0) 
+        return(NULL)
+      choices <- snets$id
+      names(choices) <- snets$name
+      return(choices)
+    }
+    
+    StoredNets_annotations_tab <- reactive({
+      return(reactiveVars$StoredNetworks_annotations_tab)
+    })
+    StoredNetsEmpty_annotations_tab <- function() {
+      return(nrow(reactiveVars$StoredNetworks_annotations_tab) == 0)
+    }
+    
+    SelectedStoredNets_annotations_tab <- function() {
+      if (length(reactiveVars$SelectedStoredNetworksIds_annotations_tab) > 0) {
+        # print(StoredNetworks_annotations_tab()[which(reactiveVars$StoredNetworks_annotations_tab$id %in% reactiveVars$SelectedStoredNetworksIds_annotations_tab), ])
+        return(StoredNets_annotations_tab()[which(reactiveVars$StoredNetworks_annotations_tab$id %in% 
+                                                    reactiveVars$SelectedStoredNetworksIds_annotations_tab), ])} 
+      else if (nrow(StoredNets_annotations_tab()) == 0 || is.na(StoredNets_annotations_tab()[1, ])) 
+        return(NULL) else {
+          updateCheckboxGroupInput(session, "uiLoadGraphOptionsOutput_annotations_tab", "Selected network(s)", choices = getStoredNetsChoices_annotations_tab(), selected = getStoredNetsChoices_annotations_tab()[1])
+          return(StoredNets_annotations_tab()[1, ])
+        }
+    }
+
+    ### Duplicated upload for annotations in annotation-tab ###
+    reactiveVars$StoredNetworks2_annotations_tab <- data.frame(id = character(), name = character(), stringsAsFactors = F)
+    reactiveVars$SelectedStoredNetworksIds2_annotations_tab <- c()
+    
+    fetchFirstSelectedStoredAnnotations2_annotations_tab <- function() {
+      groups_ann <- fetchFirstSelectedStoredGroups2_annotations_tab()
+      if (is.null(groups_ann)) 
+        return(NULL) else return(groups_ann)
+    }
+    
+    fetchFirstSelectedStoredGroups2_annotations_tab <- reactive({
+      sannots <- SelectedStoredNets2_annotations_tab()
+      if (!is.null(sannots) && nrow(sannots) > 0) {
+        return(fetchDataset2_annotations_tab(sannots[1, ]$id))
+      } else {
+        return(NULL)
+      }
+    })
+    
+    
+    
+    fetchDataset2_annotations_tab <- function(nid) {
+      retVal <- NULL
+      if (length(nid) > 0) {
+        retVal <- readRDS(paste0(nid, ".rda"))
+        attr(retVal, "id") <- nid
+      }
+      return(retVal)
+    }
+    
+    
+    
+    fetchAllSelectedStoredDataset2_annotations_tab <- function() {
+      ssn <- SelectedStoredNets2_annotations_tab()
+      ids <- c()
+      if (!is.null(ssn) && nrow(ssn) > 0) {
+        ret <- list()
+        for (i in 1:nrow(ssn)) {
+          ret[[i]] <- fetchDataset2_annotations_tab(ssn[i, ]$id)
+          ids <- c(ids, ssn[i, ]$id)
+        }
+        names(ret) <- ids
+        return(ret)
+      } else {
+        return(NULL)
+      }
+    }
+    
+    
+    fetchMaxNSelectedStoredDataset2_annotations_tab <- function(N) {
+      ssn <- SelectedStoredNets2_annotations_tab()
+      if (!is.null(ssn) && nrow(ssn) > 0) {
+        ret <- list()
+        for (i in 1:nrow(ssn)) {
+          if (i > N) 
+            break
+          ret[[i]] <- fetchDataset2_annotations_tab(ssn[i, ]$id)
+        }
+        return(ret)
+      } else {
+        return(NULL)
+      }
+    }
+    
+    output$uiLoadGraphOptionsOutput2_annotations_tab <-  renderUI({
+      input$btnAddNetwork2
+      input$btnRemoveNetworks2
+      choices <- getStoredNetsChoices2_annotations_tab()
+      if (is.null(choices))
+        return()
+      return(selectInput("storedGraphsOutputSelectUpload2_annotations_tab", "Selected network", choices))
+      
+    })
+    
+    
+    uploadTabSetSelectedNetwork2_annotations_tab <- observeEvent(input$storedGraphsOutputSelectUpload2_annotations_tab, {
+      reactiveVars$SelectedStoredNetworksIds2_annotations_tab <- c(input$storedGraphsOutputSelectUpload2_annotations_tab)
+    }, ignoreNULL = FALSE)
+    
+    
+    
+    
+    getStoredNetsChoices2_annotations_tab <- function() {
+      snets <- StoredNets2_annotations_tab()
+      if (nrow(snets) == 0) 
+        return(NULL)
+      choices <- snets$id
+      names(choices) <- snets$name
+      return(choices)
+    }
+    
+    StoredNets2_annotations_tab <- reactive({
+      return(reactiveVars$StoredNetworks2_annotations_tab)
+    })
+    StoredNetsEmpty2_annotations_tab <- function() {
+      return(nrow(reactiveVars$StoredNetworks2_annotations_tab) == 0)
+    }
+    
+    SelectedStoredNets2_annotations_tab <- function() {
+      if (length(reactiveVars$SelectedStoredNetworksIds2_annotations_tab) > 0) {
+        # print(StoredNetworks2_annotations_tab()[which(reactiveVars$StoredNetworks2_annotations_tab$id %in% reactiveVars$SelectedStoredNetworksIds2_annotations_tab), ])
+        return(StoredNets2_annotations_tab()[which(reactiveVars$StoredNetworks2_annotations_tab$id %in% 
+                                                     reactiveVars$SelectedStoredNetworksIds2_annotations_tab), ])} 
+      else if (nrow(StoredNets2_annotations_tab()) == 0 || is.na(StoredNets2_annotations_tab()[1, ])) 
+        return(NULL) else {
+          updateCheckboxGroupInput(session, "uiLoadGraphOptionsOutput2_annotations_tab", "Selected network(s)", choices = getStoredNetsChoices2_annotations_tab(), selected = getStoredNetsChoices2_annotations_tab()[1])
+          return(StoredNets2_annotations_tab()[1, ])
+        }
+    }
+    
+    
+    #########################################
     
     #########################################################
     ### Annotation button ####
@@ -543,6 +900,9 @@ loadNetworkFromFile <- function() {
           annotation<- annotation[1:10000, ]
         }
         reactiveVars$StoredAnnotations <- rbind(reactiveVars$StoredAnnotations, dtf)
+        reactiveVars$StoredNetworks2_annotations_tab <- reactiveVars$StoredAnnotations
+        
+        
         saveRDS(annotation, paste0(nid, ".rda"))
         if (length(reactiveVars$SelectedStoredAnnotationIds) == 0) {
           reactiveVars$SelectedStoredAnnotationIds <- c(nid)
@@ -557,7 +917,15 @@ loadNetworkFromFile <- function() {
                                                                             input$availableAnnotations), ]
         nr <- nrow(reactiveVars$StoredAnnotations)
         if (nr > 0) 
-          reactiveVars$SelectedStoredAnnotationIds <- reactiveVars$StoredAnnotations[nr, ]$id
+          reactiveVars$SelectedStoredAnnotationIds <- reactiveVars$StoredAnnotations[nr, ]$id}
+      
+      
+      if (!is.null(input$availableAnnotations)) {
+        reactiveVars$StoredNetworks2_annotations_tab <- reactiveVars$StoredNetworks2_annotations_tab[-which(reactiveVars$StoredNetworks2_annotations_tab$id %in% 
+                                                                            input$availableAnnotations), ]
+        nr <- nrow(reactiveVars$StoredNetworks2_annotations_tab)
+        if (nr > 0) 
+          reactiveVars$SelectedStoredNetworksIds2_annotations_tab <- reactiveVars$StoredNetworks2_annotations_tab[nr, ]$id
       }
     })
     
@@ -630,10 +998,10 @@ loadNetworkFromFile <- function() {
     
     
     
-    ######## Plots and Download Buttons #######################
+    ######## Plots#######################
     output$tabVizIgraphSimple<- renderVisNetwork({
-      # renderSimpleNetwork({
-      g <- fetchFirstSelectedStoredIgraph()
+      g <- fetchFirstSelectedStoredIgraph_just_network()
+      # print(g)
       if (is.null(g)) 
         return()
       
@@ -692,7 +1060,7 @@ loadNetworkFromFile <- function() {
       ########
       
       x<- length(rownames(annotation))
-      print(x)
+      # print(x)
       tmp_css_colors<- c()
       for(i in 1:x)
       {
@@ -748,14 +1116,14 @@ loadNetworkFromFile <- function() {
     #   pie_chartsInput()
     # })
     
-    output$pie_chartsDownload = downloadHandler(
-      filename = 'pie-charts.png',
-      content = function(file) {
-        source("pie_charts(stableInput).R", local = T)
-        png(file)
-        print(pie_chartsInput())
-        dev.off()
-      })
+    # output$pie_chartsDownload = downloadHandler(
+    #   filename = 'pie-charts.png',
+    #   content = function(file) {
+    #     source("pie_charts(stableInput).R", local = T)
+    #     png(file)
+    #     print(pie_chartsInput())
+    #     dev.off()
+    #   })
     
     
     ### Convex Hull ###
@@ -782,6 +1150,35 @@ loadNetworkFromFile <- function() {
       }
       datatable(annotation, extensions = 'Scroller', options = list( rownames=T,deferRender = TRUE, scrollY = 200, scroller = TRUE, rowCallback = JS(rowCallback_generated))) 
       })
+    
+    
+    ##### Saling ###
+    
+    scaling_coordinates_convex <- reactive({
+        input$scaling_coordinates_convex
+    })
+    
+    scaling_coordinates_pies <- reactive({
+        input$scaling_coordinates_pies
+    })
+    
+    scaling_nodes_convex <- reactive({
+        input$scaling_nodes_convex
+    })
+    
+    scaling_nodes_pies <- reactive({
+        input$scaling_nodes_pies
+    }) 
+    
+    scaling_labels_convex <- reactive({
+        input$scaling_labels_convex
+    })
+    
+    scaling_labels_pies <- reactive({
+        input$scaling_labels_pies
+    })
+    
+    
     
     ####### HTML trials ########
     expression_colors <- T
@@ -833,15 +1230,15 @@ loadNetworkFromFile <- function() {
     #     convexInput()
     # })
    
-    
-    output$convexDownload = downloadHandler(
-      filename = 'convex_hull.png',
-      content = function(file) {
-        source("download_convexhull.R", local = T)
-        png(file)
-        print(download_convexhull())
-        dev.off()
-      })
+    # 
+    # output$convexDownload = downloadHandler(
+    #   filename = 'convex_hull.png',
+    #   content = function(file) {
+    #     source("download_convexhull.R", local = T)
+    #     png(file)
+    #     print(download_convexhull())
+    #     dev.off()
+    #   })
     
     
     #######################################################################

@@ -1,6 +1,6 @@
 convexInput <- function(){
   set.seed(123)
-  g <- fetchFirstSelectedStoredIgraph()
+  g <- fetchFirstSelectedStoredIgraph_annotations_tab()
   if (is.null(g)) 
     return()
 
@@ -9,7 +9,7 @@ convexInput <- function(){
   
   gName <- SelectedStoredNets()$name
 
-  annoation_graph <- fetchFirstSelectedStoredGroups()
+  annoation_graph <- fetchFirstSelectedStoredGroups2_annotations_tab()
   if (is.null(annoation_graph)) 
     return()
   annotName <- SelectedStoredAnnots()$name

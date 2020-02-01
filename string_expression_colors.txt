@@ -8,4 +8,3 @@ TP53BP2	red
 CDKN2A	blue
 EP300	red
 CREBBP	red
-MDM2	blue
