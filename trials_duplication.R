@@ -1,39 +1,38 @@
-reactiveVars$StoredNetworks2_annotations_tab <- data.frame(id = character(), name = character(), stringsAsFactors = F)
-reactiveVars$SelectedStoredNetworksIds2_annotations_tab <- c()
+reactiveVars$StoredNetworks_topology_tab <- data.frame(id = character(), name = character(), stringsAsFactors = F)
+reactiveVars$SelectedStoredNetworksIds_topology_tab <- c()
 
-fetchFirstSelectedStoredDataset2_annotations_tab <- reactive({
-  ssn <- SelectedStoredNets2_annotations_tab()
-  # print("---")
-  # print(ssn)
+fetchFirstSelectedStoredDataset_topology_tab <- reactive({
+  ssn <- SelectedStoredNets_topology_tab()
   if (!is.null(ssn) && nrow(ssn) > 0) {
-    return(fetchDataset2_annotations_tab(ssn[1, ]$id))
+    return(fetchDataset_topology_tab(ssn[1, ]$id))
   } else {
     return(NULL)
   }
 })
 
-fetchFirstSelectedStoredAnnotations2_annotations_tab <- function() {
-  groups_ann <- fetchFirstSelectedStoredGroups2_annotations_tab()
-  if (is.null(groups_ann)) 
-    return(NULL) else return(groups_ann)
+fetchFirstSelectedStoredStoredNetworks_topology_tab <- function() {
+  topol_nets <- fetchFirstSelectedStoredStoredNetworks_topology_tab2()
+  if (is.null(topol_nets)) 
+    return(NULL) else return(topol_nets)
 }
 
-fetchFirstSelectedStoredGroups2_annotations_tab <- reactive({
-  sannots <- SelectedStoredNets2_annotations_tab()
-  if (!is.null(sannots) && nrow(sannots) > 0) {
-    return(fetchDataset2_annotations_tab(sannots[1, ]$id))
+fetchFirstSelectedStoredStoredNetworks_topology_tab2 <- reactive({
+  stopol <- SelectedStoredNets_topology_tab()
+  if (!is.null(stopol) && nrow(stopol) > 0) {
+    return(fetchDataset_topology_tab(stopol[1, ]$id))
   } else {
     return(NULL)
   }
 })
-# fetchFirstSelectedStoredIgraph2_annotations_tab <- function() {
-#   dataset <- fetchFirstSelectedStoredDataset2_annotations_tab()
-#   # print(dataset)
-#   if (is.null(dataset))
-#     return(NULL) else return(convert_to_igraph(dataset))
-# }
 
-fetchDataset2_annotations_tab <- function(nid) {
+fetchFirstSelectedStoredIgraph_topology_tab <- function() {
+  dataset <- fetchFirstSelectedStoredDataset_topology_tab()
+  # print(dataset)
+  if (is.null(dataset))
+    return(NULL) else return(convert_to_igraph(dataset))
+}
+
+fetchDataset_topology_tab <- function(nid) {
   retVal <- NULL
   if (length(nid) > 0) {
     retVal <- readRDS(paste0(nid, ".rda"))
@@ -44,13 +43,13 @@ fetchDataset2_annotations_tab <- function(nid) {
 
 
 
-fetchAllSelectedStoredDataset2_annotations_tab <- function() {
-  ssn <- SelectedStoredNets2_annotations_tab()
+fetchAllSelectedStoredDataset_topology_tab <- function() {
+  ssn <- SelectedStoredNets_topology_tab()
   ids <- c()
   if (!is.null(ssn) && nrow(ssn) > 0) {
     ret <- list()
     for (i in 1:nrow(ssn)) {
-      ret[[i]] <- fetchDataset2_annotations_tab(ssn[i, ]$id)
+      ret[[i]] <- fetchDataset_topology_tab(ssn[i, ]$id)
       ids <- c(ids, ssn[i, ]$id)
     }
     names(ret) <- ids
@@ -61,14 +60,14 @@ fetchAllSelectedStoredDataset2_annotations_tab <- function() {
 }
 
 
-fetchMaxNSelectedStoredDataset2_annotations_tab <- function(N) {
-  ssn <- SelectedStoredNets2_annotations_tab()
+fetchMaxNSelectedStoredDataset_topology_tab <- function(N) {
+  ssn <- SelectedStoredNets_topology_tab()
   if (!is.null(ssn) && nrow(ssn) > 0) {
     ret <- list()
     for (i in 1:nrow(ssn)) {
       if (i > N) 
         break
-      ret[[i]] <- fetchDataset2_annotations_tab(ssn[i, ]$id)
+      ret[[i]] <- fetchDataset_topology_tab(ssn[i, ]$id)
     }
     return(ret)
   } else {
@@ -76,31 +75,37 @@ fetchMaxNSelectedStoredDataset2_annotations_tab <- function(N) {
   }
 }
 
-# output$tabVizIgraphSimple<- renderVisNetwork({
-#   g <- fetchFirstSelectedStoredIgraph2_annotations_tab()
-#   
+
+output$uiStoredGraphsOutputSelectTopolopgy <- renderUI({
+  input$btnAddNetwork
+  input$btnRemoveNetworks
+  choices <- getStoredNetsChoices_topology_tab()
+  if (is.null(choices)) 
+    return()
+  return(selectInput("storedGraphsOutputSelectTopolopgy", "Selected network", choices))
+})  
   
   
-  output$uiLoadGraphOptionsOutput2_annotations_tab <-  renderUI({
-    input$btnAddNetwork2
-    input$btnRemoveNetworks2
-    choices <- getStoredNetsChoices2_annotations_tab()
-    if (is.null(choices))
-      return()
-    return(selectInput("storedGraphsOutputSelectUpload2_annotations_tab", "Selected network", choices))
-    
-  })
+  # output$uiLoadGraphOptionsOutput2_annotations_tab <-  renderUI({
+  #   input$btnAddNetwork2
+  #   input$btnRemoveNetworks2
+  #   choices <- getStoredNetsChoices2_annotations_tab()
+  #   if (is.null(choices))
+  #     return()
+  #   return(selectInput("storedGraphsOutputSelectUpload2_annotations_tab", "Selected network", choices))
+  #   
+  # })
   
   
-  uploadTabSetSelectedNetwork2_annotations_tab <- observeEvent(input$storedGraphsOutputSelectUpload2_annotations_tab, {
-    reactiveVars$SelectedStoredNetworksIds2_annotations_tab <- c(input$storedGraphsOutputSelectUpload2_annotations_tab)
-  }, ignoreNULL = FALSE)
+  # uploadTabSetSelectedNetwork2_annotations_tab <- observeEvent(input$storedGraphsOutputSelectUpload2_annotations_tab, {
+  #   reactiveVars$SelectedStoredNetworksIds2_annotations_tab <- c(input$storedGraphsOutputSelectUpload2_annotations_tab)
+  # }, ignoreNULL = FALSE)
+  # 
+  # 
   
   
-  
-  
-  getStoredNetsChoices2_annotations_tab <- function() {
-    snets <- StoredNets2_annotations_tab()
+  getStoredNetsChoices_topology_tab <- function() {
+    snets <- StoredNets_topology_tab()
     if (nrow(snets) == 0) 
       return(NULL)
     choices <- snets$id
@@ -108,24 +113,25 @@ fetchMaxNSelectedStoredDataset2_annotations_tab <- function(N) {
     return(choices)
   }
   
-  StoredNets2_annotations_tab <- reactive({
-    return(reactiveVars$StoredNetworks2_annotations_tab)
+  StoredNets_topology_tab <- reactive({
+    return(reactiveVars$StoredNetworks_topology_tab)
   })
-  StoredNetsEmpty2_annotations_tab <- function() {
-    return(nrow(reactiveVars$StoredNetworks2_annotations_tab) == 0)
+  StoredNetsEmpty_topology_tab <- function() {
+    return(nrow(reactiveVars$StoredNetworks_topology_tab) == 0)
   }
   
-  SelectedStoredNets2_annotations_tab <- function() {
-    if (length(reactiveVars$SelectedStoredNetworksIds2_annotations_tab) > 0) {
-      # print(StoredNetworks2_annotations_tab()[which(reactiveVars$StoredNetworks2_annotations_tab$id %in% reactiveVars$SelectedStoredNetworksIds2_annotations_tab), ])
-      return(StoredNets2_annotations_tab()[which(reactiveVars$StoredNetworks2_annotations_tab$id %in% 
-                                               reactiveVars$SelectedStoredNetworksIds2_annotations_tab), ])} 
-    else if (nrow(StoredNets2_annotations_tab()) == 0 || is.na(StoredNets2_annotations_tab()[1, ])) 
+  SelectedStoredNets_topology_tab <- function() {
+    if (length(reactiveVars$SelectedStoredNetworksIds_topology_tab) > 0) {
+      # print(StoredNetworks_topology_tab()[which(reactiveVars$StoredNetworks_topology_tab$id %in% reactiveVars$SelectedStoredNetworksIds_topology_tab), ])
+      return(StoredNets_topology_tab()[which(reactiveVars$StoredNetworks_topology_tab$id %in% 
+                                               reactiveVars$SelectedStoredNetworksIds_topology_tab), ])} 
+    else if (nrow(StoredNets_topology_tab()) == 0 || is.na(StoredNets_topology_tab()[1, ])) 
       return(NULL) else {
-        updateCheckboxGroupInput(session, "uiLoadGraphOptionsOutput2_annotations_tab", "Selected network(s)", choices = getStoredNetsChoices2_annotations_tab(), selected = getStoredNetsChoices2_annotations_tab()[1])
-        return(StoredNets2_annotations_tab()[1, ])
+        updateCheckboxGroupInput(session, "uiStoredGraphsOutputSelectTopolopgy", "Selected network(s)", choices = getStoredNetsChoices_topology_tab(), selected = getStoredNetsChoices_topology_tab()[1])
+        return(StoredNets_topology_tab()[1, ])
       }
   }
+  # updateCheckboxGroupInput(session, "storedGraphsOutputMultipleSelectTopolopgy", "Selected network(s)", choices = getStoredNetsChoices(), selected = getStoredNetsChoices()[1])
   
   doAddNetwork <- observeEvent(input$btnAddNetwork, {
     dataset <- loadNetworkFromFile()
@@ -148,10 +154,12 @@ fetchMaxNSelectedStoredDataset2_annotations_tab <- function(N) {
       
       reactiveVars$StoredNetworks_just_network <- reactiveVars$StoredNetworks
       
+      reactiveVars$StoredNetworks_topology_tab <- reactiveVars$StoredNetworks
+      
       
       saveRDS(dataset, paste0(nid, ".rda"))
-      if (length(reactiveVars$SelectedStoredNetworksIds2_annotations_tab) == 0) {
-        reactiveVars$SelectedStoredNetworksIds2_annotations_tab <- c(nid)
+      if (length(reactiveVars$SelectedStoredNetworksIds_topology_tab) == 0) {
+        reactiveVars$SelectedStoredNetworksIds_topology_tab <- c(nid)
       }
     } else createAlert(session, "tabUploadSideAlert", "fileUploadAlert", title = "ERROR !", style = "danger", content = paste0("An error occurred while trying to read your file. Please make sure that it is formatted according to the requirements."), append = FALSE)
   })

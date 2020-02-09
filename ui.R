@@ -299,34 +299,6 @@ fixedPage(
                         icon = icon("table"),
                         eval(ui_dataTable_panel('datasettab2'))
                         )
-                      
-                      # tabPanel("Convex Hull",
-                      #          fluidRow(
-                      #            
-                      #            ###############
-                      #            
-                      #            # prettyCheckbox(inputId = "labels",
-                      #            #                label = "Show Labels",
-                      #            #                thick = TRUE,
-                      #            #                shape = "curve",
-                      #            #                animation = "pulse",
-                      #            #                status = "info",
-                      #            #                inline = F,
-                      #            #                value = T),
-                      #           
-                      #            ##### JS code Trials ######
-                      # 
-                      #            
-                      # ),
-                      #          hr(),
-                      # 
-                      #     # downloadButton("convexDownload"),
-                      #     
-                      #     class = 'box-panel-padding',
-                      #     class = 'box-panel'
-                      # 
-                      # 
-                      # ) #tabpanel
                       ) #tabsetPanel
                 ) # mainPanel
             ) # sidebarLayout
@@ -489,7 +461,6 @@ fixedPage(
                         condition = "input.statisticsMethodsMainTabsetPanel == 'plotView'",
                         uiOutput("uiStoredGraphsOutputMultipleSelectTopolopgy")
                     ),
-
                 ),
                 conditionalPanel(
                     condition = "input.availableNetworks == 0",

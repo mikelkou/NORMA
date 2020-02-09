@@ -128,6 +128,7 @@ shinyServer(function(input, output, session) {
     #
     reactiveVars$StoredNetworks_just_network <- data.frame(id = character(), name = character(), stringsAsFactors = F)
     reactiveVars$SelectedStoredNetworksIds_just_network <- c()
+    #
     # reactiveVars$layoutCoord <- NULL
     # reactiveVars$plotData <- NULL
     # reactiveVars$last_intersection_data <- NULL
@@ -305,12 +306,11 @@ loadNetworkFromFile <- function() {
     
     SelectedStoredNets <- function() {
         if (length(reactiveVars$SelectedStoredNetworksIds) > 0) {
-          # print(StoredNets()[which(reactiveVars$StoredNetworks$id %in% reactiveVars$SelectedStoredNetworksIds), ])
             return(StoredNets()[which(reactiveVars$StoredNetworks$id %in% 
                 reactiveVars$SelectedStoredNetworksIds), ])} 
          else if (nrow(StoredNets()) == 0 || is.na(StoredNets()[1, ])) 
             return(NULL) else {
-            updateCheckboxGroupInput(session, "storedGraphsOutputMultipleSelectTopolopgy", "Selected network(s)", choices = getStoredNetsChoices(), selected = getStoredNetsChoices()[1])
+            # updateCheckboxGroupInput(session, "storedGraphsOutputMultipleSelectTopolopgy", "Selected network(s)", choices = getStoredNetsChoices(), selected = getStoredNetsChoices()[1])
               return(StoredNets()[1, ])
         }
     }
@@ -337,13 +337,11 @@ loadNetworkFromFile <- function() {
             retVal <- readRDS(paste0(nid, ".rda"))
             attr(retVal, "id") <- nid
         }
-        # print(retVal)
         return(retVal)
     }
     
     fetchFirstSelectedStoredDataset <- reactive({
         ssn <- SelectedStoredNets()
-        # print(ssn)
         if (!is.null(ssn) && nrow(ssn) > 0) {
             return(fetchDataset(ssn[1, ]$id))
         } else {
@@ -436,6 +434,8 @@ loadNetworkFromFile <- function() {
             reactiveVars$StoredNetworks <- rbind(reactiveVars$StoredNetworks, df)
             reactiveVars$StoredNetworks_just_network <- reactiveVars$StoredNetworks
             reactiveVars$StoredNetworks_annotations_tab <- reactiveVars$StoredNetworks
+            reactiveVars$StoredNetworks_topology_tab <- reactiveVars$StoredNetworks
+            
             
             saveRDS(dataset, paste0(nid, ".rda"))
             if (length(reactiveVars$SelectedStoredNetworksIds) == 0) {
@@ -470,6 +470,14 @@ loadNetworkFromFile <- function() {
         nr <- nrow(reactiveVars$StoredNetworks_annotations_tab)
         if (nr > 0) {
           reactiveVars$SelectedStoredNetworksIds_annotations_tab <- reactiveVars$StoredNetworks_annotations_tab[nr, ]$id}
+      }
+      
+      if (!is.null(input$availableNetworks)) {
+        reactiveVars$StoredNetworks_topology_tab <- reactiveVars$StoredNetworks_topology_tab[-which(reactiveVars$StoredNetworks_topology_tab$id %in% 
+                                                                                                      input$availableNetworks), ]
+        nr <- nrow(reactiveVars$StoredNetworks_topology_tab)
+        if (nr > 0) {
+          reactiveVars$SelectedStoredNetworksIds_topology_tab <- reactiveVars$StoredNetworks_topology_tab[nr, ]$id}
       }
       
       
@@ -529,8 +537,6 @@ loadNetworkFromFile <- function() {
     
     fetchFirstSelectedStoredDataset_just_network <- reactive({
       ssn <- SelectedStoredNets_just_network()
-      # print("---")
-      # print(ssn)
       if (!is.null(ssn) && nrow(ssn) > 0) {
         return(fetchDataset_just_network(ssn[1, ]$id))
       } else {
@@ -540,7 +546,6 @@ loadNetworkFromFile <- function() {
 
     fetchFirstSelectedStoredIgraph_just_network <- function() {
       dataset <- fetchFirstSelectedStoredDataset_just_network()
-      # print(dataset)
       if (is.null(dataset))
         return(NULL) else return(convert_to_igraph(dataset))
     }
@@ -553,7 +558,6 @@ loadNetworkFromFile <- function() {
       }
       return(retVal)
     }
-    
     
     
     fetchAllSelectedStoredDataset_just_network <- function() {
@@ -571,7 +575,6 @@ loadNetworkFromFile <- function() {
         return(NULL)
       }
     }
-    
     
     fetchMaxNSelectedStoredDataset_just_network <- function(N) {
       ssn <- SelectedStoredNets_just_network()
@@ -606,7 +609,6 @@ loadNetworkFromFile <- function() {
     
     SelectedStoredNets_just_network <- function() {
       if (length(reactiveVars$SelectedStoredNetworksIds_just_network) > 0) {
-        # print(StoredNetworks_just_network()[which(reactiveVars$StoredNetworks_just_network$id %in% reactiveVars$SelectedStoredNetworksIds_just_network), ])
         return(StoredNets_just_network()[which(reactiveVars$StoredNetworks_just_network$id %in% 
                                                  reactiveVars$SelectedStoredNetworksIds_just_network), ])} 
       else if (nrow(StoredNets_just_network()) == 0 || is.na(StoredNets_just_network()[1, ])) 
@@ -625,8 +627,6 @@ loadNetworkFromFile <- function() {
     
     fetchFirstSelectedStoredDataset_annotations_tab <- reactive({
       ssn <- SelectedStoredNets_annotations_tab()
-      # print("---")
-      # print(ssn)
       if (!is.null(ssn) && nrow(ssn) > 0) {
         return(fetchDataset_annotations_tab(ssn[1, ]$id))
       } else {
@@ -637,7 +637,6 @@ loadNetworkFromFile <- function() {
     
     fetchFirstSelectedStoredIgraph_annotations_tab <- function() {
       dataset <- fetchFirstSelectedStoredDataset_annotations_tab()
-      # print(dataset)
       if (is.null(dataset))
         return(NULL) else return(convert_to_igraph(dataset))
     }
@@ -651,8 +650,7 @@ loadNetworkFromFile <- function() {
       return(retVal)
     }
     
-    
-    
+
     fetchAllSelectedStoredDataset_annotations_tab <- function() {
       ssn <- SelectedStoredNets_annotations_tab()
       ids <- c()
@@ -695,12 +693,9 @@ loadNetworkFromFile <- function() {
       
     })
     
-    
     uploadTabSetSelectedNetwork_annotations_tab <- observeEvent(input$storedGraphsOutputSelectUpload_annotations_tab, {
       reactiveVars$SelectedStoredNetworksIds_annotations_tab <- c(input$storedGraphsOutputSelectUpload_annotations_tab)
     }, ignoreNULL = FALSE)
-    
-    
     
     
     getStoredNetsChoices_annotations_tab <- function() {
@@ -721,7 +716,6 @@ loadNetworkFromFile <- function() {
     
     SelectedStoredNets_annotations_tab <- function() {
       if (length(reactiveVars$SelectedStoredNetworksIds_annotations_tab) > 0) {
-        # print(StoredNetworks_annotations_tab()[which(reactiveVars$StoredNetworks_annotations_tab$id %in% reactiveVars$SelectedStoredNetworksIds_annotations_tab), ])
         return(StoredNets_annotations_tab()[which(reactiveVars$StoredNetworks_annotations_tab$id %in% 
                                                     reactiveVars$SelectedStoredNetworksIds_annotations_tab), ])} 
       else if (nrow(StoredNets_annotations_tab()) == 0 || is.na(StoredNets_annotations_tab()[1, ])) 
@@ -831,7 +825,6 @@ loadNetworkFromFile <- function() {
     
     SelectedStoredNets2_annotations_tab <- function() {
       if (length(reactiveVars$SelectedStoredNetworksIds2_annotations_tab) > 0) {
-        # print(StoredNetworks2_annotations_tab()[which(reactiveVars$StoredNetworks2_annotations_tab$id %in% reactiveVars$SelectedStoredNetworksIds2_annotations_tab), ])
         return(StoredNets2_annotations_tab()[which(reactiveVars$StoredNetworks2_annotations_tab$id %in% 
                                                      reactiveVars$SelectedStoredNetworksIds2_annotations_tab), ])} 
       else if (nrow(StoredNets2_annotations_tab()) == 0 || is.na(StoredNets2_annotations_tab()[1, ])) 
@@ -845,7 +838,7 @@ loadNetworkFromFile <- function() {
     #########################################
     
     #########################################################
-    ### Annotation button ####
+    ### Add Annotation button ####
     
     uploadTabSetSelectedNetwork2 <- observeEvent(input$storedGraphsOutputSelectUpload2, {
       reactiveVars$SelectedStoredAnnotationIds <- c(input$storedGraphsOutputSelectUpload2)
@@ -935,7 +928,7 @@ loadNetworkFromFile <- function() {
         return(StoredAnnots()[which(reactiveVars$StoredAnnotations$id %in% 
                                     reactiveVars$SelectedStoredAnnotationIds), ]) else if (nrow(StoredAnnots()) == 0 || is.na(StoredAnnots()[1, ])) 
                                       return(NULL) else {
-                                        updateCheckboxGroupInput(session, "storedGraphsOutputMultipleSelectTopolopgy2", "Selected annotation(s)", choices = getStoredAnnotChoices(), selected = getStoredAnnotChoices()[1])
+                                        # updateCheckboxGroupInput(session, "storedGraphsOutputMultipleSelectTopolopgy2", "Selected annotation(s)", choices = getStoredAnnotChoices(), selected = getStoredAnnotChoices()[1])
                                         return(StoredAnnots()[1, ])
                                       }
     }
@@ -955,53 +948,11 @@ loadNetworkFromFile <- function() {
         annotation<- EmptyDataset(c("Annotations", "Nodes"))
       datatable(annotation, rownames = FALSE, extensions = 'Responsive') %>% formatStyle(colnames(annotation), fontSize = ui_options["ui_table_font_sz"])
     })
-    
-    topologyTableViewSetSelectedNetwork <- observeEvent({
-        input$storedGraphsOutputSelectTopolopgy
-        input$statisticsMethodsMainTabsetPanel
-    }, {
-        if (input$statisticsMethodsMainTabsetPanel == "tableView" && !(length(reactiveVars$SelectedStoredNetworksIds) == 
-            1 && reactiveVars$SelectedStoredNetworksIds == input$storedGraphsOutputSelectTopolopgy)) {
-            reactiveVars$SelectedStoredNetworksIds <- c(input$storedGraphsOutputSelectTopolopgy)
-        }
-    }, ignoreNULL = FALSE)
-    
-    output$uiStoredGraphsOutputSelectTopolopgy <- renderUI({
-        input$btnAddNetwork
-        input$btnRemoveNetworks
-        choices <- getStoredNetsChoices()
-        if (is.null(choices)) 
-            return()
-        return(selectInput("storedGraphsOutputSelectTopolopgy", "Selected network", choices))
-    })
-    
-    topologyPlotViewSetSelectedNetwork <- observeEvent({
-        input$storedGraphsOutputMultipleSelectTopolopgy
-        input$statisticsMethodsMainTabsetPanel
-    }, {
-        if (input$statisticsMethodsMainTabsetPanel == "plotView" && !(length(reactiveVars$SelectedStoredNetworksIds) == 
-            length(input$storedGraphsOutputMultipleSelectTopolopgy) && 
-            all(reactiveVars$SelectedStoredNetworksIds == input$storedGraphsOutputMultipleSelectTopolopgy))) {
-            reactiveVars$SelectedStoredNetworksIds <- c(input$storedGraphsOutputMultipleSelectTopolopgy)
-        }
-    }, ignoreNULL = FALSE)
-    
-    output$uiStoredGraphsOutputMultipleSelectTopolopgy <- renderUI({
-        input$btnAddNetwork
-        input$btnRemoveNetworks
-        choices <- getStoredNetsChoices()
-        if (is.null(choices)) 
-            return()
-        return(checkboxGroupInput("storedGraphsOutputMultipleSelectTopolopgy", "Selected network(s)", choices))
-    })
-    
-    
-    
+    #############################
     
     ######## Plots#######################
     output$tabVizIgraphSimple<- renderVisNetwork({
       g <- fetchFirstSelectedStoredIgraph_just_network()
-      # print(g)
       if (is.null(g)) 
         return()
       
@@ -1046,7 +997,7 @@ loadNetworkFromFile <- function() {
     ### Pie - Charts ###
     
     output$chooseGroups2 <- DT::renderDataTable({
-      annotation<- fetchFirstSelectedStoredDataset2()
+      annotation<- fetchFirstSelectedStoredGroups2_annotations_tab()
       if (is.null(annotation)) 
         annotation<- EmptyDataset(c("Annotations", "Nodes"))
       rowCallback_generated <-"function(row, dat, displayNum, index){"
@@ -1060,7 +1011,6 @@ loadNetworkFromFile <- function() {
       ########
       
       x<- length(rownames(annotation))
-      # print(x)
       tmp_css_colors<- c()
       for(i in 1:x)
       {
@@ -1129,7 +1079,7 @@ loadNetworkFromFile <- function() {
     ### Convex Hull ###
     
     output$chooseGroups <- DT::renderDataTable({
-      annotation<- fetchFirstSelectedStoredDataset2()
+      annotation<- fetchFirstSelectedStoredGroups2_annotations_tab()
       if (is.null(annotation)) 
         annotation<- EmptyDataset(c("Annotations", "Nodes"))
       rowCallback_generated <-"function(row, dat, displayNum, index){"
@@ -1280,7 +1230,7 @@ loadNetworkFromFile <- function() {
         return(StoredExpress()[which(reactiveVars$StoredExpressions$id %in% 
                                        reactiveVars$SelectedStoredExpressionIds), ]) else if (nrow(StoredAnnots()) == 0 || is.na(StoredAnnots()[1, ])) 
                                          return(NULL) else {
-                                           updateCheckboxGroupInput(session, "storedGraphsOutputMultipleSelectTopolopgy3", "Selected expression(s)", choices = getStoredExpressionChoices(), selected = getStoredExpressionChoices()[1])
+                                           # updateCheckboxGroupInput(session, "storedGraphsOutputMultipleSelectTopolopgy3", "Selected expression(s)", choices = getStoredExpressionChoices(), selected = getStoredExpressionChoices()[1])
                                            return(StoredAnnots()[1, ])
                                          }
     }
@@ -1510,6 +1460,149 @@ loadNetworkFromFile <- function() {
     })
 
     
+    
+    ### Topology tab ###
+    reactiveVars$StoredNetworks_topology_tab <- data.frame(id = character(), name = character(), stringsAsFactors = F)
+    reactiveVars$SelectedStoredNetworksIds_topology_tab <- c()
+    
+    fetchFirstSelectedStoredDataset_topology_tab <- reactive({
+      ssn <- SelectedStoredNets_topology_tab()
+      if (!is.null(ssn) && nrow(ssn) > 0) {
+        return(fetchDataset_topology_tab(ssn[1, ]$id))
+      } else {
+        return(NULL)
+      }
+    })
+    
+    fetchFirstSelectedStoredStoredNetworks_topology_tab <- function() {
+      topol_nets <- fetchFirstSelectedStoredStoredNetworks_topology_tab2()
+      if (is.null(topol_nets)) 
+        return(NULL) else return(topol_nets)
+    }
+    
+    fetchFirstSelectedStoredStoredNetworks_topology_tab2 <- reactive({
+      stopol <- SelectedStoredNets_topology_tab()
+      if (!is.null(stopol) && nrow(stopol) > 0) {
+        return(fetchDataset_topology_tab(stopol[1, ]$id))
+      } else {
+        return(NULL)
+      }
+    })
+    
+    fetchFirstSelectedStoredIgraph_topology_tab <- function() {
+      dataset <- fetchFirstSelectedStoredDataset_topology_tab()
+      if (is.null(dataset))
+        return(NULL) else return(convert_to_igraph(dataset))
+    }
+    
+    fetchDataset_topology_tab <- function(nid) {
+      retVal <- NULL
+      if (length(nid) > 0) {
+        retVal <- readRDS(paste0(nid, ".rda"))
+        attr(retVal, "id") <- nid
+      }
+      return(retVal)
+    }
+    
+    fetchAllSelectedStoredDataset_topology_tab <- function() {
+      ssn <- SelectedStoredNets_topology_tab()
+      ids <- c()
+      if (!is.null(ssn) && nrow(ssn) > 0) {
+        ret <- list()
+        for (i in 1:nrow(ssn)) {
+          ret[[i]] <- fetchDataset_topology_tab(ssn[i, ]$id)
+          ids <- c(ids, ssn[i, ]$id)
+        }
+        names(ret) <- ids
+        return(ret)
+      } else {
+        return(NULL)
+      }
+    }
+    
+    fetchMaxNSelectedStoredDataset_topology_tab <- function(N) {
+      ssn <- SelectedStoredNets_topology_tab()
+      if (!is.null(ssn) && nrow(ssn) > 0) {
+        ret <- list()
+        for (i in 1:nrow(ssn)) {
+          if (i > N) 
+            break
+          ret[[i]] <- fetchDataset_topology_tab(ssn[i, ]$id)
+        }
+        return(ret)
+      } else {
+        return(NULL)
+      }
+    }
+    
+    getStoredNetsChoices_topology_tab <- function() {
+      snets <- StoredNets_topology_tab()
+      if (nrow(snets) == 0) 
+        return(NULL)
+      choices <- snets$id
+      names(choices) <- snets$name
+      return(choices)
+    }
+    
+    StoredNets_topology_tab <- reactive({
+      return(reactiveVars$StoredNetworks_topology_tab)
+    })
+    StoredNetsEmpty_topology_tab <- function() {
+      return(nrow(reactiveVars$StoredNetworks_topology_tab) == 0)
+    }
+    
+    SelectedStoredNets_topology_tab <- function() {
+      if (length(reactiveVars$SelectedStoredNetworksIds_topology_tab) > 0) {
+        return(StoredNets_topology_tab()[which(reactiveVars$StoredNetworks_topology_tab$id %in% 
+                                                 reactiveVars$SelectedStoredNetworksIds_topology_tab), ])} 
+      else if (nrow(StoredNets_topology_tab()) == 0 || is.na(StoredNets_topology_tab()[1, ])) 
+        return(NULL) else {
+          updateCheckboxGroupInput(session, "uiStoredGraphsOutputSelectTopolopgy", "Selected network(s)", choices = getStoredNetsChoices_topology_tab(), selected = getStoredNetsChoices_topology_tab()[1])
+          return(StoredNets_topology_tab()[1, ])
+        }
+    }
+    
+    topologyTableViewSetSelectedNetwork <- observeEvent({
+      input$storedGraphsOutputSelectTopolopgy
+      input$statisticsMethodsMainTabsetPanel
+    }, {
+      if (input$statisticsMethodsMainTabsetPanel == "tableView" && !(length(reactiveVars$SelectedStoredNetworksIds_topology_tab) ==
+                                                                     1 && reactiveVars$SelectedStoredNetworksIds_topology_tab == input$storedGraphsOutputSelectTopolopgy)) {
+        reactiveVars$SelectedStoredNetworksIds_topology_tab <- c(input$storedGraphsOutputSelectTopolopgy)
+      }
+    }, ignoreNULL = FALSE)
+    
+    
+    output$uiStoredGraphsOutputSelectTopolopgy <- renderUI({
+      input$btnAddNetwork
+      input$btnRemoveNetworks
+      choices <- getStoredNetsChoices_topology_tab()
+      if (is.null(choices)) 
+        return()
+      return(selectInput("storedGraphsOutputSelectTopolopgy", "Selected network", choices))
+    })
+    
+    topologyPlotViewSetSelectedNetwork <- observeEvent({
+      input$storedGraphsOutputMultipleSelectTopolopgy
+      input$statisticsMethodsMainTabsetPanel
+    }, {
+      if (input$statisticsMethodsMainTabsetPanel == "plotView" && !(length(reactiveVars$SelectedStoredNetworksIds_topology_tab) == 
+                                                                    length(input$storedGraphsOutputMultipleSelectTopolopgy) && 
+                                                                    all(reactiveVars$SelectedStoredNetworksIds_topology_tab == input$storedGraphsOutputMultipleSelectTopolopgy))) {
+        reactiveVars$SelectedStoredNetworksIds_topology_tab <- c(input$storedGraphsOutputMultipleSelectTopolopgy)
+      }
+    }, ignoreNULL = FALSE)
+    
+    
+    output$uiStoredGraphsOutputMultipleSelectTopolopgy <- renderUI({
+      input$btnAddNetwork
+      input$btnRemoveNetworks
+      choices <- getStoredNetsChoices_topology_tab()
+      if (is.null(choices)) 
+        return()
+      return(checkboxGroupInput("storedGraphsOutputMultipleSelectTopolopgy", "Selected network(s)", choices, selected = getStoredNetsChoices_topology_tab()[1] ))
+    })
+    
     ################ Statistics ########
     stat_dataset <- function(dataset, datasetName) {
       res <- tryCatch({
@@ -1563,7 +1656,7 @@ loadNetworkFromFile <- function() {
       return(res)
     }
     output$statres <- DT::renderDataTable({
-      dset <- fetchFirstSelectedStoredDataset()
+      dset <- fetchFirstSelectedStoredDataset_topology_tab()
       stat_dataset2(dset, getDatasetName(attr(dset, "id")))
     }, options = list(paging = FALSE, dom = "t", rowCallback = JS("function(row, data) {", "var num = parseFloat(data[2]).toFixed(2);", "if(isNaN(num)){num = data[2];}", "$('td:eq(2)', row).html(num);", "}")))
     
@@ -1574,7 +1667,7 @@ loadNetworkFromFile <- function() {
     
     output$statisticsMethodsBarPlot <- renderPlot({
         input$btnRefreshPalette
-        datasets <- fetchAllSelectedStoredDataset()
+        datasets <- fetchAllSelectedStoredDataset_topology_tab()
         if (length(datasets) == 0) 
             return()
         stat_res <- NULL
@@ -1622,6 +1715,4 @@ loadNetworkFromFile <- function() {
     })
     
     
-  
-    
-})
+})# The End

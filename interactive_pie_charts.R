@@ -1,13 +1,5 @@
 pie_charts<- function(){
   
-  qual_col_pals<-c("#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E","#E6AB02","#A6761D",
-                   "#666666","#7FC97F","#BEAED4","#FDC086","#FFFF99","#386CB0","#F0027F","#BF5B17","#A6CEE3","#1F78B4",
-                   "#B2DF8A","#33A02C","#FB9A99","#E31A1C","#FDBF6F","#FF7F00","#CAB2D6","#6A3D9A","#B15928","#FBB4AE","#B3CDE3",
-                   "#CCEBC5","#DECBE4","#FED9A6","#FFFFCC","#E5D8BD","#FDDAEC","#F2F2F2","#B3E2CD","#FDCDAC","#CBD5E8","#F4CAE4","#E6F5C9",
-                   "#FFF2AE","#F1E2CC","#CCCCCC","#E41A1C","#377EB8","#4DAF4A","#984EA3","#FFFF33","#A65628","#F781BF","#999999","#66C2A5",
-                   "#FC8D62","#8DA0CB","#E78AC3","#A6D854","#FFD92F","#E5C494","#B3B3B3","#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3",
-                   "#FDB462","#B3DE69","#FCCDE5","#D9D9D9","#BC80BD","#095F02")
-  
   g <- fetchFirstSelectedStoredIgraph_annotations_tab()
   if (is.null(g)) 
     return()
@@ -213,8 +205,7 @@ pie_charts<- function(){
     express_order<- as.data.frame(members_with_NA_groups)
     express_order<- as.data.frame(unique(express_order$id))
     colnames(express_order) <- "id"
-    expressions_pies<-inner_join(express_order, expressions_pies, by = "id")
-    # print(expressions_pies)
+    expressions_pies<-left_join(express_order, expressions_pies, by = "id")
     expressions_pies$color<- as.character(expressions_pies$color)
     expressions_pies$color[which(expressions_pies$color=="blue")] <- "0"
     expressions_pies$color[which(expressions_pies$color=="orange")] <- "2"
@@ -222,6 +213,8 @@ pie_charts<- function(){
     expressions_pies$color[which(expressions_pies$color=="red")] <- "6"
     expressions_pies$color[which(expressions_pies$color=="purple")] <- "8"
     expressions_pies$color[which(expressions_pies$color=="gray")] <- "15"
+    expressions_pies$color[which(is.na(expressions_pies$color))] <- "15"
+    
     # print(expressions_pies)
   }
   
@@ -290,8 +283,8 @@ pie_charts<- function(){
     };\n "), file = fileConn)
 		
   
-  cat(sprintf("var width = 1000,
-			height = 600,
+  cat(sprintf("var width = 10000,
+			height = 10000,
 			radius = 25,
 			color = d3.scale.linear().domain([",sep=""), file = fileConn)
   
