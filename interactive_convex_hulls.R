@@ -267,21 +267,43 @@ var theGraphData = {
     if(allowed==TRUE){
       max_allowed_scale<-slider_values 
     }
-}
+  }
+  
+  
+  
 
+  
+  selected_genes<-c()
+  for(i in 1:x){
+    genes <- strsplit(annotation1[s[i], 2], ",")$Nodes
+    selected_genes<-unique(c(selected_genes, genes))
+  }
+  
+  # print(s)
+  
+  
   if(zoom_slider==TRUE)
     {
+    
     for (i in 1:length(nodes)){
       coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
       coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
+      node_name<-nodes[i]
       
+      if(some_labels==T)
+      if(x!=number_of_groups)
+      if(!(node_name  %in% selected_genes))
+        node_name<-""
+      
+      if(show_labels == F)
+        node_name<-""
       #sample(0:600, 1)
       if(expression_colors == T){
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20 , ", 'y':", coor_y*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20, ", 'fixed': true, \"color_value\":", expression$color[i], "},\n",sep="")), file = fileConn)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", node_name,"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20 , ", 'y':", coor_y*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20, ", 'fixed': true, \"color_value\":", expression$color[i], "},\n",sep="")), file = fileConn)
       }
       
       if(expression_colors == F){
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20 , ", 'y':", coor_y*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20, ", 'fixed': true, \"color_value\":", 15, "},\n",sep="")), file = fileConn)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", node_name,"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20 , ", 'y':", coor_y*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20, ", 'fixed': true, \"color_value\":", 15, "},\n",sep="")), file = fileConn)
       }
     }
   }#if zoom_slider
@@ -290,14 +312,22 @@ var theGraphData = {
     for (i in 1:length(nodes)){
       coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
       coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
+      node_name<-nodes[i]
+      
+   if(length(s)!=6)
+      if(!(node_name  %in% selected_genes_with_NAs) )
+        node_name<-""
+      
+      if(show_labels == F)
+        node_name<-""
       
       #sample(0:600, 1)
       if(expression_colors == T){
-        cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20 , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20, ", 'fixed': true, \"color_value\":", expression$color[i], "},\n",sep="")), file = fileConn)
+        cat(sprintf(paste("{\"id\":", i-1, ",name:\"", node_name,"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20 , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20, ", 'fixed': true, \"color_value\":", expression$color[i], "},\n",sep="")), file = fileConn)
       }
       
       if(expression_colors == F){
-        cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20 , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20, ", 'fixed': true, \"color_value\":", 15, "},\n",sep="")), file = fileConn)
+        cat(sprintf(paste("{\"id\":", i-1, ",name:\"", node_name,"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20 , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20, ", 'fixed': true, \"color_value\":", 15, "},\n",sep="")), file = fileConn)
       }
     }
   }
@@ -320,6 +350,7 @@ var "
   ), file = fileConn)
   
   for(i in 1:x){
+    
     genes <- strsplit(annotation1[s[i], 2], ",")$Nodes
     
     if(i<x){

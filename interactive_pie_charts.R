@@ -215,17 +215,36 @@ pie_charts<- function(){
       max_allowed_scale<-slider_values 
     }
   }
+  
+  
+  selected_genes<-c()
+  for(i in 1:x){
+    genes <- strsplit(annotation1[s[i], 2], ",")$Nodes
+    selected_genes<-unique(c(selected_genes, genes))
+  }
+ # print(selected_genes)
+  
+  
+  
   if(zoom_slider==TRUE)
   {
   for (i in 1:length(nodes)){
     coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
     coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
+    node_name<-nodes[i]
     
+    if(some_labels_pies==T)
+    if(x!=number_of_groups)
+      if(!(node_name  %in% selected_genes))
+        node_name<-""
+    
+    if(show_labels_pies == F)
+      node_name<-""
     if(expression_colors_pies == T){
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":", 3,",'x':", coor_x*scaling_coordinates_pies()-100*scaling_coordinates_pies()+20  , ", 'y':", coor_y*scaling_coordinates_pies()-100*scaling_coordinates_pies()+20 , ", 'fixed': true, \"color_value\":", expressions_pies$color[i], ",\"proportions\": [\n",sep="")), file = fileConn)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", node_name,"\",\"propertyValue\":", 3,",'x':", coor_x*scaling_coordinates_pies()-100*scaling_coordinates_pies()+20  , ", 'y':", coor_y*scaling_coordinates_pies()-100*scaling_coordinates_pies()+20 , ", 'fixed': true, \"color_value\":", expressions_pies$color[i], ",\"proportions\": [\n",sep="")), file = fileConn)
     }
     if(expression_colors_pies == F){
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":", 3,",'x':", coor_x*scaling_coordinates_pies()-100*scaling_coordinates_pies()+20  , ", 'y':", coor_y*scaling_coordinates_pies()-100*scaling_coordinates_pies()+20 , ", 'fixed': true, \"color_value\":", 15, ",\"proportions\": [\n",sep="")), file = fileConn)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", node_name,"\",\"propertyValue\":", 3,",'x':", coor_x*scaling_coordinates_pies()-100*scaling_coordinates_pies()+20  , ", 'y':", coor_y*scaling_coordinates_pies()-100*scaling_coordinates_pies()+20 , ", 'fixed': true, \"color_value\":", 15, ",\"proportions\": [\n",sep="")), file = fileConn)
     }
     
     if(pie_to_be_colored[i]==F){
@@ -253,12 +272,14 @@ pie_charts<- function(){
     for (i in 1:length(nodes)){
       coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
       coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
-      
+      node_name<-nodes[i]
+      if(show_labels_pies == F)
+        node_name<-""
       if(expression_colors_pies == T){
-        cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":", 3,",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20  , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20 , ", 'fixed': true, \"color_value\":", expressions_pies$color[i], ",\"proportions\": [\n",sep="")), file = fileConn)
+        cat(sprintf(paste("{\"id\":", i-1, ",name:\"", node_name,"\",\"propertyValue\":", 3,",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20  , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20 , ", 'fixed': true, \"color_value\":", expressions_pies$color[i], ",\"proportions\": [\n",sep="")), file = fileConn)
       }
       if(expression_colors_pies == F){
-        cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":", 3,",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20  , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20 , ", 'fixed': true, \"color_value\":", 15, ",\"proportions\": [\n",sep="")), file = fileConn)
+        cat(sprintf(paste("{\"id\":", i-1, ",name:\"", node_name,"\",\"propertyValue\":", 3,",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20  , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20 , ", 'fixed': true, \"color_value\":", 15, ",\"proportions\": [\n",sep="")), file = fileConn)
       }
       
       if(pie_to_be_colored[i]==F){

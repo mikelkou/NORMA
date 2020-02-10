@@ -840,10 +840,6 @@ loadNetworkFromFile <- function() {
     
     #########################################
    
-    doRefreshPaletteAnnotationTab <- observeEvent(input$btnRefreshPaletteAnnotationTab, {
-      newcolors <- length(qual_col_pals)
-      qual_col_pals <<- randomColor(newcolors)
-    })
     
     
     #########################################################
@@ -1029,17 +1025,31 @@ loadNetworkFromFile <- function() {
     })
       
     expression_colors_pies <- T
+    show_labels_pies<- T
+    some_labels_pies <- T
+    
     output$tabVizPie_charts<-renderUI({
       s = input$chooseGroups2_rows_selected
       
-      if(input$btnRefreshPaletteAnnotationTab){
-        qual_col_pals <<- randomColor(length(qual_col_pals))}
+      if(input$show_labels_pies ==T){
+        show_labels_pies = T
+          }
+          else if(input$show_labels_pies == F){
+            show_labels_pies = F
+          }
       
       if(input$expressions_pies ==T){
             expression_colors_pies = T
           }
           else if(input$expressions_pies == F){
             expression_colors_pies = F
+          }
+      
+      if(input$some_labels_pies ==T){
+        some_labels_pies = T
+          }
+          else if(input$some_labels_pies == F){
+            some_labels_pies = F
           }
         
       source("interactive_pie_charts.R", local = T)
@@ -1051,8 +1061,6 @@ loadNetworkFromFile <- function() {
         height = "600px")
     })
     
-    label_selected_pies <- T
-    some_labels_pies <- T
     # output$tabVizPie_charts <- renderPlot({
     #   s = input$chooseGroups2_rows_selected
     #   if(input$expressions_pies ==T){
@@ -1101,13 +1109,8 @@ loadNetworkFromFile <- function() {
       }
       rowCallback_generated<-paste(rowCallback_generated, "}",sep="")
       
-      if(input$btnRefreshPaletteAnnotationTab){
-        qual_col_pals <<- randomColor(300)
-        css_colors <- group_pal_rows(length(rownames(annotation)))
-        }
-      else{
       css_colors <- group_pal_rows(length(rownames(annotation)))
-      }
+      
       ########
       
       x<- length(rownames(annotation))
@@ -1119,12 +1122,6 @@ loadNetworkFromFile <- function() {
       datatable(annotation, extensions = 'Scroller', options = list( rownames=T,deferRender = TRUE, scrollY = 200, scroller = TRUE, rowCallback = JS(rowCallback_generated))) 
       })
     
-    
-    # df_refresh<- eventReactive(input$btnRefreshPaletteAnnotationTab, {
-    #   qual_col_pals <<- randomColor(300)
-    #   css_colors <- group_pal_rows(length(rownames(annotation)))
-    #   shinyjs::js$refresh()
-    #   })
     
     
     
@@ -1158,20 +1155,30 @@ loadNetworkFromFile <- function() {
     
     ####### HTML trials ########
     expression_colors <- T
+    show_labels<- T
+    some_labels<- T
     
     output$interactive_convex_hulls<-renderUI({
       s = input$chooseGroups_rows_selected
       
-      if(input$btnRefreshPaletteAnnotationTab){
-      qual_col_pals <<- randomColor(length(qual_col_pals))
+      if (input$show_labels == T){
+        show_labels = T
       }
-      # print(qual_col_pals)
+      else  if (input$show_labels == F){
+        show_labels = F
+      }
       
       if(input$expressions ==T){
             expression_colors = T
             }
           else if(input$expressions == F){
             expression_colors = F
+            } 
+      if(input$some_labels ==T){
+        some_labels = T
+            }
+          else if(input$some_labels == F){
+            some_labels = F
             }
       
       source("interactive_convex_hulls.R", local = T)
@@ -1184,8 +1191,6 @@ loadNetworkFromFile <- function() {
       })
     
 ####################################
-    label_selected <- T
-    some_labels<- T
     # output$tabVizConvex_hull <- renderPlot({
     #   s = input$chooseGroups_rows_selected
     #   if(input$expressions ==T){

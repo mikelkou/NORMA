@@ -363,6 +363,14 @@ fixedPage(
                            multiple = FALSE
                ),
                hr(),
+               prettyCheckbox(inputId = "show_labels",
+                              label = "Show Labels",
+                              thick = TRUE,
+                              shape = "curve",
+                              animation = "pulse",
+                              status = "info",
+                              inline = F,
+                              value = T),
                prettyCheckbox(inputId = "expressions",
                               label = "Show expression colors",
                               thick = TRUE,
@@ -392,10 +400,7 @@ fixedPage(
                                                             min = 0, max = 30,
                                                             value = 10, step= 2)),
                
-               span(
-                 actionButton("btnRefreshPaletteAnnotationTab", "Refresh palette", icon = icon("refresh"))
-               )
-               
+
                ),
            
                tabPanel("Pie - Chart Nodes",
@@ -409,14 +414,14 @@ fixedPage(
                           ),
                           hr(),
                           ###############
-                          # prettyCheckbox(inputId = "labels_pies",
-                          #                label = "Show Labels",
-                          #                thick = TRUE,
-                          #                shape = "curve",
-                          #                animation = "pulse",
-                          #                status = "info",
-                          #                inline = F,
-                          #                value = T),
+                          prettyCheckbox(inputId = "show_labels_pies",
+                                         label = "Show Labels",
+                                         thick = TRUE,
+                                         shape = "curve",
+                                         animation = "pulse",
+                                         status = "info",
+                                         inline = F,
+                                         value = T),
                           prettyCheckbox(inputId = "expressions_pies",
                                          label = "Show expression colors",
                                          thick = TRUE,
