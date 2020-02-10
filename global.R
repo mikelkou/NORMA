@@ -78,7 +78,7 @@ for (i in 1: 300)
 }
 
 
-
+max_pixels_panel<-5000
 mapper<-function(value, istart, istop, ostart, ostop)
 { 
   return (ostart + (ostop - ostart) * ((value - istart) / (istop - istart)))

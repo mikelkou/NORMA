@@ -104,62 +104,7 @@ pie_charts<- function(){
 
 <body>
   <script>
-    //arrow keys for svg pan
-		document.onkeydown = function(e) {
-			e = e || window.event;
-			switch(e.which || e.keyCode) {
-			case 37: // left
-			var gg = document.getElementsByTagName(\"svg\")[0]; //TODO
-
-			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
-			var transform_attribute_array = transform_attribute.split(\"(\");
-			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
-			var scale_x = parseFloat(transform_attribute_array2[0]) - 10
-			var set_transform = transform_attribute_array[0].concat(\"(\", scale_x, \",\", transform_attribute_array2[1], \"(\", transform_attribute_array[2]); 
-			gg.setAttribute(\"transform\", set_transform);
-			//alert(\"left pressed\");
-			break;
-
-			case 38: // up
-			var gg = document.getElementsByTagName(\"svg\")[0]; //TODO
-			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
-			var transform_attribute_array = transform_attribute.split(\"(\");
-			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
-			var transform_attribute_array3 = transform_attribute_array2[1].split(\")\");
-			var scale_y = parseFloat(transform_attribute_array3[0]) - 10
-			var set_transform = transform_attribute_array[0].concat(\"(\", transform_attribute_array2[0], \",\", scale_y, \") scale(\", transform_attribute_array[2]); 
-			gg.setAttribute(\"transform\", set_transform);
-			//alert(\"up pressed\");
-			break;
-
-			case 39: // right
-			var gg = document.getElementsByTagName(\"svg\")[0]; //TODO
-			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
-			var transform_attribute_array = transform_attribute.split(\"(\");
-			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
-			var scale_x = parseFloat(transform_attribute_array2[0]) + 10
-			var set_transform = transform_attribute_array[0].concat(\"(\", scale_x, \",\", transform_attribute_array2[1], \"(\", transform_attribute_array[2]); 
-			gg.setAttribute(\"transform\", set_transform);
-			//alert(\"right pressed\");
-			break;
-			
-			case 40: // down
-			var gg = document.getElementsByTagName(\"svg\")[0]; //TODO
-			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
-			var transform_attribute_array = transform_attribute.split(\"(\");
-			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
-			var transform_attribute_array3 = transform_attribute_array2[1].split(\")\");
-			var scale_y = parseFloat(transform_attribute_array3[0]) + 10
-			var set_transform = transform_attribute_array[0].concat(\"(\", transform_attribute_array2[0], \",\", scale_y, \") scale(\", transform_attribute_array[2]); 
-			gg.setAttribute(\"transform\", set_transform);
-			//alert(\"down pressed\");
-			break;
-
-			default: return; // exit this handler for other keys
-			}
-			e.preventDefault(); // prevent the default action (scroll / move caret)
-		} 
-		
+     
 		var graph = { 	\"nodes\":[\n", sep="")), file = fileConn)
 		
   if(length(nodes_with_NA_groups)>0){
@@ -240,16 +185,47 @@ pie_charts<- function(){
   for (i in 1:length(nodes)){
     pie_to_be_colored[i]<-any(is.element(Groupss[[i]], annotation1[s])) 
   }
-
+  
+  
+  
+  zoom_slider<-TRUE
+  max_allowed_scale<-1
   for (i in 1:length(nodes)){
-    coor_x<-mapper(lay[i,1], minx, maxx, 25, 575)
-    coor_y<-mapper(lay[i,2], miny, maxy, 25, 575)
+    coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
+    coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
+    if(  (coor_x*scaling_coordinates_pies())>max_pixels_panel | (coor_y*scaling_coordinates_pies())>max_pixels_panel     )
+    {
+      zoom_slider<-FALSE
+      break
+    }
+  }
+  
+  for(slider_values in 1:10){
+    allowed<-TRUE
+    for (i in 1:length(nodes)){
+      coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
+      coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
+      if(  (coor_x*slider_values)>max_pixels_panel | (coor_y*slider_values)>max_pixels_panel     )
+      {
+        allowed<-FALSE
+        break
+      }
+    }
+    if(allowed==TRUE){
+      max_allowed_scale<-slider_values 
+    }
+  }
+  if(zoom_slider==TRUE)
+  {
+  for (i in 1:length(nodes)){
+    coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
+    coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
     
     if(expression_colors_pies == T){
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":", 3,",'x':", coor_x*scaling_coordinates_pies() , ", 'y':", coor_y*scaling_coordinates_pies(), ", 'fixed': true, \"color_value\":", expressions_pies$color[i], ",\"proportions\": [\n",sep="")), file = fileConn)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":", 3,",'x':", coor_x*scaling_coordinates_pies()-100*scaling_coordinates_pies()+20  , ", 'y':", coor_y*scaling_coordinates_pies()-100*scaling_coordinates_pies()+20 , ", 'fixed': true, \"color_value\":", expressions_pies$color[i], ",\"proportions\": [\n",sep="")), file = fileConn)
     }
     if(expression_colors_pies == F){
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":", 3,",'x':", coor_x*scaling_coordinates_pies() , ", 'y':", coor_y*scaling_coordinates_pies(), ", 'fixed': true, \"color_value\":", 15, ",\"proportions\": [\n",sep="")), file = fileConn)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":", 3,",'x':", coor_x*scaling_coordinates_pies()-100*scaling_coordinates_pies()+20  , ", 'y':", coor_y*scaling_coordinates_pies()-100*scaling_coordinates_pies()+20 , ", 'fixed': true, \"color_value\":", 15, ",\"proportions\": [\n",sep="")), file = fileConn)
     }
     
     if(pie_to_be_colored[i]==F){
@@ -270,6 +246,40 @@ pie_charts<- function(){
         }
       }
     }
+  }#for
+  }#if zoom_slider
+  else
+  {
+    for (i in 1:length(nodes)){
+      coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
+      coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
+      
+      if(expression_colors_pies == T){
+        cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":", 3,",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20  , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20 , ", 'fixed': true, \"color_value\":", expressions_pies$color[i], ",\"proportions\": [\n",sep="")), file = fileConn)
+      }
+      if(expression_colors_pies == F){
+        cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":", 3,",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20  , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20 , ", 'fixed': true, \"color_value\":", 15, ",\"proportions\": [\n",sep="")), file = fileConn)
+      }
+      
+      if(pie_to_be_colored[i]==F){
+        cat(sprintf(paste("{\"group\": 0," , "\"value\":", scaling_nodes_pies(), "}]},\n")), file = fileConn)
+      }
+      if(pie_to_be_colored[i]==T){
+        counter<-1
+        max_length<-length(intersect(Groupss[[i]], annotation1[s]))
+        for (j in 1:length(Groupss[[i]])) {
+          if(is.element(Groupss[[i]][j], annotation1[s]) == T){
+            if(counter<max_length){
+              cat(sprintf(paste("{\"group\":", which(annotation1[s] %in% Groupss[[i]][j]), "," , "\"value\":", scaling_nodes_pies(), "},\n")), file = fileConn)
+            }
+            if(counter==max_length){
+              cat(sprintf(paste("{\"group\":", which(annotation1[s] %in% Groupss[[i]][j]), "," , "\"value\":", scaling_nodes_pies(), "}]},\n")), file = fileConn)
+            }
+            counter<-counter+1
+          }
+        }
+      }
+    }#for
   }
   
 

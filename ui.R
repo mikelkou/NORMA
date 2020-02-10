@@ -97,6 +97,7 @@ library(jsonlite)
 
 
 source("layouts_ui.R")
+source("automated_annotations_vector.R")
 source("statistics.R")
 
 ui_options <- c("ui_table_line_height" = "80%")
@@ -311,8 +312,6 @@ fixedPage(
                  uiOutput("uiLoadGraphOptionsOutput_just_network")),
                br(),
                br(),
-               br(),
-               br(),
                tabsetPanel(
                tabPanel("Interactive Network",
                         
@@ -322,7 +321,17 @@ fixedPage(
                         class = 'box-panel',
                ),
                
-               tabPanel("Modulariy/Clustering"
+               tabPanel("Modulariy/Clustering",
+                        br(),
+                        selectInput("automated_annotations",
+                                    "The automated_annotations:",
+                                    choices = automated_annotations_ui,
+                                    selected = selected_automated_annotations,
+                                    multiple = FALSE
+                        ),
+                        plotOutput("modularity_plot"),
+                        eval(ui_dataTable_panel('Modularity_table'))
+
                )
                )#tabsetpanel
                ),
@@ -381,7 +390,11 @@ fixedPage(
                                                             value = 2, step= 0.2)),
                div(style="display:inline-block",sliderInput("scaling_labels_convex", "Adjust label size:",
                                                             min = 0, max = 30,
-                                                            value = 10, step= 2))
+                                                            value = 10, step= 2)),
+               
+               span(
+                 actionButton("btnRefreshPaletteAnnotationTab", "Refresh palette", icon = icon("refresh"))
+               )
                
                ),
            

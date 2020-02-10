@@ -1,0 +1,55 @@
+//arrow keys for svg pan
+		document.onkeydown = function(e) {
+			e = e || window.event;
+			switch(e.which || e.keyCode) {
+			case 37: // left
+			var gg = document.getElementsByTagName(\"svg\")[0]; //TODO
+
+			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
+			var transform_attribute_array = transform_attribute.split(\"(\");
+			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
+			var scale_x = parseFloat(transform_attribute_array2[0]) - 10
+			var set_transform = transform_attribute_array[0].concat(\"(\", scale_x, \",\", transform_attribute_array2[1], \"(\", transform_attribute_array[2]); 
+			gg.setAttribute(\"transform\", set_transform);
+			//alert(\"left pressed\");
+			break;
+
+			case 38: // up
+			var gg = document.getElementsByTagName(\"svg\")[0]; //TODO
+			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
+			var transform_attribute_array = transform_attribute.split(\"(\");
+			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
+			var transform_attribute_array3 = transform_attribute_array2[1].split(\")\");
+			var scale_y = parseFloat(transform_attribute_array3[0]) - 10
+			var set_transform = transform_attribute_array[0].concat(\"(\", transform_attribute_array2[0], \",\", scale_y, \") scale(\", transform_attribute_array[2]); 
+			gg.setAttribute(\"transform\", set_transform);
+			//alert(\"up pressed\");
+			break;
+
+			case 39: // right
+			var gg = document.getElementsByTagName(\"svg\")[0]; //TODO
+			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
+			var transform_attribute_array = transform_attribute.split(\"(\");
+			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
+			var scale_x = parseFloat(transform_attribute_array2[0]) + 10
+			var set_transform = transform_attribute_array[0].concat(\"(\", scale_x, \",\", transform_attribute_array2[1], \"(\", transform_attribute_array[2]); 
+			gg.setAttribute(\"transform\", set_transform);
+			//alert(\"right pressed\");
+			break;
+			
+			case 40: // down
+			var gg = document.getElementsByTagName(\"svg\")[0]; //TODO
+			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
+			var transform_attribute_array = transform_attribute.split(\"(\");
+			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
+			var transform_attribute_array3 = transform_attribute_array2[1].split(\")\");
+			var scale_y = parseFloat(transform_attribute_array3[0]) + 10
+			var set_transform = transform_attribute_array[0].concat(\"(\", transform_attribute_array2[0], \",\", scale_y, \") scale(\", transform_attribute_array[2]); 
+			gg.setAttribute(\"transform\", set_transform);
+			//alert(\"down pressed\");
+			break;
+
+			default: return; // exit this handler for other keys
+			}
+			e.preventDefault(); // prevent the default action (scroll / move caret)
+		}

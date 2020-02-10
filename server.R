@@ -55,6 +55,8 @@ source("statistics.R")
 source("netstats.R")
 source("layout_choices.R")
 source("layouts_ui.R")
+source("automated_annotations_vector.R")
+source("automated_annotations_choices.R")
 
 max_edges = 50000
 colors <- randomColor(50)
@@ -94,7 +96,7 @@ convert_to_igraph <- function(dataset1) ({
     # if (attr(dataset1, "directed")) {
     #     directed_tf <- attr(dataset1, "directed")
     # }
-    igraph <- graph.data.frame(dataset1, vertices = NULL)
+    igraph <- graph.data.frame(dataset1, vertices = NULL,directed = F)
     
     return(igraph)
 })
@@ -157,7 +159,8 @@ shinyServer(function(input, output, session) {
 ############ Read the files ################
 loadNetworkFromFile <- function() {
     dataset1 <- NULL
-    switch(input$uiLoadGraphOptionsInput, oF = {
+    switch(input$uiLoadGraphOptionsInput, 
+           oF = {
         if (!is.null(input$file1)) {
             dataset1 <- read_data(input$file1$datapath)
         }
@@ -836,6 +839,12 @@ loadNetworkFromFile <- function() {
     
     
     #########################################
+   
+    doRefreshPaletteAnnotationTab <- observeEvent(input$btnRefreshPaletteAnnotationTab, {
+      newcolors <- length(qual_col_pals)
+      qual_col_pals <<- randomColor(newcolors)
+    })
+    
     
     #########################################################
     ### Add Annotation button ####
@@ -1023,6 +1032,9 @@ loadNetworkFromFile <- function() {
     output$tabVizPie_charts<-renderUI({
       s = input$chooseGroups2_rows_selected
       
+      if(input$btnRefreshPaletteAnnotationTab){
+        qual_col_pals <<- randomColor(length(qual_col_pals))}
+      
       if(input$expressions_pies ==T){
             expression_colors_pies = T
           }
@@ -1089,7 +1101,13 @@ loadNetworkFromFile <- function() {
       }
       rowCallback_generated<-paste(rowCallback_generated, "}",sep="")
       
+      if(input$btnRefreshPaletteAnnotationTab){
+        qual_col_pals <<- randomColor(300)
+        css_colors <- group_pal_rows(length(rownames(annotation)))
+        }
+      else{
       css_colors <- group_pal_rows(length(rownames(annotation)))
+      }
       ########
       
       x<- length(rownames(annotation))
@@ -1100,6 +1118,14 @@ loadNetworkFromFile <- function() {
       }
       datatable(annotation, extensions = 'Scroller', options = list( rownames=T,deferRender = TRUE, scrollY = 200, scroller = TRUE, rowCallback = JS(rowCallback_generated))) 
       })
+    
+    
+    # df_refresh<- eventReactive(input$btnRefreshPaletteAnnotationTab, {
+    #   qual_col_pals <<- randomColor(300)
+    #   css_colors <- group_pal_rows(length(rownames(annotation)))
+    #   shinyjs::js$refresh()
+    #   })
+    
     
     
     ##### Saling ###
@@ -1136,13 +1162,18 @@ loadNetworkFromFile <- function() {
     output$interactive_convex_hulls<-renderUI({
       s = input$chooseGroups_rows_selected
       
+      if(input$btnRefreshPaletteAnnotationTab){
+      qual_col_pals <<- randomColor(length(qual_col_pals))
+      }
+      # print(qual_col_pals)
+      
       if(input$expressions ==T){
             expression_colors = T
             }
           else if(input$expressions == F){
             expression_colors = F
             }
-        
+      
       source("interactive_convex_hulls.R", local = T)
       lay <- input$layouts
       convex_hulls()
@@ -1714,5 +1745,35 @@ loadNetworkFromFile <- function() {
         updateCheckboxGroupInput(session, "statistics2", selected = character(0))
     })
     
+    
+    
+    # ######## Modularity Tab #####
+    
+    output$modularity_plot<- renderPlot({
+      automated_annotations <- input$automated_annotations
+      net <- fetchFirstSelectedStoredIgraph_just_network()
+      if (is.null(net)) 
+        return()
+      clp <- automated_annotation_choices(net, automated_annotations)
+      plot(clp, net, edge.color = 'grey50', 
+           mark.col= qual_col_pals,
+           vertex.size = 5, 
+           # vertex.label.color = "black",
+           vertex.color= 'grey50', 
+           vertex.label= NA)
+      
+    })
+         
+    output$Modularity_table<- DT::renderDataTable({
+      automated_annotations <- input$automated_annotations
+      net <- fetchFirstSelectedStoredIgraph_just_network()
+      if (is.null(net)) 
+        df<- EmptyDataset(c("Annotations", "Nodes"))
+      
+      source("modularity.R", local= T)
+      df<-modularity()
+      datatable(df, rownames = FALSE, extensions = 'Responsive') %>% formatStyle(colnames(df), fontSize = ui_options["ui_table_font_sz"])
+      
+    })
     
 })# The End

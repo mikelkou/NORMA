@@ -1,34 +1,30 @@
-modularity<- function(){}
+modularity<- function(method){
 
-
-  net<- g_virt
-  # Community detection (by optimizing modularity over partitions):
-  clp <- cluster_optimal(net)
-  # Community detection returns an object of class "communities" 
+  set.seed(123)
   
-  plot(clp, net, vertex.color = "grey90",
-       edge.color = 'grey80',
-       vertex.size = 10,
-       vertex.label.color = "black",)
-  
-  
-  
+  clp <- automated_annotation_choices(net, automated_annotations)
+
+groups_all<- c()
+  for (i in 1:length(clp)){
+    clp_i <- as.data.frame(clp[[i]])
+    ss<-paste(clp_i[,1], collapse="," )
+    groups_all[[i]]<-ss
+  }
+
+prefix <- "Group-"
+suffix <- seq(1:length(clp))
+
+max.length <- max(sapply(groups_all, length))
+l <- lapply(groups_all, function(v) { c(v, rep(NA, max.length-length(v)))})
+df<-as.data.frame(do.call(rbind, l))
+groups_column_name<- paste(prefix, suffix, sep="")
+df<- cbind(groups_column_name, df)
+# names(df) <- NULL
 
 
-#Instead of convex hulls, colors of communities in nodes
-V(net)$community <- clp$membership
-colrs <- adjustcolor( c("gray50", "tomato", "gold", "yellowgreen"), alpha=.6)
-plot(net, vertex.color=colrs[V(net)$community])
+write.table(df, file="tmp.txt", row.names = F, col.names = F,sep = "\t")
 
+annoation_graph<- read.delim("tmp.txt", header = F) 
+return(annoation_graph)
+}
 
-plot(net, vertex.color= "white", font.label.color= "black",mark.groups = c("BCL2L1","MDM4","CHEK2","CDKN2A","ATM","CDKN1A"), 
-     mark.col=c("#C5E5E7","#ECD89A"), mark.border=NA)
-
-
-plot(net, layout = lay, 
-                vertex.color = "grey90",
-                edge.color = 'grey80',
-                vertex.size = 10,
-                vertex.label.color = "black",
-     mark.groups = list(c("BCL2L1","MDM4"),c("CHEK2","CDKN2A","ATM","CDKN1A")), 
-     mark.col=c("#C5E5E7","#ECD89A"), mark.border=NA)

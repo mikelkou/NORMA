@@ -110,62 +110,10 @@ convex_hulls<- function(){
   	
   <body>
   	<script>
-  	//arrow keys for svg pan
-  	document.onkeydown = function(e) {
-		  e = e || window.event;
-		  switch(e.which || e.keyCode) {
-		  case 37: // left
-			var gg = document.getElementsByTagName(\"svg\")[0];
-			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
-			var transform_attribute_array = transform_attribute.split(\"(\");
-      var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
-			var scale_x = parseFloat(transform_attribute_array2[0]) - 10
-			var set_transform = transform_attribute_array[0].concat(\"(\", scale_x, \",\", transform_attribute_array2[1], \"(\", transform_attribute_array[2]); 
-			gg.setAttribute(\"transform\", set_transform);
-			//alert(\"left pressed\");
-			break;
-			case 38: // up
-			var gg = document.getElementsByTagName(\"svg\")[0];
-			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
-			var transform_attribute_array = transform_attribute.split(\"(\");
-			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
-			var transform_attribute_array3 = transform_attribute_array2[1].split(\")\");
-			var scale_y = parseFloat(transform_attribute_array3[0]) - 10
-			var set_transform = transform_attribute_array[0].concat(\"(\", transform_attribute_array2[0], \",\", scale_y, \") scale(\", transform_attribute_array[2]); 
-			gg.setAttribute(\"transform\", set_transform);
-			//alert(\"up pressed\");
-			break;
-			
-			case 39: // right
-			var gg = document.getElementsByTagName(\"svg\")[0];
-			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
-			var transform_attribute_array = transform_attribute.split(\"(\");
-			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
-			var scale_x = parseFloat(transform_attribute_array2[0]) + 10
-			var set_transform = transform_attribute_array[0].concat(\"(\", scale_x, \",\", transform_attribute_array2[1], \"(\", transform_attribute_array[2]); 
-			gg.setAttribute(\"transform\", set_transform);
-			//alert(\"right pressed\");
-			break;
-			
-			case 40: // down
-			var gg = document.getElementsByTagName(\"svg\")[0];
-			var transform_attribute = gg.getAttribute(\"transform\"); //example: \"translate(-141.0485937362168,-100.78113920140399) scale(0.5612310558128654)\"
-			var transform_attribute_array = transform_attribute.split(\"(\");
-			var transform_attribute_array2 = transform_attribute_array[1].split(\",\");
-			var transform_attribute_array3 = transform_attribute_array2[1].split(\")\");
-			var scale_y = parseFloat(transform_attribute_array3[0]) + 10
-			var set_transform = transform_attribute_array[0].concat(\"(\", transform_attribute_array2[0], \",\", scale_y, \") scale(\", transform_attribute_array[2]); 
-			gg.setAttribute(\"transform\", set_transform);
-			//alert(\"down pressed\");
-			break;
-			
-			default: return; // exit this handler for other keys
-			}
-			e.preventDefault(); // prevent the default action (scroll / move caret)
-		}
   	
-  	var width = 10000,
-  		height = 10000;
+  	
+  	var width =",max_pixels_panel,",
+  		height =", max_pixels_panel,";
             
             
             // The color functions: in this example I'm coloring all the convex hulls at the same layer the same to more easily see the result.
@@ -293,19 +241,66 @@ var theGraphData = {
   
   
   
+  zoom_slider<-TRUE
+  max_allowed_scale<-1
+  for (i in 1:length(nodes)){
+    coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
+    coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
+    if(  (coor_x*scaling_coordinates_convex())>max_pixels_panel | (coor_y*scaling_coordinates_convex())>max_pixels_panel     )
+    {
+      zoom_slider<-FALSE
+      break
+    }
+  }
+  
+  for(slider_values in 1:10){
+  allowed<-TRUE
+  for (i in 1:length(nodes)){
+    coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
+    coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
+    if(  (coor_x*slider_values)>max_pixels_panel | (coor_y*slider_values)>max_pixels_panel     )
+    {
+      allowed<-FALSE
+      break
+    }
+  }
+    if(allowed==TRUE){
+      max_allowed_scale<-slider_values 
+    }
+}
 
+  if(zoom_slider==TRUE)
+    {
     for (i in 1:length(nodes)){
-      coor_x<-mapper(lay[i,1], minx, maxx, 25, 575)
-      coor_y<-mapper(lay[i,2], miny, maxy, 25, 575)
+      coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
+      coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
+      
       #sample(0:600, 1)
       if(expression_colors == T){
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*scaling_coordinates_convex() , ", 'y':", coor_y*scaling_coordinates_convex(), ", 'fixed': true, \"color_value\":", expression$color[i], "},\n",sep="")), file = fileConn)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20 , ", 'y':", coor_y*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20, ", 'fixed': true, \"color_value\":", expression$color[i], "},\n",sep="")), file = fileConn)
       }
       
       if(expression_colors == F){
-    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*scaling_coordinates_convex() , ", 'y':", coor_y*scaling_coordinates_convex(), ", 'fixed': true, \"color_value\":", 15, "},\n",sep="")), file = fileConn)
+    cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20 , ", 'y':", coor_y*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20, ", 'fixed': true, \"color_value\":", 15, "},\n",sep="")), file = fileConn)
       }
     }
+  }#if zoom_slider
+  else
+  {
+    for (i in 1:length(nodes)){
+      coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
+      coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
+      
+      #sample(0:600, 1)
+      if(expression_colors == T){
+        cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20 , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20, ", 'fixed': true, \"color_value\":", expression$color[i], "},\n",sep="")), file = fileConn)
+      }
+      
+      if(expression_colors == F){
+        cat(sprintf(paste("{\"id\":", i-1, ",name:\"", nodes[i],"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20 , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20, ", 'fixed': true, \"color_value\":", 15, "},\n",sep="")), file = fileConn)
+      }
+    }
+  }
   
   cat(sprintf("],
   \"links\":[\n"), file= fileConn)
