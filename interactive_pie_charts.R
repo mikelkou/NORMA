@@ -78,8 +78,8 @@ pie_charts<- function(){
     group_color <- tmp_selected_colors
     group_color_fill <- adjustcolor(group_color, alpha.f = 0.2)
     
-  fileConn <- file("output2.html", "w")
-  cat(sprintf(paste("<!DOCTYPE html>
+    fileConn <- file(paste("output_pies_",Sys.getpid(),".html", sep=""), "w")
+    cat(sprintf(paste("<!DOCTYPE html>
 <head>
   <meta charset=\"utf-8\">
   <script src=\"https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js\"></script>

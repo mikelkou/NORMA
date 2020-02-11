@@ -3,7 +3,7 @@ modularity<- function(method){
   set.seed(123)
   
   clp <- automated_annotation_choices(net, automated_annotations)
-
+  
 groups_all<- c()
   for (i in 1:length(clp)){
     clp_i <- as.data.frame(clp[[i]])

@@ -14,6 +14,7 @@ convex_hulls<- function(){
   annoation_graph <- fetchFirstSelectedStoredGroups2_annotations_tab()
   if (is.null(annoation_graph)) 
     return()
+  
   annotName <- SelectedStoredAnnots()$name
   annoation_graph <- as.data.frame(annoation_graph)
   groups<-annoation_graph
@@ -63,7 +64,7 @@ convex_hulls<- function(){
   # print(lay)
   
   
-  fileConn <- file("output.html", "w")
+  fileConn <- file(paste("output_convex_",Sys.getpid(),".html", sep=""), "w")
   
   if (length(s)==0)
   {

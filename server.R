@@ -165,10 +165,10 @@ loadNetworkFromFile <- function() {
             dataset1 <- read_data(input$file1$datapath)
         }
     }, oR_String_interactions = {
-        dataset1 <- read.delim("C:/Users/mikae/Desktop/MSc_Molecular_Biomedicine/Master_Thesis_Pavlopoulos/NAP/NORMA_project/string_interactions.txt", header= T)
+        dataset1 <- read.delim("string_interactions.txt", header= T)
     }, oR_Drosophila = {
         n <- as.integer(input$oR_selected_size)
-        dataset1 <- read.delim("C:/Users/mikae/Desktop/MSc_Molecular_Biomedicine/Master_Thesis_Pavlopoulos/NAP/NORMA_project/PAP_example.txt")
+        dataset1 <- read.delim("PAP_example.txt")
     }
     )
         if (input$uiLoadGraphOptionsInput != "oF" && !is.null(dataset1)) {
@@ -203,10 +203,10 @@ loadNetworkFromFile <- function() {
           annotation1 <- read_annotations(input$file2$datapath)
         }
       }, oR_String_Annotation = {
-          annotation1 <- read.delim("C:/Users/mikae/Desktop/MSc_Molecular_Biomedicine/Master_Thesis_Pavlopoulos/NAP/NORMA_project/string_interactions_groups_comma_duplicate.txt", header= F)
+          annotation1 <- read.delim("string_interactions_groups_comma_duplicate.txt", header= F)
       }, oR_Drosophila_Annotation = {
         n <- as.integer(input$oR_selected_size)
-                annotation1 <- read.delim("C:/Users/mikae/Desktop/MSc_Molecular_Biomedicine/Master_Thesis_Pavlopoulos/NAP/NORMA_project/PAP_david.txt", header = F)
+                annotation1 <- read.delim("PAP_david.txt", header = F)
       }
       )
       
@@ -964,12 +964,15 @@ loadNetworkFromFile <- function() {
       my_network<- as.data.frame(get.edgelist(g))
       my_network<- data.frame(from = my_network$V1, to = my_network$V2)
       
+      withProgress(min = 0, max = 1, {
+        incProgress(message = "Processing data into plot",
+                    detail = "This may take a while...", amount = .1)
       visIgraph(as.undirected(g)) %>%
         visNodes(size = 25, shape = "ellipse") %>%
         visOptions(highlightNearest = TRUE, 
                    nodesIdSelection = TRUE) %>%
         visInteraction(keyboard = TRUE, navigationButtons = TRUE, zoomView = TRUE, multiselect =TRUE, dragView = TRUE)
-      
+      })
       
       
       #
@@ -1031,6 +1034,12 @@ loadNetworkFromFile <- function() {
     output$tabVizPie_charts<-renderUI({
       s = input$chooseGroups2_rows_selected
       
+      g <- fetchFirstSelectedStoredIgraph_annotations_tab()
+      annoation_graph <- fetchFirstSelectedStoredGroups2_annotations_tab()
+      
+      if (is.null(g) | is.null(annoation_graph)) 
+        return(NULL)
+      
       if(input$show_labels_pies ==T){
         show_labels_pies = T
           }
@@ -1051,14 +1060,18 @@ loadNetworkFromFile <- function() {
           else if(input$some_labels_pies == F){
             some_labels_pies = F
           }
-        
+      
+      withProgress(min = 0, max = 1, {
+        incProgress(message = "Processing data into plot",
+                    detail = "This may take a while...", amount = .1)
       source("interactive_pie_charts.R", local = T)
       lay <- input$layouts2
       pie_charts()
       tags$iframe(
-        srcdoc = paste(readLines('output2.html'), collapse = '\n'),
+        srcdoc = paste(readLines(paste("output_pies_",Sys.getpid(),".html", sep="")), collapse = '\n'),
         width = "100%",
         height = "600px")
+      })
     })
     
     # output$tabVizPie_charts <- renderPlot({
@@ -1161,6 +1174,11 @@ loadNetworkFromFile <- function() {
     output$interactive_convex_hulls<-renderUI({
       s = input$chooseGroups_rows_selected
       
+      g <- fetchFirstSelectedStoredIgraph_annotations_tab()
+      annoation_graph <- fetchFirstSelectedStoredGroups2_annotations_tab()
+      if (is.null(g) | is.null(annoation_graph)) 
+        return(NULL)
+      
       if (input$show_labels == T){
         show_labels = T
       }
@@ -1179,15 +1197,19 @@ loadNetworkFromFile <- function() {
             }
           else if(input$some_labels == F){
             some_labels = F
-            }
+          }
       
+      withProgress(min = 0, max = 1, {
+        incProgress(message = "Processing data into plot",
+                    detail = "This may take a while...", amount = .1)
       source("interactive_convex_hulls.R", local = T)
       lay <- input$layouts
       convex_hulls()
       tags$iframe(
-        srcdoc = paste(readLines('output.html'), collapse = '\n'),
+        srcdoc = paste(readLines(paste("output_convex_",Sys.getpid(),".html", sep="")), collapse = '\n'),
         width = "100%",
         height = "600px")
+      })
       })
     
 ####################################
@@ -1317,7 +1339,7 @@ loadNetworkFromFile <- function() {
           expression1 <- read_expressions(input$file3$datapath)
         }
       }, oR_Expression_file = {
-        expression1 <- read.delim("C:/Users/mikae/Desktop/MSc_Molecular_Biomedicine/Master_Thesis_Pavlopoulos/NAP/NORMA_project/string_expression_colors.txt", header= F)
+        expression1 <- read.delim("string_expression_colors.txt", header= F)
       })
    
       colnames(expression1) <- c("ID", "Color")
@@ -1754,31 +1776,86 @@ loadNetworkFromFile <- function() {
     
     # ######## Modularity Tab #####
     
+    show_labels_algorithms_tab<- T
+    
     output$modularity_plot<- renderPlot({
       automated_annotations <- input$automated_annotations
       net <- fetchFirstSelectedStoredIgraph_just_network()
       if (is.null(net)) 
         return()
       clp <- automated_annotation_choices(net, automated_annotations)
+      
+      if(input$show_labels_algorithms_tab ==F){
+        show_labels_algorithms_tab = F
+        set.seed(123)
+        withProgress(min = 0, max = 1, {
+          incProgress(message = "Processing data into plot",
+                      detail = "This may take a while...", amount = .1)
       plot(clp, net, edge.color = 'grey50', 
            mark.col= qual_col_pals,
            vertex.size = 5, 
            # vertex.label.color = "black",
            vertex.color= 'grey50', 
            vertex.label= NA)
+        })
+      }
+
+      else{
+        set.seed(123)
+        withProgress(min = 0, max = 1, {
+          incProgress(message = "Processing data into plot",
+                      detail = "This may take a while...", amount = .1)
+        plot(clp, net, edge.color = 'grey50', 
+             mark.col= qual_col_pals,
+             vertex.size = 5, 
+             vertex.label.color = "black",
+             vertex.color= 'grey50')
+        })
+      }
       
     })
          
     output$Modularity_table<- DT::renderDataTable({
-      automated_annotations <- input$automated_annotations
       net <- fetchFirstSelectedStoredIgraph_just_network()
-      if (is.null(net)) 
-        df<- EmptyDataset(c("Annotations", "Nodes"))
-      
+      if (is.null(net)){
+        df<- EmptyDataset(c("Annotations", "Nodes"))}
+      else{
+      automated_annotations <- input$automated_annotations
       source("modularity.R", local= T)
       df<-modularity()
-      datatable(df, rownames = FALSE, extensions = 'Responsive') %>% formatStyle(colnames(df), fontSize = ui_options["ui_table_font_sz"])
+      datatable(df, colnames = c("Annotations", "Nodes"),rownames = FALSE, extensions = 'Responsive') %>% formatStyle(colnames(df), fontSize = ui_options["ui_table_font_sz"])}
       
     })
+    
+   
+    
+    downaload_automated_annotations <- observeEvent(input$dowanload_automated_annotations_file, {
+      net <- fetchFirstSelectedStoredIgraph_just_network()
+      if (is.null(net)){
+        return(NULL)}
+      automated_annotations <- input$automated_annotations
+      source("modularity.R", local= T)
+      data<- modularity()
+      
+      if(automated_annotations=="Fast-Greedy\tcluster_fast_greedy(igraph)"){
+      write.table(data, file= paste("Fast-Greedy_", Sys.Date(), '.txt', sep=''), sep= "\t", row.names = F, col.names = F)
+      }
+      if(automated_annotations=="Louvain\tcluster_louvain(igraph)"){
+      write.table(data, file= paste("Louvain_", Sys.Date(), '.txt', sep=''), sep= "\t", row.names = F, col.names = F)
+      }
+      if(automated_annotations=="Label-Propagation\tcluster_label_prop(igraph)"){
+      write.table(data, file= paste("Label-Propagation_", Sys.Date(), '.txt', sep=''), sep= "\t", row.names = F, col.names = F)
+      }
+      if(automated_annotations=="Walktrap\tcluster_walktrap(igraph)"){
+      write.table(data, file= paste("Walktrap_", Sys.Date(), '.txt', sep=''), sep= "\t", row.names = F, col.names = F)
+      }
+      if(automated_annotations=="Betweenness\tcluster_edge_betweenness(igraph)"){
+      write.table(data, file= paste("Betweenness_", Sys.Date(), '.txt', sep=''), sep= "\t", row.names = F, col.names = F)
+      }
+      
+      })
+    
+    ###########################################################
+    
     
 })# The End

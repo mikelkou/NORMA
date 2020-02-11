@@ -11,3 +11,7 @@ automated_annotations_ui<-c(
 selected_automated_annotations=c(
   "Fast-Greedy\tcluster_fast_greedy(igraph)"
 )
+
+
+# Mustard Yellow HEX Code: #e1ad01
+#Dark green / #013220

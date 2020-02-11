@@ -146,6 +146,12 @@ ui_dataTable_panel <- function(datasetName, pagination = TRUE) {
     )
 }
 
+b64 <- base64enc::dataURI(file="net.png", mime="image/png")
+b64_2 <- base64enc::dataURI(file="help_pages_network_and_modularity.PNG", mime="image/png")
+b64_3 <- base64enc::dataURI(file="help_pages_convex_and_pies.PNG", mime="image/png")
+b64_4 <- base64enc::dataURI(file="help_pages_topology.PNG", mime="image/png")
+
+
 fixedPage(
   theme = shinytheme("sandstone"),
   # shinythemes::themeSelector(),  # <--- Add this somewhere in the UI
@@ -156,31 +162,33 @@ fixedPage(
   ),
     useShinyjs(),
     tags$head(tags$script(src = "cyjs.js")),
-    navbarPage(
+  # tags$img(src = b64),
+  navbarPage(
       "NORMA: The NetwORk Makeup Artist",
         header = tags$head(tags$style(type = "text/css", ui_css)),
         tabPanel(
             "Welcome",
-            h2("Welcome to the NetwORk Makeup Artist"),
+            h1("Welcome to NORMA, the NetwORk Makeup Artist"),
             strong(
                 "a tool for visualization of annotation groups."
             ),
             br(),
             br(),
             helpText(
-              "Create at least 2 files:
-            a) one will be your network file in tab delimited format: 
-            2 columns named 'from' and 'to',
-            b) the other(s) will be your annotation file(s) in tab delimited format: 
-            2 columns - the first column will be the annotations and the second will be network's nodes seperated with comma.
-            Now, follow the steps below:"
+              "NORMA is a handy tool for interactive network annotation, visualization and topological analysis, 
+              able to handle multiple networks and annotations simultaneously. Annotations and/or node groups can 
+              be precomputed or automatically calculated and users can combine several networks and groupings they
+              are interested in. Annotated networks can be visualized using both pie-chart nodes and shaded convex 
+              hulls and can be shown using several layouts while users can isolate the groups of interest interactively. 
+              In addition, NORMA is suitable for direct comparison of topological features between one or more networks.
+              In order for NORMA to run, two simple steps are required:"
             ),
             tags$ul(
-                tags$li("Load your network file"),
-                tags$li("Load your annotation(s) file"),
-                tags$li("Give it a name"),
-                tags$li("Hit the ADD button")
-            )
+                tags$li("1.Please load your network file(s), name it and hit the add button"),
+                tags$li("2.Please load your annotation file(s), name it and hit the add button")
+            ),
+            tags$ul("Further details can be found in the Help pages.")
+            
         ),# tabPanel 'Welcome'
         
       tabPanel(
@@ -315,22 +323,35 @@ fixedPage(
                tabsetPanel(
                tabPanel("Interactive Network",
                         
-                          visNetworkOutput('tabVizIgraphSimple'),
+                          visNetworkOutput('tabVizIgraphSimple',width = 1000, height = 600),
                           class = 'box-panel-padding',
-                        
+
                         class = 'box-panel',
                ),
                
-               tabPanel("Modulariy/Clustering",
+               tabPanel("Automated Annotations/Clustering",
                         br(),
                         selectInput("automated_annotations",
-                                    "The automated_annotations:",
+                                    "The Algorithms:",
                                     choices = automated_annotations_ui,
                                     selected = selected_automated_annotations,
                                     multiple = FALSE
                         ),
-                        plotOutput("modularity_plot"),
-                        eval(ui_dataTable_panel('Modularity_table'))
+                        prettyCheckbox(inputId = "show_labels_algorithms_tab",
+                                       label = "Show Labels",
+                                       thick = T,
+                                       shape = "curve",
+                                       animation = "pulse",
+                                       status = "info",
+                                       inline = F,
+                                       value = F),
+                        plotOutput("modularity_plot", width = 1000, height = 600),
+                        eval(ui_dataTable_panel('Modularity_table')),
+                        br(),
+                        span(actionButton("dowanload_automated_annotations_file", "Download", icon("download")), 
+                                          # style="color: #fff; background-color: #013220; border-color: #013220"), 
+                             class = "input-group-btn"),
+                       
 
                )
                )#tabsetpanel
@@ -390,9 +411,17 @@ fixedPage(
                hr(),
                uiOutput("interactive_convex_hulls"),
                eval(ui_dataTable_panel("chooseGroups")),
+               tags$style(HTML(".js-irs-3 .irs-bar {border-top-color: #2C8160; border-bottom-color: #2C8160;} .js-irs-3 .irs-bar-edge {border-color: #2C8160;}
+                                .js-irs-3 .irs-single, .js-irs-3 .irs-bar-edge, .js-irs-3 .irs-bar {background: #2C8160;}")),
+               
+               tags$style(HTML(".js-irs-4 .irs-bar {border-top-color: #2C8160;border-bottom-color: #2C8160;} .js-irs-4 .irs-bar-edge {border-color: #2C8160;}
+                                .js-irs-4 .irs-single, .js-irs-4 .irs-bar-edge, .js-irs-4 .irs-bar {background: #2C8160;}")),
+               
+               tags$style(HTML(".js-irs-5 .irs-bar {border-top-color: #2C8160; border-bottom-color: #2C8160;} .js-irs-5 .irs-bar-edge {border-color: #2C8160;}
+                                .js-irs-5 .irs-single, .js-irs-5 .irs-bar-edge, .js-irs-5 .irs-bar {background: #2C8160;}")),
                
                div(style="display:inline-block",sliderInput(inputId="scaling_coordinates_convex", label="Scale the coordinates:",min = 1, max = 10,
-                                                            value = 1)),
+                                                            value = 1 )),
                div(style="display:inline-block",sliderInput("scaling_nodes_convex", "Adjust node size:",
                                                             min = 0.2, max = 5,
                                                             value = 2, step= 0.2)),
@@ -400,7 +429,6 @@ fixedPage(
                                                             min = 0, max = 30,
                                                             value = 10, step= 2)),
                
-
                ),
            
                tabPanel("Pie - Chart Nodes",
@@ -442,6 +470,14 @@ fixedPage(
                           uiOutput('tabVizPie_charts'),
                           eval(ui_dataTable_panel("chooseGroups2")),
                         ),
+                        tags$style(HTML(".js-irs-0 .irs-bar {border-top-color: #2C8160; border-bottom-color: #2C8160;} .js-irs-0 .irs-bar-edge {border-color: #2C8160;}
+                                .js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: #2C8160;}")),
+                        
+                        tags$style(HTML(".js-irs-1 .irs-bar {border-top-color: #2C8160;border-bottom-color: #2C8160;} .js-irs-1 .irs-bar-edge {border-color: #2C8160;}
+                                .js-irs-1 .irs-single, .js-irs-1 .irs-bar-edge, .js-irs-1 .irs-bar {background: #2C8160;}")),
+                        
+                        tags$style(HTML(".js-irs-2 .irs-bar {border-top-color: #2C8160; border-bottom-color: #2C8160;} .js-irs-2 .irs-bar-edge {border-color: #2C8160;}
+                                .js-irs-2 .irs-single, .js-irs-2 .irs-bar-edge, .js-irs-2 .irs-bar {background: #2C8160;}")),
                         
                         div(style="display:inline-block",sliderInput("scaling_coordinates_pies", "Scale the coordinates",
                                                                      min = 1, max = 10,
@@ -545,122 +581,120 @@ fixedPage(
         tabPanel(
             "Help",
             icon = icon("question"),
-            strong("Number of Edges"),
-            helpText(
-            "Shows the number of edges in the network. If the has more than 10000 edges it will take into account the first 10000."
+            strong("The Upload Tab"),
+            helpText("Once one or more network and annotation files have been named and uploaded, they will be given as options in the dropdown selection lists. Users can select a network or an annotation file at a time and see its contents as an interactive table. Notably, one can search by suffix in a table, using the Search field. "),
+            tags$img(src=b64),
+            hr(),
+            strong("The Network Tab"),
+            helpText("This Tab consists of two sub-tabs dedicated to network analysis and visualization. These are: (i) the Interactive Network and the (ii) the Modularity/Clustering."),
+            br(),
+            strong("Interactive Network:"),
+            helpText("This Tab offers a dynamic network visualization in its simplest form. Nodes are connected with undirected edges and their coordinates are calculated using a force-directed layout. The network is fully interactive as zooming, dragging and panning are allowed either by using the mouse or the navigation buttons. In addition, nodes can be selected and dragged anywhere on the plane, whereas the first neighbors of any node can be highlighted upon selection. Finally, the network view is automatically updated when a different network is selected."),
+            br(),
+            strong("Automated Annotations/Clustering:"),
+            helpText("This Tab is used for the automatic calculation of communities whereas the exported file(s) can be used as input annotation file(s). Users can assign nodes to communities (not necessarily uniquely), using various options. These are:"),
+            tags$ul(
+              tags$li("Fast-Greedy: This function tries to find densely connected subgraphs (also called communities) via directly optimizing a modularity score."),
+              tags$li("Louvain: This function implements a multi-level modularity optimization algorithm for finding community structures and is based on the modularity measure and a hierarchical approach."),
+              tags$li("Label-Propagation: This is a fast, nearly linear time algorithm for detecting community structures in a network by labeling the vertices with unique labels and then updating the labels by majority voting in the neighborhood of the vertex."),
+              tags$li("Walktrap: This function tries to find densely connected subgraphs in a graph via random walks. The idea is that short random walks tend to stay in the same community."),
+              tags$li("Betweenness: Many networks consist of modules which are densely connected between themselves but sparsely connected to other modules. Clustering is made by ‘breaking’ the bridges which connect densely connected regions."),
             ),
-            br(),
-            strong("Number of Nodes"),
-            helpText(
-            "Shows the number of noded in the network. There is no limitation on the nuber of nodes."
-            ),
-            br(),
-            strong("Diameter"),
-            helpText(
-            "Shows the length of the longest geodesic.The diameter is calculated by using a breadth-first search like method.The graph-theoretic or geodesic distance between two points is defined as the length of the shortest path between them."
-            ),
-            br(),
-            strong("Radius"),
-            helpText(
-            "The eccentricity of a vertex is its shortest path distance from the farthest other node in the graph. The smallest eccentricity in a graph is called its radius. The eccentricity of a vertex is calculated by measuring the shortest distance from (or to) the vertex, to (or from) all vertices in the graph, and taking the maximum."
-            ),
-            br(),
-            strong("Density"),
-            helpText(
-            "The density of a graph is the ratio of the number of edges and the number of possible edges."
-            ),
-            br(),
-            strong("Number of Edges"),
-            helpText(
-            "Shows the number of edges in the network. If the has more than 10000 edges it will take into account the first 10000."
-            ),
-            br(),
-            strong("Average path length"),
-            helpText("The average number of steps needed to go from a node to any other."),
-            br(),
-            strong("Clustering Coefficient:"),
-            helpText("A metric to show if the network has the tendency to form clusters."),
-            br(),
-            strong("Modularity"),
-            helpText(
-            "This function calculates how modular is a given division of a graph into subgraphs."
-            ),
-            br(),
-            strong("Number of self loops"),
-            helpText("how many nodes are connected to themselves."),
-            br(),
-            strong("Average Eccentricity:"),
-            helpText(
-            "The eccentricity of a vertex is its shortest path distance from the farthest other node in the graph."
-            ),
-            br(),
-            strong("Average Eigenvector Centrality:"),
-            helpText("It is a measure of the influence of a node in a network."),
-            br(),
-            strong("Assortativity degree:"),
-            helpText(
-            "The assortativity coefficient is positive is similar vertices (based on some external property) tend to connect to each, and negative otherwise."
-            ),
-            br(),
-            strong("Is directed acyclic graph"),
-            helpText("It returns True (1) or False (0)."),
-            br(),
-            strong("Is directed"),
-            helpText(
-            "It returns True (1) or False (0) depending whether the edges are directed or not."
-            ),
-            br(),
-            strong("Is Bipartite"),
-            helpText(
-            "It returns True (1) or False (0) depending whether the graph is bipartite or not."
-            ),
-            br(),
-            strong("Is chordal"),
-            helpText(
-            "It returns True (1) or False (0). A graph is chordal (or triangulated) if each of its cycles of four or more nodes has a chord, which is an edge joining two nodes that are not adjacent in the cycle. An equivalent definition is that any chordless cycles have at most three nodes."
-            ),
-            br(),
-            strong("Average number of Neighbors"),
-            helpText("How many neighbors each node of the network has on average."),
-            br(),
-            strong("Centralization betweenness"),
-            helpText(
-            "It is an indicator of a node's centrality in a network. It is equal to the number of shortest paths from all vertices to all others that pass through that node.Betweenness centrality quantifies the number of times a node acts as a bridge along the shortest path between two other nodes."
-            ),
-            br(),
-            strong("Centralization closeness"),
-            helpText(
-            "It measures the speed with which randomly walking messages reach a vertex from elsewhere in the graph."
-            ),
-            br(),
-            strong("Centralization degree"),
-            helpText("It is defined as the number of links incident upon a node."),
-            br(),
-            strong("Graph mincut"),
-            helpText(
-            "Calculates the minimum st-cut between two vertices in a graph. The minimum st-cut between source and target is the minimum total weight of edges needed to remove to eliminate all paths from source to target."
-            ),
-            br(),
-            strong("Motifs-3"),
-            helpText(
-              "Searches a graph for motifs of size 3."
-            ),
-            br(),
-            strong("Motifs-4"),
-            helpText(
-              "Searches a graph for motifs of size 4."
-            ),
-            br(),
-            br()
-        ),
-        # tabPanel 'Help'
+              tags$img(src=b64_2),
+              helpText("Once a community detection method has been selected, users can see the results as interactive and searchable tables or as static plots for an at-a-glance understanding. In order for users to take advantage of NORMA’s advanced interactive visualization capabilities, the automatically generated annotations must be first exported and then imported as annotation input files."),
+              hr(),
+              strong("The Annotations Tab"),
+              helpText("This Tab is NORMA’s strongest feature and is used to visualize annotated networks in an easy and user-friendly way. Annotated, are the networks networks with (pre-)defined clusters, communities, subgraphs, marked regions or neighborhoods.
+
+Through the Annotation Tab, users can select between any of the uploaded networks or annotation files and visualize them in combination. Network and Annotation selections can be done by the offered dropdown selection lists. 
+
+The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and the (ii) Pie-chart nodes.
+"),
+              strong("Convex Hull:"),
+              helpText("In this tab, the selected network is initially visualized after applying any of the offered layout algorithms and shaded convex hulls are then used to highlight communities in a Venn-diagram-like view. A node might belong to more than one group. In this case, NORMA tries to bring closer together the overlapping regions which share nodes while simultaneously keeping the distinct groups apart. Groups are highlighted using visually distinct colors, whereas transparency is used to efficiently highlight the overlapping regions."),
+              br(),
+              strong("Pie-chart nodes:"),
+              helpText("Similarly to before, the selected network is initially visualized after applying any of the offered layout algorithms and nodes are then visualized as pie-charts, divided into slices to illustrate the groups a node belongs to. If a node for example belongs to four groups, then the pie chart will consist of four equal slices colored with distinct colors. Nodes which do not belong to any group are marked gray. 
+"),
+              br(),
+              strong("Node coloring:"),
+              helpText("Often, one might want to assign certain colors to nodes in order to encode certain information. In a gene expression network for example, one might want to highlight the up- and down-regulated genes. Once an expression file has been loaded (see Input file section), nodes in the Convex Hull will be filled with the color of interest whereas nodes in the Pie-Chart tab will appear with a colored border. As node coloring is an optional feature, one can enable or disable this functionality at any time (selection box).
+"),
+              tags$img(src=b64_3),
+              br(),
+              strong("Layouts:"),
+              helpText("Several layouts are offered for network visualization in both Convex Hull and Pie Chart sub-tabs. These are:
+"),
+              br(),
+              tags$ul(
+                tags$li("Fruchterman-Reingold: It places nodes on the plane using the force-directed layout algorithm developed by Fruchterman and Reingold."),
+                tags$li("Random: This function places the vertices of the graph on a 2D plane uniformly using random coordinates."),
+                tags$li("Circle: It places vertices on a circle, ordered by their vertex ids."),
+                tags$li("Kamada-Kawai: This layout places the vertices on a 2D plane by simulating a physical model of springs."),
+                tags$li("Reingold-Tilford: This is a tree-like layout and is suitable for trees or graphs with not too many cycles."),
+                tags$li("LGL: A force directed layout suitable for larger graphs."),
+                tags$li("Graphopt: A force-directed layout algorithm, which scales relatively well to large graphs."),
+                tags$li("Gem: It places vertices on the plane using the GEM force-directed layout algorithm."),
+                tags$li("Star: It places vertices of a graph on the plane, according to the simulated annealing algorithm by Davidson and Harel."),
+                tags$li("Grid: This layout places vertices on a rectangular 2D grid.")),
+              br(),
+              strong("Interactivity and Visualization:"),
+              helpText("NORMA gives a variety of options for the creation of optimal custom views. Network zoom in/out and panning functionalities are offered while users can interactively drag any node and place it anywhere on the plane. In addition to the visualized networks, groups are shown in an interactive table whose rows are colored accordingly. By selecting one or more groups, one can adjust the convex hulls as well as the pie-chart nodes accordingly. Colored groups (rows) in the table correspond to colored groups in the offered views and vice versa. In addition, users have the option to show and hide the labels or only keep the labels of the selected groups of interest while labels below a certain zoom level are hidden for better clarity. Finally, sliders to adjust node and label sizes as well as a slider to scale the network size are offered."),
+              hr(),
+              strong("The Topology Tab"),
+              helpText("This Tab is used for automated topological analysis and direct comparison of topological features between two or more networks. The topological features which are: 
+"),
+              tags$ul(
+                tags$li("Number of Edges: Shows the number of edges in the network. Notably, if the network has more than 10000 edges, NORMA will take into account only the first 10000.
+"),
+                tags$li("Number of Nodes: Shows the number of nodes in the network. No more than 5000 nodes are allowed.
+"),
+                tags$li("Density: The density of a graph is the ratio of the number of edges and the number of possible edges.
+"),
+                tags$li("Average path length: The average number of steps needed to go from one node to another.
+"),
+                tags$li("Clustering Coefficient: A metric which shows if the network has the tendency to form clusters. Values between 0 and 1. 
+"),
+                tags$li("Modularity: This function calculates how modular is a given division of a graph into subgraphs.
+"),
+                tags$li("Average Eccentricity: The eccentricity of a vertex is its shortest path distance from the farthest other node in the graph."),
+                tags$li("Average number of Neighbors: It is the total number of neighbors per node divided by the number of nodes
+"),
+                tags$li("Centralization betweenness: It is an indicator of a node's centrality in a network. It is equal to the number of shortest paths from all vertices to all others that pass through that node. Betweenness centrality quantifies the number of times a node acts as a bridge along the shortest path between two other nodes.
+"),
+                tags$li("Centralization degree: It is defined as the number of links incident upon a node.
+")),
+              br(),
+              
+              helpText("The Topology Tab is divided into two sub-tabs. These are: (i) the Summaries and (ii) the Comparative Plots.
+"),
+              br(),
+              strong("Summaries:"),
+              helpText("This Tab shows the aforementioned topological measures in a numerical form as a table view. Users can select one or more features of interest through the offered checkboxes and show them accordingly. Notably, this can be done for one network at a time upon selection (dropdown selection list).
+"),
+              br(),
+              strong("Comparative Plots:"),
+              helpText("This Tab can be used to directly compare the topological features of two or more networks simultaneously. In contrast with the previous Tab, users are allowed to select one topological feature at a time (radio buttons) but as many networks as they like (check boxes). Once two or more networks and one topological feature have been selected, direct comparisons can be made by the generated bar charts. A slider to adjust the chart height is offered.
+"),
+              tags$img(src=b64_2)
+        ),# tabPanel 'Help'
+      
         tabPanel(
             "Input File",
-            strong("The input file can be a network in tab delimited format."),
+            strong("NORMA mainly accepts 3 different files as input:."),
             br(),
-            helpText(
-                "Below you can see a network, an annotation and node-coloring example in tab delimited format. In case that there is not a node-coloring file, you can completely skip it"
-            ),
+            br(),
+strong("The network file:"),
+helpText(
+  "It is an obligatory, 2-column, tab-delimited file containing all network connections of an undirected network. This file must contain headers, namely: from and to."),
+  strong("The annotation file:"),
+helpText("
+ It is an obligatory, 2-column, tab-delimited file which contains information about the groups. The first column contains the group names whereas the second column contains the node names in a group separated by a comma (,) and without spaces. No headers are allowed."),
+strong("The annotation file:"),
+helpText("
+The expression file: It is an optional, 2-column, tab-delimited file which contains information about node coloring (e.g. gene expressions). The first column contains the node names and the second column the nodes’ colors (e.g. red, green, yellow, blue, orange). Nodes without color assignment will be colored gray. No headers are allowed in this file."),
+helpText("
+Examples are shown below:"),
             pre(
                 "
 Network File:             Annotation File:                        Node-coloring file            Warnings!
@@ -685,17 +719,33 @@ EP300	CREBBP
   .       .
   .       .
 "
-            )
+            ),
+
+strong("Usage:"),
+helpText("Users can upload as many network and annotation files as they like. Every time a network or an annotation file is uploaded, a name can be given first. 
+Once a network or an annotation file has been named and uploaded, it will appear as an option in any of the NORMA’s dropdown selection lists. Users can remove indifferent annotations or networks at any time. 
+"),
+br(),
+br(),
+strong("DOWNLOADABLE EXAMPLES"),
         ),
         tabPanel(
             "People",
             icon = icon("users"),
             strong("The Team:"),
             tags$ul(
-                tags$li("Mikaela Koutrouli - BSRC 'Alexander Fleming'"),
-                tags$li("Georgios Pavlopoulos - BSRC 'Alexander Fleming'")
+                tags$li("Mikaela Koutrouli - Developer - BSRC 'Alexander Fleming'"),
+                tags$li("Evangelos Karatzas - Developer - BSRC 'Alexander Fleming'"),
+                tags$li("Georgios A. Pavlopoulos - Developer/Supervisor - BSRC 'Alexander Fleming'")
             ),
-            br()
+            br(),
+            strong("Code:"),
+            helpText("Availability at: http://………….."),
+            br(),
+            strong("Publications:"),
+            helpText("NORMA has been submitted for publication. 
+            Information will be provided once the paper is online")
+            
         )
     )
 )
