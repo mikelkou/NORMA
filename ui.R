@@ -569,6 +569,9 @@ fixedPage(
                                         class = 'box-panel-padding'
                                     ), class = 'box-panel'
                                 ),
+                                tags$style(HTML(".js-irs-6 .irs-bar {border-top-color: #2C8160; border-bottom-color: #2C8160;} .js-irs-6 .irs-bar-edge {border-color: #2C8160;}
+                                .js-irs-6 .irs-single, .js-irs-6 .irs-bar-edge, .js-irs-6 .irs-bar {background: #2C8160;}")),
+                                
                                 sliderInput(
                                     "statisticsPlotPercentMagnify",
                                     "Adjust plot height (% taller)",
