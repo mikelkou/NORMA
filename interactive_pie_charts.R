@@ -153,6 +153,7 @@ pie_charts<- function(){
     expressions_pies<-left_join(express_order, expressions_pies, by = "id")
     expressions_pies$color<- as.character(expressions_pies$color)
     expressions_pies$color[which(expressions_pies$color=="blue")] <- "0"
+    expressions_pies$color[which(expressions_pies$color=="yellow")] <- "16"
     expressions_pies$color[which(expressions_pies$color=="orange")] <- "2"
     expressions_pies$color[which(expressions_pies$color=="green")] <- "4"
     expressions_pies$color[which(expressions_pies$color=="red")] <- "6"

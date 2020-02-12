@@ -82,11 +82,23 @@ read_data <- function(datapath, type = c("txt"), header = T, sep = "\t", quote =
 
 read_annotations <- function(datapath, type = c("txt"), header = F, sep = "\t", quote = "\"", weighted = F, na.strings=c("","NA")) ({
   annotation1 <- read.table(datapath, header = header, sep = sep, quote = quote)
+  if (ncol(annotation1) == 2) {
+    dataset1$V3 <- NULL
+  } else if (ncol(annotation1) > 2) {
+    annotation1 <- annotation1[, 1:2]
+  } else if (ncol(annotation1) != 2)
+    return(NULL)
 
 })
 
 read_expressions <- function(datapath, type = c("txt"), header = F, sep = "\t", quote = "\"", weighted = F, na.strings=c("","NA")) ({
   expression1 <- read.table(datapath, header = header, sep = sep, quote = quote)
+  if (ncol(expression1) == 2) {
+    dataset1$V3 <- NULL
+  } else if (ncol(expression1) > 2) {
+    expression1 <- expression1[, 1:2]
+  } else if (ncol(expression1) != 2)
+    return(NULL)
   
 })
 
@@ -214,7 +226,9 @@ loadNetworkFromFile <- function() {
       #   if (!is.null(annotation1))
       #     annotation1$X3 <- sample(1:10, nrow(annotation1), replace = T)
       # }
-      colnames(annotation1) <- c("Annotations", "Nodes")
+      if(!is.null(annotation1)){
+        colnames(annotation1) <- c("Annotations", "Nodes")}
+      
       return(annotation1)
     }
     
@@ -419,7 +433,9 @@ loadNetworkFromFile <- function() {
     ###### Upload #######
     doAddNetwork <- observeEvent(input$btnAddNetwork, {
       dataset <- loadNetworkFromFile()
+      
         if (!is.null(dataset)) {
+          if(nrow(dataset)< 10000){
             nid <- UUIDgenerate(T)      #time-base UUID is generated
             nn <- input$networkName 
             cnt <- 1                    #count
@@ -444,7 +460,16 @@ loadNetworkFromFile <- function() {
             if (length(reactiveVars$SelectedStoredNetworksIds) == 0) {
                 reactiveVars$SelectedStoredNetworksIds <- c(nid)
             }
+          }
+          
+          if(nrow(dataset)>= 100000){
+            createAlert(session, "tabUpload_up_to_10000_rows", "fileUploadAlert_up_to_10000_rows", title = "Warning !", style = "danger", 
+                        content = paste0("Please make sure that your network has less than 10,000 connections."), append = FALSE)
+            dataset<- NULL
+            }
+          
         } else createAlert(session, "tabUploadSideAlert", "fileUploadAlert", title = "ERROR !", style = "danger", content = paste0("An error occurred while trying to read your file. Please make sure that it is formatted according to the requirements."), append = FALSE)
+      
       })
 
     
@@ -883,9 +908,10 @@ loadNetworkFromFile <- function() {
     })
     
     
-    doAddNetwork2 <- observeEvent(input$btnAddNetwork2, {
+    doAddAnnotations <- observeEvent(input$btnAddNetwork2, {
       annotation<- loadAnnotations()
       if (!is.null(annotation)) {
+        if(nrow(annotation)< 300){
         nid <- UUIDgenerate(T)      #time-base UUID is generated
         nn <- input$annotationName 
         cnt <- 1                    #count
@@ -905,7 +931,15 @@ loadNetworkFromFile <- function() {
         if (length(reactiveVars$SelectedStoredAnnotationIds) == 0) {
           reactiveVars$SelectedStoredAnnotationIds <- c(nid)
         }
-      } else createAlert(session, "tabUploadSideAlert2", "annotationUploadAlert", title = "ERROR !", style = "danger", content = paste0("An error occurred while trying to read your file. Please make sure that it is formatted according to the requirements."), append = FALSE)
+        }
+        
+        if(nrow(annotation)>= 300){
+          createAlert(session, "tabUpload_up_to_10000_rows", "fileUploadAlert_up_to_10000_rows", title = "Warning !", style = "danger", 
+                      content = paste0("Please make sure that your annotation file has less than 300 lines."), append = FALSE)
+          annotation<- NULL
+        }
+        
+      } else createAlert(session, "tabUploadSideAlert", "fileUploadAlert", title = "ERROR !", style = "danger", content = paste0("An error occurred while trying to read your file. Please make sure that it is formatted according to the requirements."), append = FALSE)
     })
        
     
@@ -1341,8 +1375,8 @@ loadNetworkFromFile <- function() {
       }, oR_Expression_file = {
         expression1 <- read.delim("string_expression_colors.txt", header= F)
       })
-   
-      colnames(expression1) <- c("ID", "Color")
+      if(!is.null(expression1)){
+      colnames(expression1) <- c("ID", "Color")}
       
       # if (input$uiLoadExpressions != "oF" && !is.null(expression1)) {
       #   if (!is.null(expression1))
@@ -1366,6 +1400,7 @@ loadNetworkFromFile <- function() {
     
     doAddExpression <- observeEvent(input$btnAddExpression, {
       expression<- loadExpressions()
+
       if (!is.null(expression)) {
         nid <- UUIDgenerate(T)      #time-base UUID is generated
         nn <- input$expressionName 
@@ -1383,7 +1418,7 @@ loadNetworkFromFile <- function() {
         if (length(reactiveVars$SelectedStoredExpressionIds) == 0) {
           reactiveVars$SelectedStoredExpressionIds <- c(nid)
         }
-      } else return()
+      } else createAlert(session, "tabUploadSideAlert", "fileUploadAlert", title = "ERROR !", style = "danger", content = paste0("An error occurred while trying to read your file. Please make sure that it is formatted according to the requirements."), append = FALSE)
     })
     
     
@@ -1857,5 +1892,70 @@ loadNetworkFromFile <- function() {
     
     ###########################################################
     
+    # datasetInput <- reactive({
+    #   source("modularity_download.R", local=T)
+    #   switch (input$automated_annotations,
+    #           automated_annotations_ui= modularity_download()
+    #   )
+    #   })
+    # 
+    # 
+    # output$downloadData <- downloadHandler(
+    #   filename = function() {
+    #     paste(input$dataset, ".txt", sep = "")
+    #   },
+    #   content = function(file) {
+    #     write.table(datasetInput(), file, row.names = FALSE)
+    #   }
+    # )
+    
+    #### Help pages - Download files ###
+    
+    dros_net<- read.delim("PAP_example.txt", header = T)
+    dros_annot <- read.delim("PAP_david.txt", header = F)
+    output$dros_net <- downloadHandler(
+        filename = function() {
+          paste('Drosophila Network file', '.txt', sep='')
+        },
+        content = function(file) {
+          write.table(dros_net, file)
+        }
+      )
+    output$dros_annot <- downloadHandler(
+        filename = function() {
+          paste('Drosophila Annotation', '.txt', sep='')
+        },
+        content = function(file) {
+          write.table(dros_annot, file)
+        }
+      )
+    
+    string_net <- read.delim("string_interactions.txt", header = T)
+    string_annot <- read.delim("string_interactions_groups_comma_duplicate.txt", header = F)
+    string_expr <- read.delim("string_expression_colors.txt", header = F)
+    output$string_net <- downloadHandler(
+      filename = function() {
+        paste('STRING Network file', '.txt', sep='')
+      },
+      content = function(file) {
+        write.table(string_net, file)
+      }
+    )
+    output$string_annot <- downloadHandler(
+      filename = function() {
+        paste('STRING Annotation file', '.txt', sep='')
+      },
+      content = function(file) {
+        write.table(string_annot, file)
+      }
+    )
+    output$string_expr <- downloadHandler(
+      filename = function() {
+        paste('STRING Expression file', '.txt', sep='')
+      },
+      content = function(file) {
+        write.table(string_expr, file)
+      }
+    )
     
 })# The End

@@ -217,6 +217,7 @@ var theGraphData = {
     
     expression$color<- as.character(expression$color)
     expression$color[which(expression$color=="blue")] <- "0"
+    expression$color[which(expression$color=="yellow")] <- "16"
     expression$color[which(expression$color=="orange")] <- "2"
     expression$color[which(expression$color=="green")] <- "4"
     expression$color[which(expression$color=="red")] <- "6"
