@@ -86,7 +86,7 @@ pie_charts<- function(){
   <style>
     .node {
             stroke: white;
-			stroke-width: 3;
+			stroke-width: 2;
         }
 
 	.nodelabel {

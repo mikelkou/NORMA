@@ -1,4 +1,133 @@
+### Dependencies ###
+if (!require(Rcpp))
+  install.packages("Rcpp")
+if (!require(shiny))
+  install.packages('shiny')
+# make sure you load DT *after* shiny
+if (!require(DT))
+  install.packages('DT')
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+#BiocManager::install()
+#source("https://bioconductor.org/biocLite.R")
+if (!require(uuid))
+  install.packages('uuid')
+if (!require(shinyBS))
+  install.packages('shinyBS')
+if (!require(networkD3))
+  install.packages('networkD3')
+if (!require(shinyjs))
+  install.packages('shinyjs')
+if (!require(magrittr))
+  install.packages('magrittr')
+if (!require(devtools))
+  install.packages('devtools')
+if (!require(colourpicker))
+  install.packages('colourpicker')
+if (!require(backports))
+  install.packages('backports')
+
+if (!require(viridis))
+  install.packages('viridis')
+if (!require(tidyverse))
+  install.packages('tidyverse')
+if (!require(plyr))
+  install.packages('plyr')
+if (!require(dplyr))
+  install.packages('dplyr')
+if (!require(purrr))
+  install.packages('purrr')
+if (!require(igraph))
+  install.packages('igraph')
+if (!require(RColorBrewer))
+  install.packages('RColorBrewer')
+if (!require(data.table))
+  install.packages('data.table')
+if (!require(stringi))
+  install.packages('stringi')
+
+
+if (!require(rbokeh))
+  install.packages('rbokeh')
+if (!require(zoom))
+  install.packages('zoom')
+if (!require(shinythemes))
+  install.packages('shinythemes')
+if (!require(rhandsontable))
+  install.packages('rhandsontable')
+
+if (!require(d3Network)) install.packages("d3Network")
+if (!require(lattice)) install.packages("lattice")
+if (!require(PerformanceAnalytics)) install.packages("PerformanceAnalytics")
+if (!require(networkD3)) install.packages("networkD3")
+if (!require(randomcoloR)) install.packages("randomcoloR")
+if (!require(Cairo)) install.packages("Cairo")
+
+
+if (!require(GraphAlignment)){
+  source("https://bioconductor.org/biocLite.R")
+  biocLite("GraphAlignment")
+}
+
+
+library(shinythemes)
+
+library(BiocManager)
+library(devtools)
+library(shiny)
+library(shinyBS)
+library(DT)
+library(uuid)
+library(networkD3)
+library(magrittr)
+library(shinyjs)
+library(colourpicker)
+library(shinyWidgets)
+
+library(viridis)
+library(tidyverse)
+library(plyr)
+library(tidyr)
+library(dplyr)
+library(purrr)
+library(igraph)
+library(ggplot2)
+library(ggraph)
 library(RColorBrewer)
+library(data.table)
+library(networkD3)
+library(stringi)
+
+library(reshape2)
+library(shinyjs)
+
+library(visNetwork)
+library(shinyWidgets)
+
+library(r2d3)
+library(jsonlite)
+
+library(d3Network)
+library(lattice)
+library(Cairo)
+library(randomcoloR)
+library(colourpicker)
+library(GraphAlignment)
+
+
+library(reactlog) #debugging
+
+options(shiny.usecairo = F)
+options(shiny.maxRequestSize=30*1024^2) #30 MB for uploaded networks
+options(shiny.reactlog=TRUE) #debugging
+
+source("layout_choices.R")
+source("layouts_ui.R")
+source("statistics.R")
+source("netstats.R")
+source("automated_annotations_vector.R")
+source("automated_annotations_choices.R")
+
 
 # 300 Colors - Up to 100 are distinct
 qual_col_pals<-c("#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E","#E6AB02","#A6761D","#666666","#7FC97F","#BEAED4",
