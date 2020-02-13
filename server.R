@@ -98,7 +98,7 @@ convert_to_igraph <- function(dataset1) ({
     # }
     igraph <- graph.data.frame(dataset1, vertices = NULL,directed = F)
     
-    return(igraph)
+    return(simplify(igraph))
 })
 
 EmptyDataset <- function(columns) {
@@ -165,10 +165,10 @@ loadNetworkFromFile <- function() {
             dataset1 <- read_data(input$file1$datapath)
         }
     }, oR_String_interactions = {
-        dataset1 <- read.delim("string_interactions.txt", header= T)
+        dataset1 <- read.delim("Examples/string_interactions.txt", header= T)
     }, oR_Drosophila = {
         n <- as.integer(input$oR_selected_size)
-        dataset1 <- read.delim("PAP_example.txt")
+        dataset1 <- read.delim("Examples/PAP_example.txt")
     }
     )
         if (input$uiLoadGraphOptionsInput != "oF" && !is.null(dataset1)) {
@@ -203,10 +203,10 @@ loadNetworkFromFile <- function() {
           annotation1 <- read_annotations(input$file2$datapath)
         }
       }, oR_String_Annotation = {
-          annotation1 <- read.delim("string_interactions_groups_comma_duplicate.txt", header= F)
+          annotation1 <- read.delim("Examples/string_interactions_groups_comma_duplicate.txt", header= F)
       }, oR_Drosophila_Annotation = {
         n <- as.integer(input$oR_selected_size)
-                annotation1 <- read.delim("PAP_david.txt", header = F)
+                annotation1 <- read.delim("Examples/PAP_david.txt", header = F)
       }
       )
       
@@ -1361,7 +1361,7 @@ loadNetworkFromFile <- function() {
           expression1 <- read_expressions(input$file3$datapath)
         }
       }, oR_Expression_file = {
-        expression1 <- read.delim("string_expression_colors.txt", header= F)
+        expression1 <- read.delim("Examples/string_expression_colors.txt", header= F)
       })
       if(!is.null(expression1)){
       colnames(expression1) <- c("ID", "Color")}
@@ -1536,7 +1536,12 @@ loadNetworkFromFile <- function() {
         dataset <- fetchFirstSelectedStoredDataset()
         if (is.null(dataset)) 
             dataset <- EmptyDataset(c("Source", "Target", "Weight"))
-        return(datatable(dataset, rownames = FALSE, editable = F) %>% formatStyle(colnames(dataset), fontSize = ui_options["ui_table_font_sz"]) %>% formatRound("Weight"))
+        
+        else{gg<- convert_to_igraph(dataset)
+        dataset<- as.data.frame(get.edgelist(gg))
+        dataset<- cbind(dataset, rep(1,nrow(dataset)))
+        colnames(dataset)<- c("Source", "Target", "Weight")}
+        return(datatable(dataset, options=list(columnDefs = list(list(visible=FALSE, targets=c(2)))), rownames = FALSE, editable = F) %>% formatStyle(colnames(dataset), fontSize = ui_options["ui_table_font_sz"]) %>% formatRound("Weight"))
     
     })
 
@@ -1898,7 +1903,7 @@ loadNetworkFromFile <- function() {
     
     ### Download-links for examples in Help pages
     
-    dros_annot <- read.delim("PAP_david.txt", header = F)
+    dros_annot <- read.delim("Examples/PAP_david.txt", header = F)
     output$dros_net <- downloadHandler(
       filename = function() {
         paste('Drosophila Network file', '.txt', sep='')
@@ -1911,8 +1916,8 @@ loadNetworkFromFile <- function() {
     
     #### Help pages - Download files ###
     
-    dros_net<- read.delim("PAP_example.txt", header = T)
-    dros_annot <- read.delim("PAP_david.txt", header = F)
+    dros_net<- read.delim("Examples/PAP_example.txt", header = T)
+    dros_annot <- read.delim("Examples/PAP_david.txt", header = F)
     output$dros_net <- downloadHandler(
         filename = function() {
           paste('Drosophila Network file', '.txt', sep='')
@@ -1930,9 +1935,9 @@ loadNetworkFromFile <- function() {
         }
       )
     
-    string_net <- read.delim("string_interactions.txt", header = T)
-    string_annot <- read.delim("string_interactions_groups_comma_duplicate.txt", header = F)
-    string_expr <- read.delim("string_expression_colors.txt", header = F)
+    string_net <- read.delim("Examples/string_interactions.txt", header = T)
+    string_annot <- read.delim("Examples/string_interactions_groups_comma_duplicate.txt", header = F)
+    string_expr <- read.delim("Examples/string_expression_colors.txt", header = F)
     output$string_net <- downloadHandler(
       filename = function() {
         paste('STRING Network file', '.txt', sep='')

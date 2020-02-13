@@ -146,11 +146,17 @@ ui_dataTable_panel <- function(datasetName, pagination = TRUE) {
     )
 }
 
-b64 <- base64enc::dataURI(file="net.png", mime="image/png")
-b64_2 <- base64enc::dataURI(file="help_pages_network_and_modularity.PNG", mime="image/png")
-b64_3 <- base64enc::dataURI(file="help_pages_convex_and_pies.PNG", mime="image/png")
-b64_4 <- base64enc::dataURI(file="help_pages_topology.PNG", mime="image/png")
-b64_5 <- base64enc::dataURI(file="banner.png", mime="image/png")
+b64_1 <- base64enc::dataURI(file="Figures/Banner.png", mime="image/png")
+b64_2 <- base64enc::dataURI(file="Figures/Upload-1.png", mime="image/png")
+b64_3 <- base64enc::dataURI(file="Figures/Upload-2.png", mime="image/png")
+b64_4 <- base64enc::dataURI(file="Figures/Upload-3.png", mime="image/png")
+b64_5 <- base64enc::dataURI(file="Figures/Network_view_interactive.png", mime="image/png")
+b64_6 <- base64enc::dataURI(file="Figures/Community_detection_algorithms.png", mime="image/png")
+b64_7 <- base64enc::dataURI(file="Figures/Convex_Hulls.PNG", mime="image/png")
+b64_8 <- base64enc::dataURI(file="Figures/Pies.PNG", mime="image/png")
+b64_9 <- base64enc::dataURI(file="Figures/Expression_colors.png", mime="image/png")
+b64_10 <- base64enc::dataURI(file="Figures/Topology.PNG", mime="image/png")
+b64_11 <- base64enc::dataURI(file="Figures/Topology_comparisons.PNG", mime="image/png")
 
 
 fixedPage(
@@ -163,7 +169,7 @@ fixedPage(
   ),
     useShinyjs(),
     tags$head(tags$script(src = "cyjs.js")),
-  tags$img(src = b64_5),
+  tags$img(src = b64_1),
   navbarPage(
       "NORMA: The NetwORk Makeup Artist",
         header = tags$head(tags$style(type = "text/css", ui_css)),
@@ -471,7 +477,6 @@ fixedPage(
                                          status = "info",
                                          inline = F,
                                          value = F),
-                          # plotOutput('tabVizPie_charts'),
                           uiOutput('tabVizPie_charts'),
                           eval(ui_dataTable_panel("chooseGroups2")),
                         ),
@@ -496,7 +501,6 @@ fixedPage(
                         
                         
                         hr(),
-                        # downloadButton("pie_chartsDownload"),
                         class = 'box-panel-padding',
                         class = 'box-panel'
                         
@@ -598,7 +602,7 @@ fixedPage(
                        br(),
                        strong("The network file:"),
                        helpText(
-                         "It is an obligatory, 2-column, tab-delimited file containing all network connections of an undirected network. This file must contain headers, namely: from and to."),
+                         "It is an obligatory, 2-column (unweighted), tab-delimited file containing all network connections of an undirected network. This file must contain headers, namely: from and to. Notably, self-loops and multiple-edges are eliminated automatically."),
                        strong("The annotation file:"),
                        helpText("
  It is an obligatory, 2-column, tab-delimited file which contains information about the groups. The first column contains the group names whereas the second column contains the node names in a group separated by a comma (,) and without spaces. No headers are allowed."),
@@ -665,7 +669,10 @@ Once a network or an annotation file has been named and uploaded, it will appear
               tabPanel("The Upload Tab",
                        br(),
                        helpText("Once one or more network and annotation files have been named and uploaded, they will be given as options in the dropdown selection lists. Users can select a network or an annotation file at a time and see its contents as an interactive table. Notably, one can search by suffix in a table, using the Search field. "),
-                       tags$img(src=b64),
+                       tags$img(src=b64_2),
+                       tags$img(src=b64_3),
+                       tags$img(src=b64_4),
+                       br(),
                        br()
                        
                        ),#Tabpanel Upload
@@ -677,6 +684,9 @@ Once a network or an annotation file has been named and uploaded, it will appear
                        strong("Interactive Network:"),
                        helpText("This Tab offers a dynamic network visualization in its simplest form. Nodes are connected with undirected edges and their coordinates are calculated using a force-directed layout. The network is fully interactive as zooming, dragging and panning are allowed either by using the mouse or the navigation buttons. In addition, nodes can be selected and dragged anywhere on the plane, whereas the first neighbors of any node can be highlighted upon selection. Finally, the network view is automatically updated when a different network is selected."),
                        br(),
+                       tags$img(src=b64_5),
+                       br(),
+                       br(),
                        strong("Automated Annotations/Clustering:"),
                        helpText("This Tab is used for the automatic calculation of communities whereas the exported file(s) can be used as input annotation file(s). Users can assign nodes to communities (not necessarily uniquely), using various options. These are:"),
                        helpText(tags$ul(
@@ -686,10 +696,12 @@ Once a network or an annotation file has been named and uploaded, it will appear
                          tags$li("Walktrap: This function tries to find densely connected subgraphs in a graph via random walks. The idea is that short random walks tend to stay in the same community."),
                          tags$li("Betweenness: Many networks consist of modules which are densely connected between themselves but sparsely connected to other modules. Clustering is made by ‘breaking’ the bridges which connect densely connected regions."),
                        )),
-                       tags$img(src=b64_2),
+                       br(),
+                       tags$img(src=b64_6),
+                       br(),
+                       br(),
                        helpText("Once a community detection method has been selected, users can see the results as interactive and searchable tables or as static plots for an at-a-glance understanding. In order for users to take advantage of NORMA’s advanced interactive visualization capabilities, the automatically generated annotations must be first exported and then imported as annotation input files.")
-                       # hr()
-                       
+
                        ), #Tabpanel Network
               
               
@@ -706,18 +718,28 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
                        strong("Convex Hull:"),
                        helpText("In this tab, the selected network is initially visualized after applying any of the offered layout algorithms and shaded convex hulls are then used to highlight communities in a Venn-diagram-like view. A node might belong to more than one group. In this case, NORMA tries to bring closer together the overlapping regions which share nodes while simultaneously keeping the distinct groups apart. Groups are highlighted using visually distinct colors, whereas transparency is used to efficiently highlight the overlapping regions."),
                        br(),
+                       tags$img(src=b64_7),
+                       br(),
+                       br(),
                        strong("Pie-chart nodes:"),
                        helpText("Similarly to before, the selected network is initially visualized after applying any of the offered layout algorithms and nodes are then visualized as pie-charts, divided into slices to illustrate the groups a node belongs to. If a node for example belongs to four groups, then the pie chart will consist of four equal slices colored with distinct colors. Nodes which do not belong to any group are marked gray. 
 "),
                        br(),
+                       tags$img(src=b64_8),
+                       
+                       br(),
+                       br(),
                        strong("Node coloring:"),
                        helpText("Often, one might want to assign certain colors to nodes in order to encode certain information. In a gene expression network for example, one might want to highlight the up- and down-regulated genes. Once an expression file has been loaded (see Input file section), nodes in the Convex Hull will be filled with the color of interest whereas nodes in the Pie-Chart tab will appear with a colored border. As node coloring is an optional feature, one can enable or disable this functionality at any time (selection box).
 "),
-                       tags$img(src=b64_3),
+                       br(),
+                       tags$img(src=b64_9),
+                       br(),
                        br(),
                        strong("Layouts:"),
                        helpText("Several layouts are offered for network visualization in both Convex Hull and Pie Chart sub-tabs. These are:
 "),
+                       br(),
                        br(),
                        helpText(tags$ul(
                          tags$li("Fruchterman-Reingold: It places nodes on the plane using the force-directed layout algorithm developed by Fruchterman and Reingold."),
@@ -770,10 +792,14 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
                        helpText("This Tab shows the aforementioned topological measures in a numerical form as a table view. Users can select one or more features of interest through the offered checkboxes and show them accordingly. Notably, this can be done for one network at a time upon selection (dropdown selection list).
 "),
                        br(),
+                       tags$img(src=b64_10),
+                       
+                       br(),
                        strong("Comparative Plots:"),
                        helpText("This Tab can be used to directly compare the topological features of two or more networks simultaneously. In contrast with the previous Tab, users are allowed to select one topological feature at a time (radio buttons) but as many networks as they like (check boxes). Once two or more networks and one topological feature have been selected, direct comparisons can be made by the generated bar charts. A slider to adjust the chart height is offered.
 "),
-                       tags$img(src=b64_2)
+                       tags$img(src=b64_11),
+                       br()
                        
                        ) #Tabpanel Topology
               
@@ -795,7 +821,7 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
             ),
             br(),
             strong("Code:"),
-            helpText("Availability at: http://………….."),
+            helpText("Available upon request."),
             br(),
             strong("Publications:"),
             helpText("NORMA has been submitted for publication. 
@@ -804,4 +830,3 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
         )
     )
 )
-# )
