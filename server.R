@@ -82,23 +82,11 @@ read_data <- function(datapath, type = c("txt"), header = T, sep = "\t", quote =
 
 read_annotations <- function(datapath, type = c("txt"), header = F, sep = "\t", quote = "\"", weighted = F, na.strings=c("","NA")) ({
   annotation1 <- read.table(datapath, header = header, sep = sep, quote = quote)
-  if (ncol(annotation1) == 2) {
-    dataset1$V3 <- NULL
-  } else if (ncol(annotation1) > 2) {
-    annotation1 <- annotation1[, 1:2]
-  } else if (ncol(annotation1) != 2)
-    return(NULL)
 
 })
 
 read_expressions <- function(datapath, type = c("txt"), header = F, sep = "\t", quote = "\"", weighted = F, na.strings=c("","NA")) ({
   expression1 <- read.table(datapath, header = header, sep = sep, quote = quote)
-  if (ncol(expression1) == 2) {
-    dataset1$V3 <- NULL
-  } else if (ncol(expression1) > 2) {
-    expression1 <- expression1[, 1:2]
-  } else if (ncol(expression1) != 2)
-    return(NULL)
   
 })
 
@@ -939,7 +927,7 @@ loadNetworkFromFile <- function() {
           annotation<- NULL
         }
         
-      } else createAlert(session, "tabUploadSideAlert", "fileUploadAlert", title = "ERROR !", style = "danger", content = paste0("An error occurred while trying to read your file. Please make sure that it is formatted according to the requirements."), append = FALSE)
+      } else createAlert(session, "tabUploadSideAlert", "fileUploadAlert", title = "ERROR !", style = "danger", content = paste0("An error occurred while trying to read your file. Please make sure that it is formatted according to the requirements (Check tabs between columns."), append = FALSE)
     })
        
     
@@ -1863,51 +1851,63 @@ loadNetworkFromFile <- function() {
     })
     
    
+    ###########################################################
+    ## Download-button for automated annotations
     
-    downaload_automated_annotations <- observeEvent(input$dowanload_automated_annotations_file, {
-      net <- fetchFirstSelectedStoredIgraph_just_network()
-      if (is.null(net)){
-        return(NULL)}
+    file_name<- function(){
       automated_annotations <- input$automated_annotations
-      source("modularity.R", local= T)
-      data<- modularity()
       
       if(automated_annotations=="Fast-Greedy\tcluster_fast_greedy(igraph)"){
-      write.table(data, file= paste("Fast-Greedy_", Sys.Date(), '.txt', sep=''), sep= "\t", row.names = F, col.names = F)
-      }
+        filename<- "Fast-Greedy_"
+        }
       if(automated_annotations=="Louvain\tcluster_louvain(igraph)"){
-      write.table(data, file= paste("Louvain_", Sys.Date(), '.txt', sep=''), sep= "\t", row.names = F, col.names = F)
-      }
+        filename<-"Louvain_"
+        }
       if(automated_annotations=="Label-Propagation\tcluster_label_prop(igraph)"){
-      write.table(data, file= paste("Label-Propagation_", Sys.Date(), '.txt', sep=''), sep= "\t", row.names = F, col.names = F)
-      }
+        filename<-"Label-Propagation_"
+        }
       if(automated_annotations=="Walktrap\tcluster_walktrap(igraph)"){
-      write.table(data, file= paste("Walktrap_", Sys.Date(), '.txt', sep=''), sep= "\t", row.names = F, col.names = F)
-      }
+        filename<-"Walktrap_"
+        }
       if(automated_annotations=="Betweenness\tcluster_edge_betweenness(igraph)"){
-      write.table(data, file= paste("Betweenness_", Sys.Date(), '.txt', sep=''), sep= "\t", row.names = F, col.names = F)
-      }
+        filename<-"Betweenness_"
+        }
+      return(filename)
+    }
+    
+    datasetInput <- reactive({
+      automated_annotations <- input$automated_annotations
       
+      source("modularity.R", local=T)
+      net <- fetchFirstSelectedStoredIgraph_just_network()
+      if (is.null(net)) 
+        return()
+      modularity()
       })
     
-    ###########################################################
     
-    # datasetInput <- reactive({
-    #   source("modularity_download.R", local=T)
-    #   switch (input$automated_annotations,
-    #           automated_annotations_ui= modularity_download()
-    #   )
-    #   })
-    # 
-    # 
-    # output$downloadData <- downloadHandler(
-    #   filename = function() {
-    #     paste(input$dataset, ".txt", sep = "")
-    #   },
-    #   content = function(file) {
-    #     write.table(datasetInput(), file, row.names = FALSE)
-    #   }
-    # )
+    output$downloadData <- downloadHandler(
+      filename = function() {
+        automated_annotations <- input$automated_annotations
+        paste(file_name(), Sys.Date(), '.txt', sep='')
+      },
+      content = function(file) {
+        write.table(datasetInput(), file, row.names = FALSE, col.names = F, quote = F, sep = "\t")
+      }
+    )
+    
+    ### Download-links for examples in Help pages
+    
+    dros_annot <- read.delim("PAP_david.txt", header = F)
+    output$dros_net <- downloadHandler(
+      filename = function() {
+        paste('Drosophila Network file', '.txt', sep='')
+      },
+      content = function(file) {
+        write.table(dros_net, file, sep = "\t")
+      }
+    )
+    
     
     #### Help pages - Download files ###
     
@@ -1918,7 +1918,7 @@ loadNetworkFromFile <- function() {
           paste('Drosophila Network file', '.txt', sep='')
         },
         content = function(file) {
-          write.table(dros_net, file)
+          write.table(dros_net, file, sep = "\t")
         }
       )
     output$dros_annot <- downloadHandler(
@@ -1926,7 +1926,7 @@ loadNetworkFromFile <- function() {
           paste('Drosophila Annotation', '.txt', sep='')
         },
         content = function(file) {
-          write.table(dros_annot, file)
+          write.table(dros_annot, file, sep = "\t")
         }
       )
     
@@ -1938,7 +1938,7 @@ loadNetworkFromFile <- function() {
         paste('STRING Network file', '.txt', sep='')
       },
       content = function(file) {
-        write.table(string_net, file)
+        write.table(string_net, file, sep = "\t")
       }
     )
     output$string_annot <- downloadHandler(
@@ -1946,7 +1946,7 @@ loadNetworkFromFile <- function() {
         paste('STRING Annotation file', '.txt', sep='')
       },
       content = function(file) {
-        write.table(string_annot, file)
+        write.table(string_annot, file, sep = "\t")
       }
     )
     output$string_expr <- downloadHandler(
@@ -1954,8 +1954,10 @@ loadNetworkFromFile <- function() {
         paste('STRING Expression file', '.txt', sep='')
       },
       content = function(file) {
-        write.table(string_expr, file)
+        write.table(string_expr, file, sep = "\t")
       }
     )
+   
+    
     
 })# The End

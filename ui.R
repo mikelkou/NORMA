@@ -342,14 +342,8 @@ fixedPage(
                                     selected = selected_automated_annotations,
                                     multiple = FALSE
                         ),
-                        span(actionButton("dowanload_automated_annotations_file", "Export as annotation file", icon("download")), 
-                             # style="color: #fff; background-color: #013220; border-color: #013220"), 
-                             class = "input-group-btn"),
-                        
-                        # downloadButton("downloadData", "Download"),
-                        
-                        
-                        
+                        downloadButton("downloadData", "Export as annotation file", icon("download")),
+                        br(),
                         br(),
                         prettyCheckbox(inputId = "show_labels_algorithms_tab",
                                        label = "Show Labels",
