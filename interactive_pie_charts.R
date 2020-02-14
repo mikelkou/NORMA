@@ -4,8 +4,6 @@ pie_charts<- function(){
   if (is.null(g)) 
     return()
   dataset1<- get.edgelist(g)
-  # print(dataset1)
-  
   my_network<- as.data.frame(get.edgelist(g))
   my_network<- data.frame(from = my_network$V1, to = my_network$V2)
   
@@ -23,8 +21,7 @@ pie_charts<- function(){
   groups<- data.frame(V1 = groups$Annotations, stri_split_fixed(groups$Nodes, ",",  simplify = TRUE))
   groups<-mutate_all(groups, funs(na_if(.,"")))
   number_of_groups<-dim(groups)[1]
-  #paste("Number of nodes in", gName, " is ", " and the annotation file is : ", annotName)
-  
+
   x <- list()
   for (i in 1:number_of_groups) {
     group_i<- groups[i,]
@@ -46,21 +43,15 @@ pie_charts<- function(){
   
   members <- data_frame(id=unlist(x),group = unlist(GO))
   members_with_NA_groups <- data_frame(id=unlist(x),group = unlist(GO))
-  # print(members_with_NA_groups)
-  
-  # members <- unique(rbind(as.matrix(dataset1[,1]), as.matrix(dataset1[,2])))
-  # print(members)
-  
   dataset1 <- as.matrix(dataset1)
   annotation1 <- as.matrix(annotation1)
   
   nrowdat <- nrow(dataset1)
   nrowannot <- nrow(annotation1)
   
-  source("pie_charts(stableInput).R", local = T)
+  source("pie_charts_layout_virtual_nodes.R", local = T)
   lay<-pie_chartsInput()
-  
-  
+
   if (length(s)==0)
   {
     s<-c(1:nrowannot)
@@ -69,8 +60,6 @@ pie_charts<- function(){
   if (length(s)) {
     s<-sort(s)#-----------------------------------
     x<- length(s)
-    # print(s)
-    # print(x)
     ccc<-group_pal_rows(length(x))
     tmp_selected_colors<- c()
     
@@ -114,24 +103,18 @@ pie_charts<- function(){
     }
     members_with_NA_groups<-unique(members_with_NA_groups)
   }
-  # print(members_with_NA_groups)
   nodes <- unique(members_with_NA_groups$id)
-  # nodes_no_NAs<- na.omit(nodes)
-  
   annots <- na.omit(members_with_NA_groups)
   annots<- unique(annots$group)
 
   members_with_zeros<- as.matrix(members_with_NA_groups)
   members_with_zeros[is.na(members_with_zeros)] <- 0
   members_with_zeros<- as.data.frame(members_with_zeros)
-  # print(members_with_zeros)
-  
+
   groupss <- members_with_zeros %>% 
     group_by(id) %>% 
     summarise_all(funs(trimws(paste(., collapse = ','))))
   groupss <- inner_join(members_with_zeros, groupss, by = "id")
-   # groupss<- na.omit(groupss)
-  # print(groupss)
   groupss <-data.frame(groupss[,1],groupss[,3])
   groupss<-groupss[!duplicated(groupss[,1]), ]
   colnames(groupss)<- c("V1", "V2")
@@ -144,7 +127,6 @@ pie_charts<- function(){
   #### Expressions ####
   
   if (!is.null(getStoredExpressionChoices())){
-    # expressions_pies<-read.delim("string_expression_colors.txt", header = F)
     expressions_pies<-fetchFirstSelectedStoredExpression()
     colnames(expressions_pies) <- c("id", "color")
     express_order<- as.data.frame(members_with_NA_groups)
@@ -160,8 +142,6 @@ pie_charts<- function(){
     expressions_pies$color[which(expressions_pies$color=="purple")] <- "8"
     expressions_pies$color[which(expressions_pies$color=="gray")] <- "15"
     expressions_pies$color[which(is.na(expressions_pies$color))] <- "15"
-    
-    # print(expressions_pies)
   }
   
   if (is.null(getStoredExpressionChoices())){
@@ -171,11 +151,8 @@ pie_charts<- function(){
     colnames(expressions_pies) <- c("id", "color")
   }
   
-  
   ###################
-  
-  
-  
+
   minx<-min(lay[,1])
   maxx<-max(lay[,1])
   miny<-min(lay[,2])
@@ -223,9 +200,6 @@ pie_charts<- function(){
     genes <- strsplit(annotation1[s[i], 2], ",")$Nodes
     selected_genes<-unique(c(selected_genes, genes))
   }
- # print(selected_genes)
-  
-  
   
   if(zoom_slider==TRUE)
   {
@@ -303,7 +277,6 @@ pie_charts<- function(){
       }
     }#for
   }
-  
 
   cat(sprintf("],\n
 						\"links\":[\n"), file = fileConn)
@@ -333,11 +306,7 @@ pie_charts<- function(){
       cat(sprintf(paste( "\"", qual_col_pals[s[i]], "\"," ,sep="")), file = fileConn)
     }
   cat(sprintf("])\n"), file = fileConn)
-  ########################################
-  
-  
-  
-
+ 
   cat(sprintf("var color_border = d3.scale.category20();
               color_border(0);
               color_border(1);

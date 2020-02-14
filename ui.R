@@ -45,6 +45,7 @@ ui_dataTable_panel <- function(datasetName, pagination = TRUE) {
   ))
 }
 
+# Images for help pages and banner
 b64_1 <-
   base64enc::dataURI(file = "Figures/Banner.png", mime = "image/png")
 b64_2 <-
@@ -160,7 +161,7 @@ fixedPage(
           
           ######2nd button-annotation
           selectInput(
-            "uiLoadGraphOptionsInput2",
+            "uiLoadGraphOptionsInput_annotations",
             "2: Choose Annotation(s)",
             c(
               "File upload" = "oF",
@@ -168,7 +169,7 @@ fixedPage(
               "Drosophila_Annotation" = "oR_Drosophila_Annotation"
             )
           ),
-          uiOutput("uiLoadGraphOptionsOutput2"),
+          uiOutput("uiLoadGraphOptionsOutput_annotations"),
           div(
             span(
               actionButton(
@@ -188,7 +189,7 @@ fixedPage(
             ),
             class = "input-group"
           ),
-          uiOutput("uiStoredGraphsOutputRadio2"),
+          uiOutput("uiStoredGraphsOutputRadio_annotations"),
           hr(),
           
           
@@ -199,8 +200,6 @@ fixedPage(
             c("File upload" = "oF",
               "Expression_file" = "oR_Expression_file")
           ),
-          
-          
           uiOutput("uiLoadExpressions"),
           div(
             span(
@@ -272,7 +271,6 @@ fixedPage(
       tabsetPanel(
         tabPanel(
           "Interactive Network",
-          
           visNetworkOutput('tabVizIgraphSimple', width = 1000, height = 600),
           class = 'box-panel-padding',
           
@@ -280,7 +278,7 @@ fixedPage(
         ),
         
         tabPanel(
-          "Automated Annotations/Clustering",
+          "Automated Community Detection",
           br(),
           selectInput(
             "automated_annotations",
@@ -320,7 +318,7 @@ fixedPage(
       conditionalPanel(
         condition = "input.availableAnnotations == 0",
         bsAlert("tabUploadMainAlert"),
-        uiOutput("uiLoadGraphOptionsOutput2_annotations_tab")
+        uiOutput("uiLoadGraphOptionsOutput_annotations_annotations_tab")
       ),
       conditionalPanel(
         condition = "input.availableExpressions == 0",
@@ -536,8 +534,8 @@ fixedPage(
           class = 'box-panel-padding',
           class = 'box-panel'
           
-        )
-        # tags$a("Large window",target="_blank",href="www/output_convex_8488.html")
+        ),
+        # tags$a("Large window",target="_blank",href="output_convex_11188.html")
         
         
       ) #tabsetPanel
@@ -644,12 +642,12 @@ fixedPage(
           br(),
           strong("The network file:"),
           helpText(
-            "It is an obligatory, 2-column (unweighted), tab-delimited file containing all network connections of an undirected network. This file must contain headers, namely: from and to. Notably, self-loops and multiple-edges are eliminated automatically."
+            "It is an obligatory, 2-column (unweighted), tab-delimited file, containing all network connections of an undirected network. This file must contain headers, namely: 'from' and 'to'. Notably, self-loops and multiple-edges are eliminated automatically."
           ),
           strong("The annotation file:"),
           helpText(
             "
- It is an obligatory, 2-column, tab-delimited file which contains information about the groups. The first column contains the group names whereas the second column contains the node names in a group separated by a comma (,) and without spaces. No headers are allowed."
+ It is an obligatory, 2-column, tab-delimited file which contains information about the defined groups. The first column contains the group names whereas the second column contains the node names in a group separated by a comma (,) and without spaces. No headers are allowed."
           ),
           strong("The expression file:"),
           helpText(
@@ -721,7 +719,7 @@ Once a network or an annotation file has been named and uploaded, it will appear
           "The Upload Tab",
           br(),
           helpText(
-            "Once one or more network and annotation files have been named and uploaded, they will be given as options in the dropdown selection lists. Users can select a network or an annotation file at a time and see its contents as an interactive table. Notably, one can search by suffix in a table, using the Search field. "
+            "Once one or more network and annotation files have been named and uploaded, they will appear as options in the dropdown selection lists. Users can select a network or an annotation file at a time and see its content as an interactive table. Notably, one can search by suffix in the table, using the Search field. "
           ),
           tags$img(src = b64_2),
           tags$img(src = b64_3),
@@ -736,8 +734,9 @@ Once a network or an annotation file has been named and uploaded, it will appear
           "The Network Tab",
           br(),
           strong(
-            "This Tab consists of two sub-tabs dedicated to network analysis and visualization. These are: (i) the Interactive Network and the (ii) the Modularity/Clustering."
+            "This Tab consists of two sub-tabs dedicated to network analysis and visualization. These are: (i) the Interactive Network and the (ii) the Automated Community Detection."
           ),
+          br(),
           br(),
           strong("Interactive Network:"),
           helpText(
@@ -747,7 +746,7 @@ Once a network or an annotation file has been named and uploaded, it will appear
           tags$img(src = b64_5),
           br(),
           br(),
-          strong("Automated Annotations/Clustering:"),
+          strong("Automated Community Detection:"),
           helpText(
             "This Tab is used for the automatic calculation of communities whereas the exported file(s) can be used as input annotation file(s). Users can assign nodes to communities (not necessarily uniquely), using various options. These are:"
           ),
@@ -773,7 +772,7 @@ Once a network or an annotation file has been named and uploaded, it will appear
           br(),
           br(),
           helpText(
-            "Once a community detection method has been selected, users can see the results as interactive and searchable tables or as static plots for an at-a-glance understanding. In order for users to take advantage of NORMA’s advanced interactive visualization capabilities, the automatically generated annotations must be first exported and then imported as annotation input files."
+            "Once a community detection method has been selected, users can see the results as interactive and searchable tables or as static plots for an at-a-glance view. In order for users to take advantage of NORMA’s advanced interactive visualization capabilities, the automatically generated annotations must be first exported and then imported as annotation input files."
           )
           
         ),
@@ -784,7 +783,7 @@ Once a network or an annotation file has been named and uploaded, it will appear
           "The Annotations Tab",
           br(),
           strong(
-            "This Tab is NORMA’s strongest feature and is used to visualize annotated networks in an easy and user-friendly way. Annotated, are the networks networks with (pre-)defined clusters, communities, subgraphs, marked regions or neighborhoods.
+            "This Tab is NORMA’s strongest feature and is used to visualize annotated networks in an easy and user-friendly way. Annotated, are the networks with (pre-)defined clusters, communities, subgraphs, marked regions or neighborhoods.
 
 Through the Annotation Tab, users can select between any of the uploaded networks or annotation files and visualize them in combination. Network and Annotation selections can be done by the offered dropdown selection lists.
 
@@ -795,7 +794,7 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
           br(),
           strong("Convex Hull:"),
           helpText(
-            "In this tab, the selected network is initially visualized after applying any of the offered layout algorithms and shaded convex hulls are then used to highlight communities in a Venn-diagram-like view. A node might belong to more than one group. In this case, NORMA tries to bring closer together the overlapping regions which share nodes while simultaneously keeping the distinct groups apart. Groups are highlighted using visually distinct colors, whereas transparency is used to efficiently highlight the overlapping regions."
+            "In this tab, the selected network is initially visualized after applying any of the offered layout algorithms and shaded convex hulls are then used to highlight communities in a Venn-diagram-like view. A node might belong to more than one group. In this case, NORMA tries to bring closer together the overlapping regions which share common nodes while simultaneously it tries to keep the distinct groups apart. Groups are highlighted using visually distinct colors, whereas transparency is used to efficiently highlight the overlapping regions."
           ),
           br(),
           tags$img(src = b64_7),
@@ -803,7 +802,7 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
           br(),
           strong("Pie-chart nodes:"),
           helpText(
-            "Similarly to before, the selected network is initially visualized after applying any of the offered layout algorithms and nodes are then visualized as pie-charts, divided into slices to illustrate the groups a node belongs to. If a node for example belongs to four groups, then the pie chart will consist of four equal slices colored with distinct colors. Nodes which do not belong to any group are marked gray.
+            "In this Tab, the selected network is initially visualized after applying any of the offered layout algorithms and nodes are then visualized as pie-charts, divided into slices to illustrate the groups a node belongs to. If a node for example belongs to four groups, then the pie chart will consist of four equal slices colored with distinct colors. Nodes which do not belong to any group are marked gray.
 "
           ),
           br(),
@@ -825,8 +824,6 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
             "Several layouts are offered for network visualization in both Convex Hull and Pie Chart sub-tabs. These are:
 "
           ),
-          br(),
-          br(),
           helpText(
             tags$ul(
               tags$li(
@@ -842,7 +839,7 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
                 "Kamada-Kawai: This layout places the vertices on a 2D plane by simulating a physical model of springs."
               ),
               tags$li(
-                "Reingold-Tilford: This is a tree-like layout and is suitable for trees or graphs with not too many cycles."
+                "Reingold-Tilford: This is a tree-like layout and is suitable for trees or graphs without many cycles."
               ),
               tags$li("LGL: A force directed layout suitable for larger graphs."),
               tags$li(
@@ -860,7 +857,7 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
           br(),
           strong("Interactivity and Visualization:"),
           helpText(
-            "NORMA gives a variety of options for the creation of optimal custom views. Network zoom in/out and panning functionalities are offered while users can interactively drag any node and place it anywhere on the plane. In addition to the visualized networks, groups are shown in an interactive table whose rows are colored accordingly. By selecting one or more groups, one can adjust the convex hulls as well as the pie-chart nodes accordingly. Colored groups (rows) in the table correspond to colored groups in the offered views and vice versa. In addition, users have the option to show and hide the labels or only keep the labels of the selected groups of interest while labels below a certain zoom level are hidden for better clarity. Finally, sliders to adjust node and label sizes as well as a slider to scale the network size are offered."
+            "NORMA gives a variety of options for the creation of optimal custom views. Network zoom in/out and panning functionalities are offered while users can interactively drag any node and place it anywhere on the plane. In addition to the visualized networks, groups are shown in an interactive table whose rows are colored accordingly. By selecting one or more groups, one can adjust the convex hulls as well as the pie-chart nodes accordingly. Colored groups (rows) in the table correspond to colored groups in the offered views and vice versa. In addition, users have the option to show and hide the labels or only keep the labels of the selected groups of interest while labels below a certain zoom level are hidden for clarity. Finally, sliders to adjust node and label sizes as well as a slider to scale the network size are offered."
           )
           
         ),
@@ -873,15 +870,15 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
             "This Tab is used for automated topological analysis and direct comparison of topological features between two or more networks.
 "
           ),
-          helpText("The topological features which are: "),
+          helpText("The topological features are: "),
           helpText(
             tags$ul(
               tags$li(
-                "Number of Edges: Shows the number of edges in the network. Notably, if the network has more than 10000 edges, NORMA will take into account only the first 10000.
+                "Number of Edges: Shows the number of edges in the network. NORMA accepts networks with less than 10000 edges.
 "
               ),
               tags$li(
-                "Number of Nodes: Shows the number of nodes in the network. No more than 5000 nodes are allowed.
+                "Number of Nodes: Shows the number of nodes in the network.
 "
               ),
               tags$li(
@@ -901,10 +898,10 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
 "
               ),
               tags$li(
-                "Average Eccentricity: The eccentricity of a vertex is its shortest path distance from the farthest other node in the graph."
+                "Average Eccentricity: The distance from a particular vertex to all other vertices in the graph is taken and among those distances, the eccentricity is the highest of distances."
               ),
               tags$li(
-                "Average number of Neighbors: It is the total number of neighbors per node divided by the number of nodes
+                "Average number of Neighbors: It is the total number of neighbors per node divided by the number of nodes.
 "
               ),
               tags$li(
@@ -919,7 +916,7 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
           ),
           br(),
           
-          helpText(
+          strong(
             "The Topology Tab is divided into two sub-tabs. These are: (i) the Summaries and (ii) the Comparative Plots.
 "
           ),
@@ -935,7 +932,7 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
           br(),
           strong("Comparative Plots:"),
           helpText(
-            "This Tab can be used to directly compare the topological features of two or more networks simultaneously. In contrast with the previous Tab, users are allowed to select one topological feature at a time (radio buttons) but as many networks as they like (check boxes). Once two or more networks and one topological feature have been selected, direct comparisons can be made by the generated bar charts. A slider to adjust the chart height is offered.
+            "This Tab can be used to directly compare the topological features of two or more networks simultaneously. In contrast to the previous Tab, users are allowed to select one topological feature at a time (radio buttons) but as many networks as they like (check boxes). Once two or more networks and one topological feature have been selected, direct comparisons can be made by the generated bar charts. A slider to adjust the chart height is offered.
 "
           ),
           tags$img(src = b64_11),

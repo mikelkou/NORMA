@@ -1,6 +1,5 @@
 pie_chartsInput <- function() {
   set.seed(123)
-  
   g <- fetchFirstSelectedStoredIgraph_annotations_tab()
   if (is.null(g))
     return()
@@ -19,8 +18,7 @@ pie_chartsInput <- function() {
                stri_split_fixed(groups$Nodes, ",",  simplify = TRUE))
   groups <- mutate_all(groups, funs(na_if(., "")))
   number_of_groups <- dim(groups)[1]
-  #paste("Number of nodes in", gName, " is ", " and the annotation file is : ", annotName)
-  
+
   x <- list()
   for (i in 1:number_of_groups) {
     group_i <- groups[i, ]
@@ -69,7 +67,6 @@ pie_chartsInput <- function() {
     })
   
   #### sort by group as in file #####
-  
   group_order<-(as.list(unique(members_with_NA_groups$group)))
   EE <- new.env(hash = TRUE)
   EE_positions <- new.env(hash = TRUE)
@@ -93,12 +90,6 @@ pie_chartsInput <- function() {
     group_ids<-c(group_ids, group_ids_tmp[ EE_positions[[ as.character(i) ]]])
   }
   
-  
-  ####################################
-  # print(group_ids)
-  ####################################
-  
-
   virt_group_nodes <-
     length(members_with_NA_groups$id) + 1:number_of_groups
   names(virt_group_nodes) <- c(letters[1:number_of_groups])

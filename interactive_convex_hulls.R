@@ -4,8 +4,7 @@ convex_hulls<- function(){
   if (is.null(g)) 
     return()
   dataset1<- get.edgelist(g)
-  # print(dataset1)
-  
+
   my_network<- as.data.frame(get.edgelist(g))
   my_network<- data.frame(from = my_network$V1, to = my_network$V2)
   
@@ -24,8 +23,7 @@ convex_hulls<- function(){
   groups<- data.frame(V1 = groups$Annotations, stri_split_fixed(groups$Nodes, ",",  simplify = TRUE))
   groups<-mutate_all(groups, funs(na_if(.,"")))
   number_of_groups<-dim(groups)[1]
-  #paste("Number of nodes in", gName, " is ", " and the annotation file is : ", annotName)
-  
+
   x <- list()
   for (i in 1:number_of_groups) {
     group_i<- groups[i,]
@@ -47,11 +45,7 @@ convex_hulls<- function(){
   
   members <- data_frame(id=unlist(x),group = unlist(GO))
   members_with_NA_groups <- data_frame(id=unlist(x),group = unlist(GO))
-  # print(members_with_NA_groups)
-  
-  # members <- unique(rbind(as.matrix(dataset1[,1]), as.matrix(dataset1[,2])))
-  # print(members)
-  
+
   dataset1 <- as.matrix(dataset1)
   annotation1 <- as.matrix(annotation1)
   
@@ -59,10 +53,8 @@ convex_hulls<- function(){
   nrowannot <- nrow(annotation1)
   
  
-  source("convex_hullInput.R", local = T)
+  source("convex_hulls_layout_virtual_nodes.R", local = T)
   lay<-convexInput()
-  # print(lay)
-  
   
   fileConn <- file(paste("output_convex_",Sys.getpid(),".html", sep=""), "w")
   
@@ -74,8 +66,6 @@ convex_hulls<- function(){
   if (length(s)) {
     s<-sort(s)#-----------------------------------
     x<- length(s)
-    # print(s)
-    # print(x)
     ccc<-group_pal_rows(length(x))
     tmp_selected_colors<- c()
     
@@ -184,8 +174,6 @@ var g = d3.select(\"g\");
 var theGraphData = {
 \"nodes\":[\n"), file= fileConn)
   
-  
-  # members_with_NA_groups$id #<- parseMembers()# to do
   if(length(nodes_with_NA_groups)>0){
     for (i in 1:length(nodes_with_NA_groups))
     {
@@ -193,28 +181,22 @@ var theGraphData = {
     }
     members_with_NA_groups<-unique(members_with_NA_groups)
   }
-  # print(members_with_NA_groups)
   nodes <- unique(members_with_NA_groups$id)
-  # print(nodes)
-  
 
   minx<-min(lay[,1])
   maxx<-max(lay[,1])
   miny<-min(lay[,2])
   maxy<-max(lay[,2])
   
-  
   #### Expressions ####
   
   if (!is.null(getStoredExpressionChoices())){
-    # expression<-read.delim("string_expression_colors.txt", header = F)
     expression<-fetchFirstSelectedStoredExpression()
     colnames(expression) <- c("id", "color")
     express_order<- as.data.frame(members_with_NA_groups)
     express_order<- as.data.frame(unique(express_order$id))
     colnames(express_order) <- "id"
     expression<-left_join(express_order, expression, by = "id")
-    
     expression$color<- as.character(expression$color)
     expression$color[which(expression$color=="blue")] <- "0"
     expression$color[which(expression$color=="yellow")] <- "16"
@@ -224,10 +206,6 @@ var theGraphData = {
     expression$color[which(expression$color=="purple")] <- "8"
     expression$color[which(expression$color=="gray")] <- "15"
     expression$color[which(is.na(expression$color))] <- "15"
-    
-    # if(is.na(expression$color)){
-    # }
-    # print(expression)
   }
   
   if (is.null(getStoredExpressionChoices())){
@@ -236,13 +214,8 @@ var theGraphData = {
       expression$color <- rep(c("15"))
       colnames(expression) <- c("id", "color")
   }
-  
-  
-  
+
   ###################
-  
-  
-  
   zoom_slider<-TRUE
   max_allowed_scale<-1
   for (i in 1:length(nodes)){
@@ -271,18 +244,11 @@ var theGraphData = {
     }
   }
   
-  
-  
-
-  
   selected_genes<-c()
   for(i in 1:x){
     genes <- strsplit(annotation1[s[i], 2], ",")$Nodes
     selected_genes<-unique(c(selected_genes, genes))
   }
-  
-  # print(s)
-  
   
   if(zoom_slider==TRUE)
     {
@@ -299,7 +265,6 @@ var theGraphData = {
       
       if(show_labels == F)
         node_name<-""
-      #sample(0:600, 1)
       if(expression_colors == T){
     cat(sprintf(paste("{\"id\":", i-1, ",name:\"", node_name,"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20 , ", 'y':", coor_y*scaling_coordinates_convex()-100*scaling_coordinates_convex()+20, ", 'fixed': true, \"color_value\":", expression$color[i], "},\n",sep="")), file = fileConn)
       }
@@ -323,7 +288,6 @@ var theGraphData = {
       if(show_labels == F)
         node_name<-""
       
-      #sample(0:600, 1)
       if(expression_colors == T){
         cat(sprintf(paste("{\"id\":", i-1, ",name:\"", node_name,"\",\"propertyValue\":",scaling_nodes_convex(), ",'x':", coor_x*max_allowed_scale-100*max_allowed_scale+20 , ", 'y':", coor_y*max_allowed_scale-100*max_allowed_scale+20, ", 'fixed': true, \"color_value\":", expression$color[i], "},\n",sep="")), file = fileConn)
       }
@@ -381,8 +345,6 @@ var "
   }      
 
   ########################################
- 
-  
   for (i in 1:x){
     cat(sprintf(paste("var groupNodes", s[i], " = group", s[i], 
                       ".map(function(group", s[i], ",index){
@@ -412,8 +374,6 @@ var "
     ), file = fileConn)
   }
 
-  #####
-  
   cat(sprintf(paste("\nforce
 .nodes(graph.nodes)
 .links(graph.links)

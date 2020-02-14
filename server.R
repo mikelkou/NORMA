@@ -87,7 +87,6 @@ options(shiny.error = browser) #debugging
 
 
 
-
 shinyServer(function(input, output, session) {
   reactiveVars <- reactiveValues()
   reactiveVars$StoredNetworks <-
@@ -190,7 +189,7 @@ shinyServer(function(input, output, session) {
   loadAnnotations <- function() {
     annotation1 <- NULL
     switch(
-      input$uiLoadGraphOptionsInput2,
+      input$uiLoadGraphOptionsInput_annotations,
       oF = {
         if (!is.null(input$file2)) {
           annotation1 <- read_annotations(input$file2$datapath)
@@ -214,13 +213,13 @@ shinyServer(function(input, output, session) {
     return(annotation1)
   }
   
-  output$uiLoadGraphOptionsOutput2 <- renderUI({
-    if (is.null(input$uiLoadGraphOptionsInput2))
+  output$uiLoadGraphOptionsOutput_annotations <- renderUI({
+    if (is.null(input$uiLoadGraphOptionsInput_annotations))
       return()
     
     # Depending on input$input_type, we'll generate a different UI
     # component and send it to the client.
-    if (input$uiLoadGraphOptionsInput2 == "oF") {
+    if (input$uiLoadGraphOptionsInput_annotations == "oF") {
       wellPanel(fileInput(
         "file2",
         "Choose file to upload",
@@ -233,7 +232,6 @@ shinyServer(function(input, output, session) {
     }
     
   })
-  
   
   ####################################
   
@@ -267,7 +265,7 @@ shinyServer(function(input, output, session) {
   dochangeAnnotationName <- observe({
     updateTextInput(session,
                     inputId = "annotationName",
-                    value = (if (input$uiLoadGraphOptionsInput2 == "OF") {
+                    value = (if (input$uiLoadGraphOptionsInput_annotations == "OF") {
                       paste("Annotation name")
                     }))
   })
@@ -275,7 +273,7 @@ shinyServer(function(input, output, session) {
   dochangeAnnotationName2 <- observe({
     updateTextInput(session,
                     inputId = "annotationName",
-                    value = (if (input$uiLoadGraphOptionsInput2 == "oR_String_Annotation") {
+                    value = (if (input$uiLoadGraphOptionsInput_annotations == "oR_String_Annotation") {
                       paste("STRING Annotation")
                     }))
   })
@@ -283,7 +281,7 @@ shinyServer(function(input, output, session) {
   dochangeAnnotationName3 <- observe({
     updateTextInput(session,
                     inputId = "annotationName",
-                    value = (if (input$uiLoadGraphOptionsInput2 == "oR_Drosophila_Annotation") {
+                    value = (if (input$uiLoadGraphOptionsInput_annotations == "oR_Drosophila_Annotation") {
                       paste("Drosophila Annotation")
                     }))
   })
@@ -888,7 +886,7 @@ shinyServer(function(input, output, session) {
     }
   }
   
-  output$uiLoadGraphOptionsOutput2_annotations_tab <-  renderUI({
+  output$uiLoadGraphOptionsOutput_annotations_annotations_tab <-  renderUI({
     input$btnAddNetwork2
     input$btnRemoveNetworks2
     choices <- getStoredNetsChoices2_annotations_tab()
@@ -941,7 +939,7 @@ shinyServer(function(input, output, session) {
     else {
       updateCheckboxGroupInput(
         session,
-        "uiLoadGraphOptionsOutput2_annotations_tab",
+        "uiLoadGraphOptionsOutput_annotations_annotations_tab",
         "Selected network(s)",
         choices = getStoredNetsChoices2_annotations_tab(),
         selected = getStoredNetsChoices2_annotations_tab()[1]
@@ -959,7 +957,7 @@ shinyServer(function(input, output, session) {
         c(input$storedGraphsOutputSelectUpload2)
     }, ignoreNULL = FALSE)
   
-  output$uiStoredGraphsOutputRadio2 <- renderUI({
+  output$uiStoredGraphsOutputRadio_annotations <- renderUI({
     input$btnAddNetwork2
     input$btnRemoveNetworks2
     choices <- getStoredAnnotChoices()
@@ -1127,7 +1125,6 @@ shinyServer(function(input, output, session) {
   })
   
   ######## Plots#######################
-  
   ### Interactive Network ###
   output$tabVizIgraphSimple <- renderVisNetwork({
     g <- fetchFirstSelectedStoredIgraph_just_network()
@@ -1182,7 +1179,6 @@ shinyServer(function(input, output, session) {
   })
   
   ### Pie - Charts ###
-  
   output$chooseGroups2 <- DT::renderDataTable({
     annotation <- fetchFirstSelectedStoredGroups2_annotations_tab()
     if (is.null(annotation))
@@ -1280,7 +1276,6 @@ shinyServer(function(input, output, session) {
   })
   
   ### Convex Hull ###
-  
   output$chooseGroups <- DT::renderDataTable({
     annotation <- fetchFirstSelectedStoredGroups2_annotations_tab()
     if (is.null(annotation))
@@ -1391,8 +1386,7 @@ shinyServer(function(input, output, session) {
   StoredExpressEmpty <- function() {
     return(nrow(reactiveVars$StoredExpressions) == 0)
   }
-  
-  
+
   StoredExpress <- reactive({
     return(reactiveVars$StoredExpressions)
   })
@@ -2194,7 +2188,5 @@ shinyServer(function(input, output, session) {
       write.table(string_expr, file, sep = "\t")
     }
   )
-  
-  
   
 })# The End
