@@ -45,33 +45,6 @@ ui_dataTable_panel <- function(datasetName, pagination = TRUE) {
   ))
 }
 
-# Images for help pages and banner
-b64_1 <-
-  base64enc::dataURI(file = "Figures/Banner.png", mime = "image/png")
-b64_2 <-
-  base64enc::dataURI(file = "Figures/Upload-1.png", mime = "image/png")
-b64_3 <-
-  base64enc::dataURI(file = "Figures/Upload-2.png", mime = "image/png")
-b64_4 <-
-  base64enc::dataURI(file = "Figures/Upload-3.png", mime = "image/png")
-b64_5 <-
-  base64enc::dataURI(file = "Figures/Network_view_interactive.png", mime =
-                       "image/png")
-b64_6 <-
-  base64enc::dataURI(file = "Figures/Community_detection_algorithms.png", mime =
-                       "image/png")
-b64_7 <-
-  base64enc::dataURI(file = "Figures/Convex_Hulls.PNG", mime = "image/png")
-b64_8 <-
-  base64enc::dataURI(file = "Figures/Pies.PNG", mime = "image/png")
-b64_9 <-
-  base64enc::dataURI(file = "Figures/Expression_colors.png", mime = "image/png")
-b64_10 <-
-  base64enc::dataURI(file = "Figures/Topology.PNG", mime = "image/png")
-b64_11 <-
-  base64enc::dataURI(file = "Figures/Topology_comparisons.PNG", mime = "image/png")
-
-
 fixedPage(
   theme = shinytheme("sandstone"),
   # shinythemes::themeSelector(),  # <--- Add this somewhere in the UI
@@ -534,7 +507,7 @@ fixedPage(
           class = 'box-panel-padding',
           class = 'box-panel'
           
-        ),
+        )
         # tags$a("Large window",target="_blank",href="output_convex_11188.html")
         
         

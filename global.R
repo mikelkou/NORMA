@@ -129,6 +129,33 @@ source("automated_annotations_vector.R")
 source("automated_annotations_choices.R")
 
 
+# Images for help pages and banner
+b64_1 <-
+  base64enc::dataURI(file = "Figures/Banner.png", mime = "image/png")
+b64_2 <-
+  base64enc::dataURI(file = "Figures/Upload-1.png", mime = "image/png")
+b64_3 <-
+  base64enc::dataURI(file = "Figures/Upload-2.png", mime = "image/png")
+b64_4 <-
+  base64enc::dataURI(file = "Figures/Upload-3.png", mime = "image/png")
+b64_5 <-
+  base64enc::dataURI(file = "Figures/Network_view_interactive.png", mime =
+                       "image/png")
+b64_6 <-
+  base64enc::dataURI(file = "Figures/Community_detection_algorithms.png", mime =
+                       "image/png")
+b64_7 <-
+  base64enc::dataURI(file = "Figures/Convex_Hulls.PNG", mime = "image/png")
+b64_8 <-
+  base64enc::dataURI(file = "Figures/Pies.PNG", mime = "image/png")
+b64_9 <-
+  base64enc::dataURI(file = "Figures/Expression_colors.png", mime = "image/png")
+b64_10 <-
+  base64enc::dataURI(file = "Figures/Topology.PNG", mime = "image/png")
+b64_11 <-
+  base64enc::dataURI(file = "Figures/Topology_comparisons.PNG", mime = "image/png")
+
+
 # 300 Colors - Up to 100 are distinct
 qual_col_pals<-c("#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E","#E6AB02","#A6761D","#666666","#7FC97F","#BEAED4",
                  "#FDC086","#FFFF99","#386CB0","#F0027F","#BF5B17","#A6CEE3","#1F78B4","#B2DF8A","#33A02C","#FB9A99",
