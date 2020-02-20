@@ -1,3 +1,5 @@
+library(shiny)
+
 colors <- randomColor(50)
 
 read_data <-
@@ -2188,5 +2190,220 @@ shinyServer(function(input, output, session) {
       write.table(string_expr, file, sep = "\t")
     }
   )
+  
+  
+  
+
+  ### Venn Diagrams ###
+  library(VennDiagram)
+  
+  output$vennDiagram1<- renderUI({
+    source("vennDiagrams.R", local=T)
+    venn<-vennDiagrams()
+    selectInput("node_1", label = "Node 1", choices = c("-",venn$id), selected = "-")
+  })
+  output$vennDiagram2<- renderUI({
+    source("vennDiagrams.R", local=T)
+    venn<-vennDiagrams()
+    selectInput("node_2", label = "Node 2", choices = c("-",venn$id), selected = "-")
+  }) 
+  # output$vennDiagram3<- renderUI({
+  #   source("vennDiagrams.R", local=T)
+  #   venn<-vennDiagrams()
+  #   selectInput("node_3", label = "Node 3", choices = c("-",venn$id), selected = "-")
+  # })
+  
+    
+  area1<- NULL
+  area2<- NULL
+  # area3<- NULL
+  v1<- NULL
+  v2<- NULL
+  # v3<- NULL
+  
+  output$vennDiagrams <- renderPlot({
+    node1_choice<- observe({
+      node1 <- input$node_1})
+    
+    if(!is.null(input$node_1)){
+      source("vennDiagrams.R", local = T)
+      venn<- vennDiagrams()
+      for(i in length(venn$id)){
+        venn_i<-which(venn$id==input$node_1)
+        v1 <- unlist(stri_split(venn[venn_i,2],fixed=','))
+        area1<-length(v1)
+      }
+    }
+    
+    node2_choice<- observe({
+      node2 <- input$node_2})
+    
+    if(!is.null(input$node_2)){
+      source("vennDiagrams.R", local = T)
+      venn<- vennDiagrams()
+      for(i in length(venn$id)){
+        venn_i<-which(venn$id==input$node_2)
+        v2 <- unlist(stri_split(venn[venn_i,2],fixed=','))
+        area2<-length(v2)
+      }
+    }
+    
+    
+    v12<-length(which(v1 %in% v2))
+    # v23<- length(which(v2 %in% v3))
+    # v13<- length(which(v1 %in% v3))
+    
+    # if(length(which(v1 %in% v2 %in% v3))>=0){
+    #   v123<- length(which(v1 %in% v2 %in% v3))}
+    # else {v123==0}
+    
+    length_of_gaps<- c(input$node_1, input$node_2)
+    if(!is.null(length_of_gaps)){
+    empty_length<- length(which(length_of_gaps %in% "-"))
+    
+    if(empty_length==0){ # 2 nodes
+      if( (input$node_1 != input$node_2) )
+      {
+        draw.pairwise.venn(area1 = area1, 
+                           area2 = area2, 
+                           cross.area = v12,
+                           category = c(input$node_1, input$node_2), 
+                           lty = "blank", 
+                           fill = c("skyblue", "pink1"))   
+    }
+    }
+    
+    # if(empty_length==1){ # 2 choices
+    # 
+    #   if(input$node_1== "-")
+    #     if(input$node_2 != input$node_3){
+    #     v = v23
+    #     area1=area2
+    #     area2=area3
+    #     category<- c(input$node_2,input$node_3)
+    #     draw.pairwise.venn(area1 = area1, 
+    #                        area2 = area2, 
+    #                        cross.area = v,
+    #                        category = category, 
+    #                        lty = "blank", 
+    #                        fill = c("skyblue", "pink1"))
+    #   }
+    #   if(input$node_2== "-")
+    #     if(input$node_1 != input$node_3){
+    #     v = v13
+    #     area1=area1
+    #     area2=area3
+    #     category<- c(input$node_1,input$node_3)
+    #     draw.pairwise.venn(area1 = area1, 
+    #                        area2 = area2, 
+    #                        cross.area = v,
+    #                        category = category, 
+    #                        lty = "blank", 
+    #                        fill = c("skyblue", "pink1"))
+    #   }
+    #   # if(input$node_3== "-")
+    #   #   if(input$node_1 != input$node_2){
+    #   #   v = v12
+    #   #   area1=area1
+    #   #   area2=area2
+    #   #   category<- c(input$node_1,input$node_2)
+    #   #   draw.pairwise.venn(area1 = area1, 
+    #   #                      area2 = area2, 
+    #   #                      cross.area = v,
+    #   #                      category = category, 
+    #   #                      lty = "blank", 
+    #   #                      fill = c("skyblue", "pink1"))
+    #   # }
+    # }
+    }
+    })
+  
+  node1_choice<- observe({
+    node1 <- input$node_1
+    node2 <- input$node_2
+    
+    source("vennDiagrams.R", local = T)
+    venn<- vennDiagrams()
+    if(is.null(input$node1))
+      df<- EmptyDataset(c("V1", "V2"))
+
+    if(!is.null(input$node_1)){
+      for(i in length(venn$id)){
+        venn_1<-which(venn$id==input$node_1)
+        venn_2<-which(venn$id==input$node_2)
+        v2 <- unlist(stri_split(venn[venn_2,2],fixed=','))
+        v1 <- unlist(stri_split(venn[venn_1,2],fixed=','))
+        area1<-length(v1)
+
+        df <- cbind("Node 1"=input$node_1,"Unique Groups"= v1[which((v1%in%v2)==F)])
+        df<- as.data.frame(df)
+      }
+    }
+    output$venn_table1 <- DT::renderDataTable({
+    datatable(df,rownames = FALSE, extensions = 'Responsive') %>% formatStyle(colnames(df), fontSize = ui_options["ui_table_font_sz"])
+  })
+  })
+
+  node2_choice<- observe({
+    node2 <- input$node_2
+    node1 <- input$node_1
+    
+    source("vennDiagrams.R", local = T)
+    venn<- vennDiagrams()
+    if(is.null(input$node2))
+      df<- EmptyDataset(c("V1", "V2"))
+
+    if(!is.null(input$node_2)){
+      for(i in length(venn$id)){
+        venn_1<-which(venn$id==input$node_1)
+        venn_2<-which(venn$id==input$node_2)
+        v2 <- unlist(stri_split(venn[venn_2,2],fixed=','))
+        v1 <- unlist(stri_split(venn[venn_1,2],fixed=','))
+        area2<-length(v2)
+        
+        v1 %in% v2
+        
+        df <- cbind("Node 2"=input$node_2, "Unique Groups"=v2[which((v2%in%v1)==F)])
+        df<- as.data.frame(df)
+      }
+    }
+    output$venn_table2 <- DT::renderDataTable({
+    datatable(df,rownames = FALSE, extensions = 'Responsive') %>% formatStyle(colnames(df), fontSize = ui_options["ui_table_font_sz"])
+  })
+  })
+
+
+  # node1_choice<- observe({
+  #   node2_choice<- observe({
+  #     node3_choice<- observe({
+
+  output$venn_table_summ <- DT::renderDataTable({
+    source("vennDiagrams.R", local = T)
+    venn<- vennDiagrams()
+    length_of_gaps<- c(input$node_1, input$node_2, input$node_3)
+    empty_length<- length(which(length_of_gaps %in% "-"))
+
+    if(is.null(input$node_1)|is.null(input$node_2))
+      df<- EmptyDataset(c("Node 1", "Node 2", "Intersection"))
+    
+          for(i in length(venn$id)){
+            venn_1<-which(venn$id==input$node_1)
+            venn_2<-which(venn$id==input$node_2)
+            v1 <- unlist(stri_split(venn[venn_1,2],fixed=','))
+            v2 <- unlist(stri_split(venn[venn_2,2],fixed=','))
+            area1<-length(v1)
+            area2<-length(v2)
+            v12<-length(which(v1 %in% v2))
+
+            df <- cbind("Node 1"=input$node_1, "Node 2"=input$node_2, "Intersection"=paste(v1[which(v1 %in% v2)], sep = ""))
+            df<- as.data.frame(df)
+          }
+    # print(df)
+  
+          datatable(df,rownames = FALSE, extensions = 'Responsive') %>% formatStyle(colnames(df), fontSize = ui_options["ui_table_font_sz"])
+  })
+  
+  
+  
   
 })# The End

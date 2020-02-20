@@ -1,3 +1,5 @@
+library(shiny)
+
 ui_options <- c("ui_table_line_height" = "80%")
 
 ui_css <- paste0(
@@ -508,8 +510,19 @@ fixedPage(
           class = 'box-panel'
           
         )
+        ,
         # tags$a("Large window",target="_blank",href="output_convex_11188.html")
+        tabPanel("Venn Diagrams",
+                 br(),
+                 div(style = "display:inline-block",uiOutput("vennDiagram1")),
+        div(style = "display:inline-block",uiOutput("vennDiagram2")),
+        br(),
+        plotOutput("vennDiagrams",width = 600, height = 600),
+        div(style = "display:inline-block",eval(ui_dataTable_panel("venn_table1", FALSE))),
+        div(style = "display:inline-block",eval(ui_dataTable_panel("venn_table2", FALSE))),
+        div(style = "display:inline-block",eval(ui_dataTable_panel("venn_table_summ", FALSE)))
         
+        )
         
       ) #tabsetPanel
       
@@ -760,7 +773,7 @@ Once a network or an annotation file has been named and uploaded, it will appear
 
 Through the Annotation Tab, users can select between any of the uploaded networks or annotation files and visualize them in combination. Network and Annotation selections can be done by the offered dropdown selection lists.
 
-The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and the (ii) Pie-chart nodes.
+The Annotation Tab consists of three sub-tabs. These are the: (i) Convex Hull, (ii) Pie-chart nodes and (iii) Venn diagrams.
 "
           ),
           br(),
@@ -831,8 +844,12 @@ The Annotation Tab consists of two sub-tabs. These are the: (i) Convex Hull and 
           strong("Interactivity and Visualization:"),
           helpText(
             "NORMA gives a variety of options for the creation of optimal custom views. Network zoom in/out and panning functionalities are offered while users can interactively drag any node and place it anywhere on the plane. In addition to the visualized networks, groups are shown in an interactive table whose rows are colored accordingly. By selecting one or more groups, one can adjust the convex hulls as well as the pie-chart nodes accordingly. Colored groups (rows) in the table correspond to colored groups in the offered views and vice versa. In addition, users have the option to show and hide the labels or only keep the labels of the selected groups of interest while labels below a certain zoom level are hidden for clarity. Finally, sliders to adjust node and label sizes as well as a slider to scale the network size are offered."
-          )
-          
+          ),
+          br(),
+          strong("Venn Diagrams:"),
+          helpText("Users are allowed to choose any pair of nodes and visualize the common groups they belong to as a Venn diagram. As it is not in the scope of NORMA to provide more complex Venn diagrams, users are encouraged to visit other online applications dedicated to this purpose. "),
+          tags$img(src = b64_12)
+
         ),
         #Tabpanel Annotations
         

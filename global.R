@@ -46,11 +46,6 @@ if (!require(data.table))
 if (!require(stringi))
   install.packages('stringi')
 
-
-if (!require(rbokeh))
-  install.packages('rbokeh')
-if (!require(zoom))
-  install.packages('zoom')
 if (!require(shinythemes))
   install.packages('shinythemes')
 if (!require(rhandsontable))
@@ -63,11 +58,6 @@ if (!require(networkD3)) install.packages("networkD3")
 if (!require(randomcoloR)) install.packages("randomcoloR")
 if (!require(Cairo)) install.packages("Cairo")
 
-
-if (!require(GraphAlignment)){
-  source("https://bioconductor.org/biocLite.R")
-  biocLite("GraphAlignment")
-}
 
 
 library(shinythemes)
@@ -83,9 +73,6 @@ library(magrittr)
 library(shinyjs)
 library(colourpicker)
 library(shinyWidgets)
-
-library(viridis)
-library(tidyverse)
 library(plyr)
 library(tidyr)
 library(dplyr)
@@ -104,7 +91,6 @@ library(shinyjs)
 library(visNetwork)
 library(shinyWidgets)
 
-library(r2d3)
 library(jsonlite)
 
 library(d3Network)
@@ -112,8 +98,8 @@ library(lattice)
 library(Cairo)
 library(randomcoloR)
 library(colourpicker)
-library(GraphAlignment)
 
+library(VennDiagram)
 
 library(reactlog) #debugging
 
@@ -154,6 +140,8 @@ b64_10 <-
   base64enc::dataURI(file = "Figures/Topology.PNG", mime = "image/png")
 b64_11 <-
   base64enc::dataURI(file = "Figures/Topology_comparisons.PNG", mime = "image/png")
+b64_12 <-
+  base64enc::dataURI(file = "Figures/venn.png", mime = "image/png")
 
 
 # 300 Colors - Up to 100 are distinct
