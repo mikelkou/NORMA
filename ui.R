@@ -104,7 +104,7 @@ fixedPage(
           ),
           selectInput(
             "uiLoadGraphOptionsInput",
-            "1: Choose Network",
+            "1: Choose Network(s)",
             c(
               "File upload" = "oF",
               "STRING" = "oR_String_interactions",
@@ -315,6 +315,16 @@ fixedPage(
             selected = selected_layouts,
             multiple = FALSE
           ),
+          prettyCheckbox(
+            inputId = "layouts_with_virtual_nodes",
+            label = "Allow modification of the selected layout taking into account the groups",
+            thick = TRUE,
+            shape = "curve",
+            animation = "pulse",
+            status = "info",
+            inline = F,
+            value = F
+          ),
           hr(),
           prettyCheckbox(
             inputId = "show_labels",
@@ -415,6 +425,16 @@ fixedPage(
               choices = layouts_ui,
               selected = selected_layouts,
               multiple = FALSE
+            ),
+            prettyCheckbox(
+              inputId = "layouts_with_virtual_nodes_pies",
+              label = "Allow modification of the selected layout taking into account the groups",
+              thick = TRUE,
+              shape = "curve",
+              animation = "pulse",
+              status = "info",
+              inline = F,
+              value = F
             ),
             hr(),
             ###############

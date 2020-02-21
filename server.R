@@ -897,7 +897,7 @@ shinyServer(function(input, output, session) {
     return(
       selectInput(
         "storedGraphsOutputSelectUpload2_annotations_tab",
-        "Selected network",
+        "Selected annotation",
         choices
       )
     )
@@ -1132,7 +1132,7 @@ shinyServer(function(input, output, session) {
     g <- fetchFirstSelectedStoredIgraph_just_network()
     if (is.null(g))
       return()
-    
+    set.seed(123)
     my_network <- as.data.frame(get.edgelist(g))
     my_network <-
       data.frame(from = my_network$V1, to = my_network$V2)
@@ -1228,6 +1228,7 @@ shinyServer(function(input, output, session) {
   expression_colors_pies <- T
   show_labels_pies <- T
   some_labels_pies <- T
+  layouts_with_virtual_nodes_pies<- T
   
   output$tabVizPie_charts <- renderUI({
     s = input$chooseGroups2_rows_selected
@@ -1239,6 +1240,12 @@ shinyServer(function(input, output, session) {
     if (is.null(g) | is.null(annoation_graph))
       return(NULL)
     
+    if (input$layouts_with_virtual_nodes_pies == T) {
+      layouts_with_virtual_nodes_pies = T
+    }
+    else if (input$layouts_with_virtual_nodes_pies == F) {
+      layouts_with_virtual_nodes_pies = F
+    }
     if (input$show_labels_pies == T) {
       show_labels_pies = T
     }
@@ -1325,6 +1332,7 @@ shinyServer(function(input, output, session) {
   expression_colors <- T
   show_labels <- T
   some_labels <- T
+  layouts_with_virtual_nodes<- T
   
   output$interactive_convex_hulls <- renderUI({
     s = input$chooseGroups_rows_selected
@@ -1335,6 +1343,12 @@ shinyServer(function(input, output, session) {
     if (is.null(g) | is.null(annoation_graph))
       return(NULL)
     
+    if (input$layouts_with_virtual_nodes == T) {
+      layouts_with_virtual_nodes = T
+    }
+    else  if (input$layouts_with_virtual_nodes == F) {
+      layouts_with_virtual_nodes = F
+    }
     if (input$show_labels == T) {
       show_labels = T
     }

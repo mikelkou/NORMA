@@ -52,10 +52,13 @@ convex_hulls<- function(){
   nrowdat <- nrow(dataset1)
   nrowannot <- nrow(annotation1)
   
- 
+ if(layouts_with_virtual_nodes==T){
   source("convex_hulls_layout_virtual_nodes.R", local = T)
-  lay<-convexInput()
-  
+  lay<-convexInput()}
+  else{set.seed(123)
+    lay <- layout_choices(g, lay)
+    }
+
   fileConn <- file(paste("output_convex_",Sys.getpid(),".html", sep=""), "w")
   
   if (length(s)==0)

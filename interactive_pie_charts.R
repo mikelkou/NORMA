@@ -49,8 +49,12 @@ pie_charts<- function(){
   nrowdat <- nrow(dataset1)
   nrowannot <- nrow(annotation1)
   
+  if(layouts_with_virtual_nodes_pies==T){
   source("pie_charts_layout_virtual_nodes.R", local = T)
-  lay<-pie_chartsInput()
+  lay<-pie_chartsInput()}
+  else{set.seed(123)
+    lay <- layout_choices(g, lay)
+  }
 
   if (length(s)==0)
   {
