@@ -131,7 +131,6 @@ convexInput <- function(){
   tmp<-which(nodes_virt$is_virt == T )
   
   lay <- lay[-tmp, ]
-
   return(lay)
 }
 

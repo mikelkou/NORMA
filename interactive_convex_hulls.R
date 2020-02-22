@@ -4,10 +4,10 @@ convex_hulls<- function(){
   if (is.null(g)) 
     return()
   dataset1<- get.edgelist(g)
-
+  # print(g)
+  # print(dataset1)
   my_network<- as.data.frame(get.edgelist(g))
   my_network<- data.frame(from = my_network$V1, to = my_network$V2)
-  
   gName <- SelectedStoredNets()$name
   
   annoation_graph <- fetchFirstSelectedStoredGroups2_annotations_tab()
@@ -45,20 +45,22 @@ convex_hulls<- function(){
   
   members <- data_frame(id=unlist(x),group = unlist(GO))
   members_with_NA_groups <- data_frame(id=unlist(x),group = unlist(GO))
-
+  
   dataset1 <- as.matrix(dataset1)
   annotation1 <- as.matrix(annotation1)
   
   nrowdat <- nrow(dataset1)
   nrowannot <- nrow(annotation1)
+
   
  if(layouts_with_virtual_nodes==T){
   source("convex_hulls_layout_virtual_nodes.R", local = T)
   lay<-convexInput()}
-  else{set.seed(123)
+  else{
+    set.seed(123)
     lay <- layout_choices(g, lay)
     }
-
+  
   fileConn <- file(paste("output_convex_",Sys.getpid(),".html", sep=""), "w")
   
   if (length(s)==0)
@@ -138,7 +140,6 @@ convex_hulls<- function(){
     cat(sprintf(
       paste("groupHullColor", s[i], " = '", qual_col_pals[s[i]], "' ;\n", sep = "")), file = fileConn)
   }
-  
   cat(sprintf("var force = d3.layout.force()
     .charge(-120)
     .linkDistance(30)
@@ -176,7 +177,7 @@ var g = d3.select(\"g\");
 // propertyValue depicts the size of the node while value the edge width, 'fixed': true to disable bouncy physics
 var theGraphData = {
 \"nodes\":[\n"), file= fileConn)
-  
+
   if(length(nodes_with_NA_groups)>0){
     for (i in 1:length(nodes_with_NA_groups))
     {
@@ -185,11 +186,23 @@ var theGraphData = {
     members_with_NA_groups<-unique(members_with_NA_groups)
   }
   nodes <- unique(members_with_NA_groups$id)
+  
+  
+  # print(length(lay[,1]))
+  # g<- (read.delim("Examples/string_interactions.txt"))
+  # g<- graph.data.frame(g, vertices = NULL, directed = F)
+  # lay<- layout.fruchterman.reingold(g)
+  
+  # if(length(nodes) > length(lay[,1])){
+  #   lay<-rbind(lay,lay[1:length(nodes),])
+  # }
+  # # lay<- rep(lay, length(nodes))
 
   minx<-min(lay[,1])
   maxx<-max(lay[,1])
   miny<-min(lay[,2])
   maxy<-max(lay[,2])
+  
   
   #### Expressions ####
   
@@ -217,23 +230,29 @@ var theGraphData = {
       expression$color <- rep(c("15"))
       colnames(expression) <- c("id", "color")
   }
+  
 
   ###################
   zoom_slider<-TRUE
   max_allowed_scale<-1
-  for (i in 1:length(nodes)){
+  
+  new_g<- get.edgelist(g)
+  new_nodes<-unique(union(new_g[,1], new_g[,2]))
+
+  for (i in 1:length(new_nodes)){
     coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
     coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
+
     if(  (coor_x*scaling_coordinates_convex())>max_pixels_panel | (coor_y*scaling_coordinates_convex())>max_pixels_panel     )
     {
       zoom_slider<-FALSE
       break
     }
   }
-  
+
   for(slider_values in 1:10){
   allowed<-TRUE
-  for (i in 1:length(nodes)){
+  for (i in 1:length(new_nodes)){
     coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
     coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
     if(  (coor_x*slider_values)>max_pixels_panel | (coor_y*slider_values)>max_pixels_panel     )
@@ -256,7 +275,7 @@ var theGraphData = {
   if(zoom_slider==TRUE)
     {
     
-    for (i in 1:length(nodes)){
+    for (i in 1:length(new_nodes)){
       coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
       coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
       node_name<-nodes[i]
@@ -279,7 +298,7 @@ var theGraphData = {
   }#if zoom_slider
   else
   {
-    for (i in 1:length(nodes)){
+    for (i in 1:length(new_nodes)){
       coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
       coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
       node_name<-nodes[i]

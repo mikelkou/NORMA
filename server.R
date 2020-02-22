@@ -1279,7 +1279,7 @@ shinyServer(function(input, output, session) {
           paste("output_pies_", Sys.getpid(), ".html", sep = "")
         ), collapse = '\n'),
         width = "100%",
-        height = "600px"
+        height = "850px"
       )
     })
   })
@@ -1381,7 +1381,7 @@ shinyServer(function(input, output, session) {
           paste("output_convex_", Sys.getpid(), ".html", sep = "")
         ), collapse = '\n'),
         width = "100%",
-        height = "600px"
+        height = "850px"
       )
     })
   })
@@ -2206,11 +2206,7 @@ shinyServer(function(input, output, session) {
   )
   
   
-  
-
   ### Venn Diagrams ###
-  library(VennDiagram)
-  
   output$vennDiagram1<- renderUI({
     source("vennDiagrams.R", local=T)
     venn<-vennDiagrams()
@@ -2221,20 +2217,12 @@ shinyServer(function(input, output, session) {
     venn<-vennDiagrams()
     selectInput("node_2", label = "Node 2", choices = c("-",venn$id), selected = "-")
   }) 
-  # output$vennDiagram3<- renderUI({
-  #   source("vennDiagrams.R", local=T)
-  #   venn<-vennDiagrams()
-  #   selectInput("node_3", label = "Node 3", choices = c("-",venn$id), selected = "-")
-  # })
   
-    
   area1<- NULL
   area2<- NULL
-  # area3<- NULL
   v1<- NULL
   v2<- NULL
-  # v3<- NULL
-  
+
   output$vennDiagrams <- renderPlot({
     node1_choice<- observe({
       node1 <- input$node_1})
@@ -2262,14 +2250,7 @@ shinyServer(function(input, output, session) {
       }
     }
     
-    
     v12<-length(which(v1 %in% v2))
-    # v23<- length(which(v2 %in% v3))
-    # v13<- length(which(v1 %in% v3))
-    
-    # if(length(which(v1 %in% v2 %in% v3))>=0){
-    #   v123<- length(which(v1 %in% v2 %in% v3))}
-    # else {v123==0}
     
     length_of_gaps<- c(input$node_1, input$node_2)
     if(!is.null(length_of_gaps)){
@@ -2286,49 +2267,6 @@ shinyServer(function(input, output, session) {
                            fill = c("skyblue", "pink1"))   
     }
     }
-    
-    # if(empty_length==1){ # 2 choices
-    # 
-    #   if(input$node_1== "-")
-    #     if(input$node_2 != input$node_3){
-    #     v = v23
-    #     area1=area2
-    #     area2=area3
-    #     category<- c(input$node_2,input$node_3)
-    #     draw.pairwise.venn(area1 = area1, 
-    #                        area2 = area2, 
-    #                        cross.area = v,
-    #                        category = category, 
-    #                        lty = "blank", 
-    #                        fill = c("skyblue", "pink1"))
-    #   }
-    #   if(input$node_2== "-")
-    #     if(input$node_1 != input$node_3){
-    #     v = v13
-    #     area1=area1
-    #     area2=area3
-    #     category<- c(input$node_1,input$node_3)
-    #     draw.pairwise.venn(area1 = area1, 
-    #                        area2 = area2, 
-    #                        cross.area = v,
-    #                        category = category, 
-    #                        lty = "blank", 
-    #                        fill = c("skyblue", "pink1"))
-    #   }
-    #   # if(input$node_3== "-")
-    #   #   if(input$node_1 != input$node_2){
-    #   #   v = v12
-    #   #   area1=area1
-    #   #   area2=area2
-    #   #   category<- c(input$node_1,input$node_2)
-    #   #   draw.pairwise.venn(area1 = area1, 
-    #   #                      area2 = area2, 
-    #   #                      cross.area = v,
-    #   #                      category = category, 
-    #   #                      lty = "blank", 
-    #   #                      fill = c("skyblue", "pink1"))
-    #   # }
-    # }
     }
     })
   
@@ -2385,12 +2323,7 @@ shinyServer(function(input, output, session) {
     datatable(df,rownames = FALSE, extensions = 'Responsive') %>% formatStyle(colnames(df), fontSize = ui_options["ui_table_font_sz"])
   })
   })
-
-
-  # node1_choice<- observe({
-  #   node2_choice<- observe({
-  #     node3_choice<- observe({
-
+  
   output$venn_table_summ <- DT::renderDataTable({
     source("vennDiagrams.R", local = T)
     venn<- vennDiagrams()
@@ -2412,8 +2345,6 @@ shinyServer(function(input, output, session) {
             df <- cbind("Node 1"=input$node_1, "Node 2"=input$node_2, "Intersection"=paste(v1[which(v1 %in% v2)], sep = ""))
             df<- as.data.frame(df)
           }
-    # print(df)
-  
           datatable(df,rownames = FALSE, extensions = 'Responsive') %>% formatStyle(colnames(df), fontSize = ui_options["ui_table_font_sz"])
   })
   

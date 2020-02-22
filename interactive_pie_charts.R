@@ -162,6 +162,7 @@ pie_charts<- function(){
   miny<-min(lay[,2])
   maxy<-max(lay[,2])
 
+  
   pie_to_be_colored<-c(rep(F,length(nodes)))
   
   for (i in 1:length(nodes)){
@@ -172,7 +173,11 @@ pie_charts<- function(){
   
   zoom_slider<-TRUE
   max_allowed_scale<-1
-  for (i in 1:length(nodes)){
+  
+  new_g<- get.edgelist(g)
+  new_nodes<-unique(union(new_g[,1], new_g[,2]))
+  
+  for (i in 1:length(new_nodes)){
     coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
     coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
     if(  (coor_x*scaling_coordinates_pies())>max_pixels_panel | (coor_y*scaling_coordinates_pies())>max_pixels_panel     )
@@ -184,7 +189,7 @@ pie_charts<- function(){
   
   for(slider_values in 1:10){
     allowed<-TRUE
-    for (i in 1:length(nodes)){
+    for (i in 1:length(new_nodes)){
       coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
       coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
       if(  (coor_x*slider_values)>max_pixels_panel | (coor_y*slider_values)>max_pixels_panel     )
@@ -207,7 +212,7 @@ pie_charts<- function(){
   
   if(zoom_slider==TRUE)
   {
-  for (i in 1:length(nodes)){
+  for (i in 1:length(new_nodes)){
     coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
     coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
     node_name<-nodes[i]
@@ -248,7 +253,7 @@ pie_charts<- function(){
   }#if zoom_slider
   else
   {
-    for (i in 1:length(nodes)){
+    for (i in 1:length(new_nodes)){
       coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
       coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
       node_name<-nodes[i]
