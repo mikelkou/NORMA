@@ -1376,6 +1376,7 @@ shinyServer(function(input, output, session) {
       source("interactive_convex_hulls.R", local = T)
       lay <- input$layouts
       convex_hulls()
+      
       tags$iframe(
         srcdoc = paste(readLines(
           paste("output_convex_", Sys.getpid(), ".html", sep = "")
@@ -1385,6 +1386,8 @@ shinyServer(function(input, output, session) {
       )
     })
   })
+  
+  uiOutputTextError<- 
   
   #######################################################################
   #Expression

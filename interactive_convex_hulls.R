@@ -239,6 +239,14 @@ var theGraphData = {
   new_g<- get.edgelist(g)
   new_nodes<-unique(union(new_g[,1], new_g[,2]))
 
+  if(length(nodes)!=length(new_nodes)){
+      showModal(modalDialog(
+        title = "Important message",
+        "Please make sure that the selected annotations corresponds to the selected network!",
+        easyClose = T
+      ))
+    }
+  
   for (i in 1:length(new_nodes)){
     coor_x<-mapper(lay[i,1], minx, maxx, 100, 800)
     coor_y<-mapper(lay[i,2], miny, maxy, 100, 800)
