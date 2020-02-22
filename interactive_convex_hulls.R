@@ -186,17 +186,6 @@ var theGraphData = {
     members_with_NA_groups<-unique(members_with_NA_groups)
   }
   nodes <- unique(members_with_NA_groups$id)
-  
-  
-  # print(length(lay[,1]))
-  # g<- (read.delim("Examples/string_interactions.txt"))
-  # g<- graph.data.frame(g, vertices = NULL, directed = F)
-  # lay<- layout.fruchterman.reingold(g)
-  
-  # if(length(nodes) > length(lay[,1])){
-  #   lay<-rbind(lay,lay[1:length(nodes),])
-  # }
-  # # lay<- rep(lay, length(nodes))
 
   minx<-min(lay[,1])
   maxx<-max(lay[,1])
@@ -242,7 +231,7 @@ var theGraphData = {
   if(length(nodes)!=length(new_nodes)){
       showModal(modalDialog(
         title = "Important message",
-        "Please make sure that the selected annotations corresponds to the selected network!",
+        "Please make sure that the selected annotation corresponds to the selected network!",
         easyClose = T
       ))
     }

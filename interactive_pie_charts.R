@@ -169,8 +169,6 @@ pie_charts<- function(){
     pie_to_be_colored[i]<-any(is.element(Groupss[[i]], annotation1[s])) 
   }
   
-  
-  
   zoom_slider<-TRUE
   max_allowed_scale<-1
   
@@ -179,7 +177,7 @@ pie_charts<- function(){
   if(length(nodes)!=length(new_nodes)){
     showModal(modalDialog(
       title = "Important message",
-      "Please make sure that the selected annotations corresponds to the selected network!",
+      "Please make sure that the selected annotation corresponds to the selected network!",
       easyClose = T
     ))
   }
