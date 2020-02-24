@@ -147,11 +147,11 @@ shinyServer(function(input, output, session) {
       },
       oR_String_interactions = {
         dataset1 <-
-          read.delim("Examples/string_interactions.txt", header = T)
+          read.delim("Examples/TP53/string_interactions.txt", header = T)
       },
       oR_Drosophila = {
         n <- as.integer(input$oR_selected_size)
-        dataset1 <- read.delim("Examples/PAP_example.txt")
+        dataset1 <- read.delim("Examples/TAU/TAU_network_DEGs_NORMA.txt")
       }
     )
     if (input$uiLoadGraphOptionsInput != "oF" &&
@@ -199,13 +199,13 @@ shinyServer(function(input, output, session) {
       },
       oR_String_Annotation = {
         annotation1 <-
-          read.delim("Examples/string_interactions_groups_comma_duplicate.txt",
+          read.delim("Examples/TP53/string_interactions_groups_comma_duplicate.txt",
                      header = F)
       },
       oR_Drosophila_Annotation = {
         n <- as.integer(input$oR_selected_size)
         annotation1 <-
-          read.delim("Examples/PAP_david.txt", header = F)
+          read.delim("Examples/TAU/TAU_KEGG_Annotation_NORMA.txt", header = F)
       }
     )
     if (!is.null(annotation1)) {
@@ -1479,7 +1479,7 @@ shinyServer(function(input, output, session) {
            },
            oR_Expression_file = {
              expression1 <-
-               read.delim("Examples/string_expression_colors.txt", header = F)
+               read.delim("Examples/TP53/string_expression_colors.txt", header = F)
            })
     if (!is.null(expression1)) {
       colnames(expression1) <- c("ID", "Color")
@@ -2144,69 +2144,15 @@ shinyServer(function(input, output, session) {
   
   ### Download-links for examples in Help pages
   
-  dros_annot <- read.delim("Examples/PAP_david.txt", header = F)
-  output$dros_net <- downloadHandler(
-    filename = function() {
-      paste('Drosophila Network file', '.txt', sep = '')
-    },
-    content = function(file) {
-      write.table(dros_net, file, sep = "\t")
-    }
-  )
-  
-  
-  #### Help pages - Download files ###
-  
-  dros_net <- read.delim("Examples/PAP_example.txt", header = T)
-  dros_annot <- read.delim("Examples/PAP_david.txt", header = F)
-  output$dros_net <- downloadHandler(
-    filename = function() {
-      paste('Drosophila Network file', '.txt', sep = '')
-    },
-    content = function(file) {
-      write.table(dros_net, file, sep = "\t")
-    }
-  )
-  output$dros_annot <- downloadHandler(
-    filename = function() {
-      paste('Drosophila Annotation', '.txt', sep = '')
-    },
-    content = function(file) {
-      write.table(dros_annot, file, sep = "\t")
-    }
-  )
-  
-  string_net <-
-    read.delim("Examples/string_interactions.txt", header = T)
-  string_annot <-
-    read.delim("Examples/string_interactions_groups_comma_duplicate.txt",
-               header = F)
-  string_expr <-
-    read.delim("Examples/string_expression_colors.txt", header = F)
-  output$string_net <- downloadHandler(
-    filename = function() {
-      paste('STRING Network file', '.txt', sep = '')
-    },
-    content = function(file) {
-      write.table(string_net, file, sep = "\t")
-    }
-  )
-  output$string_annot <- downloadHandler(
-    filename = function() {
-      paste('STRING Annotation file', '.txt', sep = '')
-    },
-    content = function(file) {
-      write.table(string_annot, file, sep = "\t")
-    }
-  )
-  output$string_expr <- downloadHandler(
-    filename = function() {
-      paste('STRING Expression file', '.txt', sep = '')
-    },
-    content = function(file) {
-      write.table(string_expr, file, sep = "\t")
-    }
-  )
+  # dros_annot <- read.delim("Examples/Drosophila/PAP_david.txt", header = F)
+  # output$dros_net <- downloadHandler(
+  #   filename = function() {
+  #     paste('Drosophila Network file', '.txt', sep = '')
+  #   },
+  #   content = function(file) {
+  #     write.table(dros_annot, file, sep = "\t")
+  #   }
+  # )
   
   
   ### Venn Diagrams ###
@@ -2350,6 +2296,192 @@ shinyServer(function(input, output, session) {
           }
           datatable(df,rownames = FALSE, extensions = 'Responsive') %>% formatStyle(colnames(df), fontSize = ui_options["ui_table_font_sz"])
   })
+  
+  
+  #### Help pages - Download files ###
+  
+  dros_net <- read.delim("Examples/TAU/TAU_network_DEGs_NORMA.txt", header = T)
+  dros_annot <- read.delim("Examples/TAU/TAU_KEGG_Annotation_NORMA.txt", header = F)
+  dros_louvain <- read.delim("Examples/TAU/TAU_Louvain.txt", header = F)
+  dros_express <- read.delim("Examples/TAU/TAU_expressions.txt", header = F)
+  output$dros_net <- downloadHandler(
+    filename = function() {
+      paste('Drosophila (TAU) Network file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(dros_net, file, row.names = F, sep = "\t")
+    }
+  )
+  output$dros_annot <- downloadHandler(
+    filename = function() {
+      paste('Drosophila KEGG pathways', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(dros_annot, file,row.names = F,col.names = F, sep = "\t")
+    }
+  )
+  output$dros_louvain <- downloadHandler(
+    filename = function() {
+      paste('Drosophila Louvain automated annotation', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(dros_louvain, file,row.names = F,col.names = F, sep = "\t")
+    }
+  )
+  output$dros_express <- downloadHandler(
+    filename = function() {
+      paste('Drosophila Expressions file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(dros_express, file,row.names = F,col.names = F, sep = "\t")
+    }
+  )
+  
+  #-------------------------------------------#
+  
+  string_net_tp53 <-
+    read.delim("Examples/TP53/string_interactions.txt", header = T)
+  string_annot <-
+    read.delim("Examples/TP53/string_interactions_groups_comma_duplicate.txt",
+               header = F)
+  string_expr <-
+    read.delim("Examples/TP53/string_expression_colors.txt", header = F)
+  
+  output$string_net_tp53 <- downloadHandler(
+    filename = function() {
+      paste('STRING TP53 Network file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(string_net_tp53, file, row.names = F, sep = "\t")
+    }
+  )
+  output$string_annot <- downloadHandler(
+    filename = function() {
+      paste('STRING TP53 Annotation file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(string_annot, file, row.names = F,col.names = F, sep = "\t")
+    }
+  )
+  output$string_expr <- downloadHandler(
+    filename = function() {
+      paste('STRING TP53 Expression file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(string_expr, file, row.names = F,col.names = F, sep = "\t")
+    }
+  )
+  
+  #-------------------------------------------#
+  
+  string_net_bcar3 <-
+    read.delim("Examples/BCAR3/BCAR3.txt", header = T)
+  string_bp <-
+    read.delim("Examples/BCAR3/BCAR3_GO_BP.txt", header = F)
+  string_mf <-
+    read.delim("Examples/BCAR3/BCAR3_GO_MF.txt", header = F)
+  string_kegg <-
+    read.delim("Examples/BCAR3/BCAR3_KEGG.txt",
+               header = F)
+  
+  output$string_net_bcar3 <- downloadHandler(
+    filename = function() {
+      paste('STRING BCAR3 Network file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(string_net_bcar3, file, row.names = F, sep = "\t")
+    }
+  )
+  output$string_bp <- downloadHandler(
+    filename = function() {
+      paste('STRING BCAR3 GO Biological Processes file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(string_bp, file, row.names = F,col.names = F, sep = "\t")
+    }
+  )
+  output$string_mf <- downloadHandler(
+    filename = function() {
+      paste('STRING BCAR3 GO Molecura functions file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(string_mf, file, row.names = F,col.names = F, sep = "\t")
+    }
+  ) 
+  output$string_kegg <- downloadHandler(
+    filename = function() {
+      paste('STRING BCAR3 GO KEGG file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(string_kegg, file, row.names = F,col.names = F, sep = "\t")
+    }
+  )
+  
+  #-------------------------------------------#
+  co_express <-
+    read.delim("Examples/Human_Coexpression/NORMA_Human_coexpression_NETWORK.txt", header = T)
+  co_express_bp <-
+    read.delim("Examples/Human_Coexpression/NORMA_Human_coexpression_Annotation_GO_BP.txt", header = F)
+  co_express_mf <-
+    read.delim("Examples/Human_Coexpression/NORMA_Human_coexpression_Annotation_GO_MF.txt", header = F)
+  co_express_cc <-
+    read.delim("Examples/Human_Coexpression/NORMA_Human_coexpression_Annotation_GO_CC.txt",
+               header = F)
+  co_express_kegg <-
+    read.delim("Examples/Human_Coexpression/NORMA_Human_coexpression_Annotation_KEGG.txt", header = F)
+  co_express_mcode <-
+    read.delim("Examples/Human_Coexpression/NORMA_Human_coexpression_Expression_MCODE.txt",
+               header = F)
+  
+  output$co_express <- downloadHandler(
+    filename = function() {
+      paste('Human Gene Co-expression Network file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(co_express, file, row.names = F, sep = "\t")
+    }
+  )
+  output$co_express_bp <- downloadHandler(
+    filename = function() {
+      paste('Human Gene Co-expression GO Biological Processes file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(co_express_bp, file,row.names = F,col.names = F, sep = "\t")
+    }
+  )
+  output$co_express_mf <- downloadHandler(
+    filename = function() {
+      paste('Human Gene Co-expression GO Molecura functions file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(co_express_mf, file,row.names = F,col.names = F, sep = "\t")
+    }
+  ) 
+  output$co_express_cc <- downloadHandler(
+    filename = function() {
+      paste('Human Gene Co-expression Cellular Componets file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(co_express_cc, file,row.names = F,col.names = F, sep = "\t")
+    }
+  )
+  output$co_express_kegg <- downloadHandler(
+    filename = function() {
+      paste('Human Gene Co-expression KEGG pathways file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(co_express_kegg, file,row.names = F,col.names = F, sep = "\t")
+    }
+  ) 
+  output$co_express_mcode <- downloadHandler(
+    filename = function() {
+      paste('Human Gene Co-expression MCODE node coloring file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(co_express_mcode, file,row.names = F,col.names = F, sep = "\t")
+    }
+  )
+  
   
   
   

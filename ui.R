@@ -246,7 +246,7 @@ fixedPage(
       tabsetPanel(
         tabPanel(
           "Interactive Network",
-          visNetworkOutput('tabVizIgraphSimple', width = 1000, height = 600),
+          visNetworkOutput('tabVizIgraphSimple', width = 1000, height = 550),
           class = 'box-panel-padding',
           
           class = 'box-panel',
@@ -703,9 +703,9 @@ Once a network or an annotation file has been named and uploaded, it will appear
         tabPanel(
           "EXAMPLES",
           br(),
-          strong("STRING example:"),
+          strong("STRING example 1 (TP53 interactors):"),
           br(),
-          downloadLink('string_net', "STRING Network file"),
+          downloadLink('string_net_tp53', "STRING Network file"),
           br(),
           downloadLink('string_annot', "STRING Annotation file"),
           br(),
@@ -713,11 +713,45 @@ Once a network or an annotation file has been named and uploaded, it will appear
           br(),
           hr(),
           br(),
-          strong("Drosophila example:"),
+          strong("STRING example 2 (BCAR3 interactors):"),
+          br(),
+          downloadLink('string_net_bcar3', "STRING Network file"),
+          br(),
+          downloadLink('string_bp', "GO Annotation - Biological Process"),
+          br(),
+          downloadLink('string_mf', "GO Annotation - Molecular Function"),
+          br(),
+          downloadLink('string_kegg', "KEGG pathways"),
+          br(),
+          hr(),
+          hr(),
+          br(),
+          strong("Drosophila (Tau) Network (PMID:31488613, PMCID:PMC6794924, DOI:10.1523/JNEUROSCI.0391-19.2019):"),
           br(),
           downloadLink('dros_net', "Drosophila Network file"),
           br(),
-          downloadLink('dros_annot', "Drosophila Annotation file"),
+          downloadLink('dros_annot', "Drosophila Kegg pathways"),
+          br(),
+          downloadLink('dros_louvain', "Drosophila Louvain automated annotation file"),
+          br(),
+          downloadLink('dros_express', "Drosophila Expression file"),
+          br(),
+          hr(),
+          br(),
+          strong("Human Gene Co-expression Network (PMID:19081792, PMCID:PMC2597745, DOI:10.1371/journal.pone.0003911):"),
+          helpText("http://bioinfow.dep.usal.es/coexpression/"),
+          br(),
+          downloadLink('co_express', "Gene Co-expression Network"),
+          br(),
+          downloadLink('co_express_bp', "GO Annotation - Biological Process"),
+          br(),
+          downloadLink('co_express_mf', "GO Annotation - Molecular Function"),
+          br(),
+          downloadLink('co_express_cc', "GO Annotation - Cellular Components"),
+          br(),
+          downloadLink('co_express_kegg', "KEGG pathways"),
+          br(),
+          downloadLink('co_express_mcode', "MCODE Node coloring"),
           br()
         ),
         
@@ -858,7 +892,8 @@ The Annotation Tab consists of three sub-tabs. These are the: (i) Convex Hull, (
                 "Star: It places vertices of a graph on the plane, according to the simulated annealing algorithm by Davidson and Harel."
               ),
               tags$li("Grid: This layout places vertices on a rectangular 2D grid.")
-            )
+            ),
+            helpText("NOTE: NORMA provides the option to slightly modify the selected layout in order to make groups as distinct as possible, thus avoiding unecessary overlaps which may occur due to the original layout.")
           ),
           br(),
           strong("Interactivity and Visualization:"),
@@ -964,11 +999,11 @@ The Annotation Tab consists of three sub-tabs. These are the: (i) Convex Hull, (
       icon = icon("users"),
       strong("The Team:"),
       tags$ul(
-        tags$li("Mikaela Koutrouli - Developer - BSRC 'Alexander Fleming'"),
-        tags$li("Evangelos Karatzas - Developer - BSRC 'Alexander Fleming'"),
-        tags$li(
-          "Georgios A. Pavlopoulos - Developer/Supervisor - BSRC 'Alexander Fleming'"
-        )
+        tags$li("Mikaela Koutrouli - BSRC 'Alexander Fleming'"),
+        tags$li("Evangelos Karatzas - BSRC 'Alexander Fleming'"),
+        tags$li("Katerina Papanikolopoulou - BSRC 'Alexander Fleming'"),
+        tags$li("Yorgos Sofianatos - BSRC 'Alexander Fleming'"),
+        tags$li("Georgios A. Pavlopoulos - BSRC 'Alexander Fleming'")
       ),
       br(),
       strong("Code:"),

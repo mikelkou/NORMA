@@ -44,4 +44,3 @@ transcription regulator activity	FOS,ADH1B,KLF4
 plasma membrane	WISP2,KRT19,MYH2,OXTR,NEGR1
 intrinsic to membrane	FMO2,HS6ST3,OXTR,NEGR1
 integral to membrane	FMO2,HS6ST3,OXTR
-
