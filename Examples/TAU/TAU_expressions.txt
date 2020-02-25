@@ -1,3 +1,5 @@
+CG7603	red
+His1	red
 Act79B	red
 Gbeta76C	red
 CG11876	red

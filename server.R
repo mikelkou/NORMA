@@ -147,7 +147,7 @@ shinyServer(function(input, output, session) {
       },
       oR_String_interactions = {
         dataset1 <-
-          read.delim("Examples/TP53/string_interactions.txt", header = T)
+          read.delim("Examples/BCAR3/BCAR3.txt", header = T)
       },
       oR_Drosophila = {
         n <- as.integer(input$oR_selected_size)
@@ -197,15 +197,24 @@ shinyServer(function(input, output, session) {
           annotation1 <- read_annotations(input$file2$datapath)
         }
       },
-      oR_String_Annotation = {
-        annotation1 <-
-          read.delim("Examples/TP53/string_interactions_groups_comma_duplicate.txt",
-                     header = F)
+      oR_String_Annotation_BP = {
+        annotation1 <-read.delim("Examples/BCAR3/BCAR3_GO_BP.txt", header = F)
+      }, 
+      oR_String_Annotation_MF = {
+        annotation1 <-read.delim("Examples/BCAR3/BCAR3_GO_MF.txt", header = F)
+      }, 
+      oR_String_Annotation_KEGG = {
+        annotation1 <-read.delim("Examples/BCAR3/BCAR3_KEGG.txt", header = F)
       },
-      oR_Drosophila_Annotation = {
+      oR_Drosophila_KEGG = {
         n <- as.integer(input$oR_selected_size)
         annotation1 <-
           read.delim("Examples/TAU/TAU_KEGG_Annotation_NORMA.txt", header = F)
+      },
+      oR_Drosophila_Luvain = {
+        n <- as.integer(input$oR_selected_size)
+        annotation1 <-
+          read.delim("Examples/TAU/TAU_Louvain.txt", header = F)
       }
     )
     if (!is.null(annotation1)) {
@@ -250,7 +259,7 @@ shinyServer(function(input, output, session) {
     updateTextInput(session,
                     inputId = "networkName",
                     value = (if (input$uiLoadGraphOptionsInput == "oR_String_interactions") {
-                      paste("STRING")
+                      paste("BCAR3 STRING Network")
                     }))
   })
   
@@ -258,7 +267,7 @@ shinyServer(function(input, output, session) {
     updateTextInput(session,
                     inputId = "networkName",
                     value = (if (input$uiLoadGraphOptionsInput == "oR_Drosophila") {
-                      paste("Drosophila")
+                      paste("Drosophila TAU Network")
                     }))
   })
   
@@ -272,19 +281,51 @@ shinyServer(function(input, output, session) {
                     }))
   })
   
-  dochangeAnnotationName2 <- observe({
+  dochangeAnnotationName2a <- observe({
     updateTextInput(session,
                     inputId = "annotationName",
-                    value = (if (input$uiLoadGraphOptionsInput_annotations == "oR_String_Annotation") {
-                      paste("STRING Annotation")
+                    value = (if (input$uiLoadGraphOptionsInput_annotations == "oR_String_Annotation_BP") {
+                      paste("BCAR3 GO Biological Process")
+                    }))
+  }) 
+  
+  dochangeAnnotationName2b <- observe({
+    updateTextInput(session,
+                    inputId = "annotationName",
+                    value = (if (input$uiLoadGraphOptionsInput_annotations == "oR_String_Annotation_MF") {
+                      paste("BCAR3 GO Molecular Function")
+                    }))
+  }) 
+  
+  dochangeAnnotationName2c <- observe({
+    updateTextInput(session,
+                    inputId = "annotationName",
+                    value = (if (input$uiLoadGraphOptionsInput_annotations == "oR_String_Annotation_KEGG") {
+                      paste("BCAR3 GO KEGG pathways")
+                    }))
+  }) 
+  
+  dochangeAnnotationName3a <- observe({
+    updateTextInput(session,
+                    inputId = "annotationName",
+                    value = (if (input$uiLoadGraphOptionsInput_annotations == "oR_Drosophila_KEGG") {
+                      paste("Drosophila TAU KEGG pathways")
                     }))
   })
   
-  dochangeAnnotationName3 <- observe({
+  dochangeAnnotationName3b <- observe({
     updateTextInput(session,
                     inputId = "annotationName",
-                    value = (if (input$uiLoadGraphOptionsInput_annotations == "oR_Drosophila_Annotation") {
-                      paste("Drosophila Annotation")
+                    value = (if (input$uiLoadGraphOptionsInput_annotations == "oR_Drosophila_Luvain") {
+                      paste("Drosophila TAU Louvain")
+                    }))
+  })
+  
+  dochangeExpressionName <- observe({
+    updateTextInput(session,
+                    inputId = "expressionName",
+                    value = (if (input$uiLoadExpressions == "oR_Expression_file_Drosophila") {
+                      paste("Drosophila TAU node - coloring file")
                     }))
   })
   
@@ -1477,10 +1518,15 @@ shinyServer(function(input, output, session) {
                expression1 <- read_expressions(input$file3$datapath)
              }
            },
-           oR_Expression_file = {
+           # oR_Expression_file_STRING = {
+           #   expression1 <-
+           #     read.delim("Examples/", header = F)
+           # },
+           oR_Expression_file_Drosophila = {
              expression1 <-
-               read.delim("Examples/TP53/string_expression_colors.txt", header = F)
-           })
+               read.delim("Examples/TAU/TAU_expressions.txt", header = F)
+           }
+           )
     if (!is.null(expression1)) {
       colnames(expression1) <- c("ID", "Color")
     }

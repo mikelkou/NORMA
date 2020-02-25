@@ -85,9 +85,7 @@ fixedPage(
         "Input file instructions as well as downloadable examples can be found in the Help/About page."
       )
       
-    ),
-    # tabPanel 'Welcome'
-    
+    ),# tabPanel 'Welcome'
     tabPanel(
       "Upload",
       icon = icon("upload"),
@@ -96,19 +94,18 @@ fixedPage(
           bsAlert("tabUploadSideAlert"),
           bsAlert("tabUpload_up_to_10000_rows"),
           helpText("Please follow the steps below:"),
-          tags$ul(
+          helpText(tags$ul(
             tags$li("Load your network file in tab delimited format"),
-            tags$li("Choose the network type"),
             tags$li("Give it a name"),
             tags$li("Hit the ADD button")
-          ),
+          )),
           selectInput(
             "uiLoadGraphOptionsInput",
             "1: Choose Network(s)",
             c(
               "File upload" = "oF",
-              "STRING" = "oR_String_interactions",
-              "Drosophila" = "oR_Drosophila"
+              "Example STRING BCAR3 Network" = "oR_String_interactions",
+              "Example Drosophila TAU Network" = "oR_Drosophila"
             )
           ),
           uiOutput("uiLoadGraphOptionsOutput"),
@@ -135,13 +132,22 @@ fixedPage(
           hr(),
           
           ######2nd button-annotation
+          helpText("Please follow the steps below:"),
+          helpText(tags$ul(
+            tags$li("Load your annotation file in tab delimited format"),
+            tags$li("Give it a name"),
+            tags$li("Hit the ADD button")
+          )),
           selectInput(
             "uiLoadGraphOptionsInput_annotations",
             "2: Choose Annotation(s)",
             c(
               "File upload" = "oF",
-              "STRING_Annotation" = "oR_String_Annotation",
-              "Drosophila_Annotation" = "oR_Drosophila_Annotation"
+              "Example BCAR3 STRING GO BP" = "oR_String_Annotation_BP",
+              "Example BCAR3 STRING GO MF" = "oR_String_Annotation_MF",
+              "Example BCAR3 STRING GO KEGG" = "oR_String_Annotation_KEGG",
+              "Example TAU Drosophila KEGG" = "oR_Drosophila_KEGG",
+              "Example TAU Drosophila Louvain" = "oR_Drosophila_Luvain"
             )
           ),
           uiOutput("uiLoadGraphOptionsOutput_annotations"),
@@ -169,11 +175,19 @@ fixedPage(
           
           
           ######3rd button-expression
+          helpText("Please follow the steps below:"),
+          helpText(tags$ul(
+            tags$li("Load your node - coloring file in tab delimited format"),
+            tags$li("Give it a name"),
+            tags$li("Hit the ADD button")
+          )),
           selectInput(
             "uiLoadExpressions",
-            "3: Choose Expression - file",
+            "3: Choose node - coloring file(s)",
             c("File upload" = "oF",
-              "Expression_file" = "oR_Expression_file")
+              # "Expression_file_STRING" = "oR_Expression_file_STRING",
+              "Example TAU Drosophila node - coloring file" = "oR_Expression_file_Drosophila"
+              )
           ),
           uiOutput("uiLoadExpressions"),
           div(
@@ -191,7 +205,7 @@ fixedPage(
               type = "text",
               class = "form-control",
               placeholder = "Type expression name ..",
-              value = "Expression name"
+              value = "Node - coloring file name"
             ),
             class = "input-group"
           ),
@@ -338,7 +352,7 @@ fixedPage(
           ),
           prettyCheckbox(
             inputId = "expressions",
-            label = "Show expression colors",
+            label = "Show node - coloring",
             thick = TRUE,
             shape = "curve",
             animation = "pulse",
@@ -450,7 +464,7 @@ fixedPage(
             ),
             prettyCheckbox(
               inputId = "expressions_pies",
-              label = "Show expression colors",
+              label = "Show node - coloring",
               thick = TRUE,
               shape = "curve",
               animation = "pulse",
@@ -723,7 +737,6 @@ Once a network or an annotation file has been named and uploaded, it will appear
           br(),
           downloadLink('string_kegg', "KEGG pathways"),
           br(),
-          hr(),
           hr(),
           br(),
           strong("Drosophila (Tau) Network (PMID:31488613, PMCID:PMC6794924, DOI:10.1523/JNEUROSCI.0391-19.2019):"),
