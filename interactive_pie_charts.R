@@ -174,13 +174,38 @@ pie_charts<- function(){
   
   new_g<- get.edgelist(g)
   new_nodes<-unique(union(new_g[,1], new_g[,2]))
-  if(length(nodes)!=length(new_nodes)){
+  
+  df1<- data.frame(V1= column1)
+  df2<- data.frame(V1= column2)
+  
+  unique_nodes_network<- full_join(df1,df2)
+  
+  annotations2<- as.character(annoation_graph[,2])
+  genes_tmp <- strsplit(annotations2, ",")
+  
+  unique_nodes_annotations<- as.data.frame(unique(unlist(genes_tmp)))
+  colnames(unique_nodes_annotations)<- "V1"
+  
+  merged<- full_join(unique_nodes_network, unique_nodes_annotations)
+  
+  words_to_be_removed<- anti_join(merged,unique_nodes_network)
+  
+  if(length(words_to_be_removed$V1)>0){
     showModal(modalDialog(
       title = "Important message",
-      "Please make sure that the selected annotation corresponds to the selected network!",
+      paste("Please remove the nodes below from the selected annotation file as they were not found in the selected network file.", 
+            as.character(words_to_be_removed),".", "To automatically remove them, please see Help Pages (Input File - Troubleshooting).", sep = "\t"),
       easyClose = T
     ))
   }
+  if(length(words_to_be_removed$V1)==length(unique_nodes_annotations$V1)){
+    showModal(modalDialog(
+      title = "Important message",
+      "Please check if the selected annotation file corresponds to the selected network.",
+      easyClose = T
+    ))
+  }
+  
   
   
   for (i in 1:length(new_nodes)){

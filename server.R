@@ -2187,19 +2187,7 @@ shinyServer(function(input, output, session) {
       )
     }
   )
-  
-  ### Download-links for examples in Help pages
-  
-  # dros_annot <- read.delim("Examples/Drosophila/PAP_david.txt", header = F)
-  # output$dros_net <- downloadHandler(
-  #   filename = function() {
-  #     paste('Drosophila Network file', '.txt', sep = '')
-  #   },
-  #   content = function(file) {
-  #     write.table(dros_annot, file, sep = "\t")
-  #   }
-  # )
-  
+
   
   ### Venn Diagrams ###
   output$vennDiagram1<- renderUI({
@@ -2527,7 +2515,17 @@ shinyServer(function(input, output, session) {
       write.table(co_express_mcode, file,row.names = F,col.names = F, sep = "\t")
     }
   )
+  ##############################################################################
+  R_script <- read.delim("annotation_cleaner.R", header = F)
   
+  output$R_script <- downloadHandler(
+    filename = function() {
+      paste('Annotation_cleaner', '.R', sep = '')
+    },
+    content = function(file) {
+       write.table(R_script, file, row.names = F,col.names = F, sep = "\t", quote = F)
+    }
+  ) 
   
   
   

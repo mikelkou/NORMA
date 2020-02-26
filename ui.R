@@ -143,9 +143,9 @@ fixedPage(
             "2: Choose Annotation(s)",
             c(
               "File upload" = "oF",
-              "Example BCAR3 STRING GO BP" = "oR_String_Annotation_BP",
-              "Example BCAR3 STRING GO MF" = "oR_String_Annotation_MF",
               "Example BCAR3 STRING GO KEGG" = "oR_String_Annotation_KEGG",
+              "Example BCAR3 STRING GO MF" = "oR_String_Annotation_MF",
+              "Example BCAR3 STRING GO BP" = "oR_String_Annotation_BP",
               "Example TAU Drosophila KEGG" = "oR_Drosophila_KEGG",
               "Example TAU Drosophila Louvain" = "oR_Drosophila_Luvain"
             )
@@ -672,7 +672,7 @@ fixedPage(
           strong("The expression file:"),
           helpText(
             "
-The expression file: It is an optional, 2-column, tab-delimited file which contains information about node coloring (e.g. gene expressions). The first column contains the node names and the second column the nodes’ colors (e.g. red, green, yellow, blue, orange). Nodes without color assignment will be colored gray. No headers are allowed in this file."
+The expression file: It is an optional, 2-column, tab-delimited file which contains information about node coloring (e.g. gene expressions). The first column contains the node names and the second column the node colors (e.g. red, green, yellow, blue, orange). Nodes without color assignment will be colored gray. No headers are allowed in this file."
           ),
           helpText("
 Examples are shown below:"),
@@ -705,9 +705,23 @@ EP300	CREBBP
           strong("Usage:"),
           helpText(
             "Users can upload as many network and annotation files as they like. Every time a network or an annotation file is uploaded, a name can be given first.
-Once a network or an annotation file has been named and uploaded, it will appear as an option in any of the NORMA’s dropdown selection lists. Users can remove indifferent annotations or networks at any time.
+Once a network or an annotation file has been named and uploaded, it will appear as an option in any of the NORMA's dropdown selection lists. Users can remove indifferent annotations or networks at any time.
 "
           ),
+          br(),
+          br(),
+          strong("Troubleshooting:"),
+          helpText("Nodes referenced in the annotation file must comply with nodes referenced in the network file. If a node in the annotation does not appear in the network file, NORMA won't be able to process the files and produce a proper visualization. To address this problem, we have implemented an R script which accepts a network file and an annotation file as inputs and generates a corrected annotation output file. In this output file, node names in annotations which do not appear in the network file are discarded. Notably, node names in both files must not contain any commas (,)."),
+         
+          br(),
+          downloadLink('R_script', "Download R script here"),
+          br(),
+          helpText(tags$ul(
+            tags$li("Install R / Rstudio"),
+            tags$li("Open the file with Rstudio"),
+            tags$li("Run the file"),
+            tags$li("The output will be written in a new file named 'annotations_cleaned.txt'. ")
+          )),
           br(),
           br()
           
