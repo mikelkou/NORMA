@@ -64,5 +64,5 @@ if(!is.null(words_to_be_removed)){
 }
 colnames(annotations_new)<- c('Annotations','Nodes')
 
-write.table(annotations_new, file = 'annotations_cleaned.txt', row.names = F, col.names = F)
+write.table(annotations_new, file = 'annotations_cleaned.txt', row.names = F, col.names = F, sep = "\t")
 
