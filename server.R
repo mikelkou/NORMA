@@ -487,7 +487,7 @@ shinyServer(function(input, output, session) {
         }
       }
       
-      if (nrow(dataset) >= 100000) {
+      if (nrow(dataset) >= 10000) {
         createAlert(
           session,
           "tabUpload_up_to_10000_rows",
@@ -1428,7 +1428,6 @@ shinyServer(function(input, output, session) {
     })
   })
   
-  uiOutputTextError<- 
   
   #######################################################################
   #Expression
