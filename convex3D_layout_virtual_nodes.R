@@ -1,4 +1,4 @@
-convexInput <- function(){
+convex3DLayout <- function(lay2D){
   set.seed(123)
   g <- fetchFirstSelectedStoredIgraph_annotations_tab()
   if (is.null(g)) 
@@ -7,18 +7,18 @@ convexInput <- function(){
   my_network<- data.frame(Source = my_network$V1, Target = my_network$V2)
   
   gName <- SelectedStoredNets()$name
-
+  
   annoation_graph <- fetchFirstSelectedStoredGroups2_annotations_tab()
   if (is.null(annoation_graph)) 
     return()
   annotName <- SelectedStoredAnnots()$name
   annoation_graph <- as.data.frame(annoation_graph)
   groups<-annoation_graph
-
+  
   groups<- data.frame(V1 = groups$Annotations, stri_split_fixed(groups$Nodes, ",",  simplify = TRUE))
   groups<-mutate_all(groups, funs(na_if(.,"")))
   number_of_groups<-dim(groups)[1]
-
+  
   x <- list()
   for (i in 1:number_of_groups) {
     group_i<- groups[i,]
@@ -26,18 +26,18 @@ convexInput <- function(){
     group_i <- group_i[!is.na(group_i)]
     x[[i]]<- (group_i)
   }
-
+  
   GO <- list()
   for (i in 1:number_of_groups) {
     GO[[i]]<-rep(groups[i,1], length(x[[i]]))
   }
-
+  
   column1<-my_network$Source
   column2<-my_network$Target
   node_names<-unique(union(column1, column2))
   tt<-unlist(x)
   nodes_with_NA_groups<-setdiff(node_names,tt)
-
+  
   members <- data_frame(id=unlist(x),group = unlist(GO))
   members_with_NA_groups <- data_frame(id=unlist(x),group = unlist(GO))
   
@@ -50,7 +50,7 @@ convexInput <- function(){
   }
   
   edge <- data_frame(Source = my_network$Source, Target = my_network$Target, group = NA) #edge --> not edges
-
+  
   within_group_edges <- members %>%
     split(.$group) %>%
     map_dfr(function (grp) {
@@ -122,7 +122,8 @@ convexInput <- function(){
   
   # use "auto layout"
   # lay2 <- layout_nicely(g_virt)
-  lay <- layout_choices(g_virt, lay)
+  # lay <- layout_choices_3D(g, "Fructerman\tlayout.fruchterman.reingold(igraph, dim=3)")
+  lay <- layout_choices(g_virt, lay2D)
   
   # remove virtual group nodes from graph
   g_virt <- delete_vertices(g_virt,which(nodes_virt$is_virt == T ))
@@ -131,8 +132,6 @@ convexInput <- function(){
   tmp<-which(nodes_virt$is_virt == T )
   
   lay <- lay[-tmp, ]
+  # lay2 <- lay2[-tmp, ]
   return(lay)
 }
-
-
-  
