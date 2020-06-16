@@ -115,17 +115,13 @@ convex_hull_3D <- function() {
   #-------------------------#
   
   colnames(lay) <- c("x", "y", "z")
-  node_names_3D <- unique(union(dataset[,1], dataset[,2]))
+  # node_names_3D <- unique(union(dataset[,1], dataset[,2]))
   
   
   #---------------------------------#
-  # if(layouts_with_virtual_nodes_3D==T){
-  #   node_names_3D <- unique(union(dataset[,1], dataset[,2]))
-  #   node_name_links_3D <- unique(union(dataset[,1], dataset[,2]))
-  # }else{
-  #   node_names_3D <- names(V(g))
-  #   node_name_links_3D <- names(V(g))
-  # }
+ 
+    node_names_3D <- names(V(g))
+    node_name_links_3D <- names(V(g))
   #--------------------------------#
   
   
@@ -164,18 +160,18 @@ convex_hull_3D <- function() {
     s<-sort(s)#-----------------------------------
     x<- length(s)
     
+    dataset1 <- get.edgelist(g)
     dataset1 <- data.frame("Source" = dataset[,1], "Target" = dataset[,2])
     
-    edges_for_plotly_1 <- inner_join(node_names_with_coords, dataset1, by = "Source")
-    colnames(dataset1) <- c("Target", "Source")
-    
-    edges_for_plotly_2 <- inner_join(node_names_with_coords, dataset1, by = "Source")
-    
-    colnames(dataset1) <- c("Source", "Target")
-    
-    edges_for_plotly <- data.frame("Source" = edges_for_plotly_1[,2:4],
-                                "Target" = edges_for_plotly_2[,2:4])
+    source <- matrix(ncol=3, nrow=nrow(dataset1))
+    target <- matrix(ncol=3, nrow=nrow(dataset1))
+    for(i in 1:nrow(dataset1)){
+      source[i,] <- coordinates_hashmap[[as.character(dataset1[i,1])]]
+      target[i,] <- coordinates_hashmap[[as.character(dataset1[i,2])]]
+    }
 
+    edges_for_plotly <- data.frame("Source.x" = source[,1], "Source.y" = source[,2], "Source.z" = source[,3],
+                                   "Target.x" = target[,1], "Target.y" = target[,2], "Target.z" = target[,3])
   x<- c()
   for(i in 1:nrow(edges_for_plotly)){
     if(i == nrow(edges_for_plotly)){
@@ -244,18 +240,6 @@ convex_hull_3D <- function() {
   type: 'scatter3d',"), file = fileConn)
     
   
-  # print("************************")  
-  
-  #  cat(paste(sprintfN(10000,paste("
-  #   x : [", x, "],\n" , sep="")), collapse=""), file = fileConn)
-  #  cat(paste(sprintfN(10000,paste("
-  #   y : [", y, "],\n" , sep="")), collapse=""), file = fileConn)
-  #  
-  #  cat(paste(sprintfN(10000,paste("
-  #   z : [", z, "],\n hoverinfo : 'none'
-  # };" , sep="")), collapse=""), file = fileConn)
-   
-
     write(paste("
     x : [", x, "],\n" , sep=""), file = fileConn, append = T)
     write(paste("
@@ -285,18 +269,7 @@ convex_hull_3D <- function() {
   type: 'scatter3d',"), file = fileConn)
     
     
-    # fileConn <- file(paste("convex_3D_",Sys.getpid(),".html", sep=""), "w")
     
-    # writeLines(paste("x : [", 222, "],\n" , sep=""), con = fileConn, useBytes = FALSE)
-    
-    
-    # cat(sprintf(paste("
-    # x : [", x_nodes, "],\n" , sep="")), file = fileConn)
-    # cat(sprintf(paste("
-    # y : [", y_nodes, "],\n" , sep="")), file = fileConn)
-    # cat(sprintf(paste("
-    # z : [", z_nodes, "], \n ", sep="")), file = fileConn)
-
     write(paste("
       x : [", x_nodes, "],\n" , sep=""), file = fileConn, append = T)
     write(paste("
