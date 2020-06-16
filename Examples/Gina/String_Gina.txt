@@ -1,4 +1,4 @@
-from	to
+Source	Target
 Nhp2	Nop56
 Nop58	Nop56
 Nop58	Nhp2

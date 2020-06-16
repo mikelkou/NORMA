@@ -1,4 +1,4 @@
-from	to
+Source	Target
 RpL18A	RpS13
 RpL26	RpS12
 RpS10a	RpS12

@@ -1,4 +1,4 @@
-from	to
+Source	Target
 ADH1B	CYR61
 ADH1B	DUSP1
 ALDH1A1	KLF4

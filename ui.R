@@ -555,16 +555,16 @@ fixedPage(
             selected = selected_layouts,
             multiple = FALSE
           ),
-          prettyCheckbox(
-            inputId = "layouts_with_virtual_nodes_3D",
-            label = "Allow modification of the selected layout taking into account the groups",
-            thick = TRUE,
-            shape = "curve",
-            animation = "pulse",
-            status = "info",
-            inline = F,
-            value = F
-          ),
+          # prettyCheckbox(
+          #   inputId = "layouts_with_virtual_nodes_3D",
+          #   label = "Allow modification of the selected layout taking into account the groups",
+          #   thick = TRUE,
+          #   shape = "curve",
+          #   animation = "pulse",
+          #   status = "info",
+          #   inline = F,
+          #   value = F
+          # ),
           prettyCheckbox(
             inputId = "Dark",
             label = "Dark mode",

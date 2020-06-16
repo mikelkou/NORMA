@@ -71,25 +71,25 @@ convex_hull_3D <- function() {
   # lay <- layout_choices_3D(g, "Fructerman\tlayout.fruchterman.reingold(igraph, dim=3)")
   
   
-  if(layouts_with_virtual_nodes_3D==T){
-    lay_3D <- layout_choices_3D(g, lay)
-    
-    source("layout_choices.R", local = T)
-    lay_2D <- gsub("3", "2", lay)
-    
-    
-    source("convex3D_layout_virtual_nodes.R", local = T)
-    lay_2D_virtual <- convex3DLayout(lay_2D)
-    # print(lay_2D_virtual)
-    
-    lay <- cbind(lay_2D_virtual, lay_3D[,3])
-
-    # print(lay)
-    }
-  else{
+  # if(layouts_with_virtual_nodes_3D==T){
+  #   lay_3D <- layout_choices_3D(g, lay)
+  #   
+  #   source("layout_choices.R", local = T)
+  #   lay_2D <- gsub("3", "2", lay)
+  #   
+  #   
+  #   source("convex3D_layout_virtual_nodes.R", local = T)
+  #   lay_2D_virtual <- convex3DLayout(lay_2D)
+  #   # print(lay_2D_virtual)
+  #   
+  #   lay <- cbind(lay_2D_virtual, lay_3D[,3])
+  # 
+  #   # print(lay)
+  #   }
+  # else{
     set.seed(123)
     lay <- layout_choices_3D(g, lay)
-  }
+  # }
   #----------------------------------------------------------------#
   scene_scale_x_max <- max(lay[,1])*scaling_coordinates_convex_3D_X()
   scene_scale_x_min <- min(lay[,1])*scaling_coordinates_convex_3D_X()
@@ -431,7 +431,7 @@ marker: {
     plot_bgcolor: '#c7c7c7',
     scene: {
       xaxis: {
-          range: [-50, 50],
+      	  range: [",scene_scale_x_min, ",",scene_scale_x_max,"],
           title: '',
           autorange: false,
           showgrid: false,
@@ -442,7 +442,7 @@ marker: {
           showticklabels: false
       },
       yaxis: {
-          range: [-50, 50],
+          range: [",scene_scale_y_min, ",",scene_scale_y_max,"],
           title: '',
           autorange: false,
           showgrid: false,
@@ -453,7 +453,7 @@ marker: {
           showticklabels: false
       },
       zaxis: {
-          range: [-50, 50],
+          range: [",scene_scale_z_min,",", scene_scale_z_max,"],
           title: '',
           autorange: false,
           showgrid: false,

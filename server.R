@@ -29,7 +29,6 @@ read_data <-
       return(dataset1)
     })
 
-
 read_annotations <-
   function(datapath,
            type = c("txt"),
@@ -162,7 +161,17 @@ shinyServer(function(input, output, session) {
           sample(1:10, nrow(dataset1), replace = T)
       colnames(dataset1) <- c("Source", "Target", "Weight")
       # } else { colnames(dataset1) <- c('Source', 'Target') }
+    }       
+    row_to_keep <- c()
+    for(i in 1:nrow(dataset1)){
+      if(dataset1[i,1]==dataset1[i,2]){
+        row_to_keep <- c(row_to_keep, FALSE) 
+      }
+      if(dataset1[i,1]!=dataset1[i,2]){
+        row_to_keep <- c(row_to_keep, TRUE) 
+      }
     }
+    dataset1 = dataset1[row_to_keep,]
     return(dataset1)
   }
   
@@ -2359,12 +2368,12 @@ shinyServer(function(input, output, session) {
     else if (input$expressions_3D == F) {
       expression_colors_3D = F
     }
-    if (input$layouts_with_virtual_nodes_3D == T) {
-      layouts_with_virtual_nodes_3D = T
-    }
-    else  if (input$layouts_with_virtual_nodes_3D == F) {
-      layouts_with_virtual_nodes_3D = F
-    }
+    # if (input$layouts_with_virtual_nodes_3D == T) {
+    #   layouts_with_virtual_nodes_3D = T
+    # }
+    # else  if (input$layouts_with_virtual_nodes_3D == F) {
+    #   layouts_with_virtual_nodes_3D = F
+    # }
     if (input$show_some_labels_3D == T) {
       show_some_labels_3D = T
     }
