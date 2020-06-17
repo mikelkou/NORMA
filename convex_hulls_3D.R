@@ -110,8 +110,6 @@ convex_hull_3D <- function() {
 
   coorz<- lay[,3]*scaling_coordinates_convex_3D_Z()
   lay <- cbind(lay[,1:2], coorz)
-  
-  
   #-------------------------#
   
   colnames(lay) <- c("x", "y", "z")
@@ -325,22 +323,30 @@ marker: {
   
   annotations_split <- str_split(annotation_graph[,2], ",", simplify = T)
   
-  
-  # if(show_some_labels_3D == T){
-  #   for(i in 1:length(node_names_3D)){
-  #     if(i == length(node_names_3D)){
-  #       cat(sprintf(paste("\"", node_names_3D[i], "\"", sep="")), file = fileConn)
-  #     }else{
-  #       cat(sprintf(paste("\"", node_names_3D[i], "\"", ",", sep="")), file = fileConn)
-  #     }
-  #   }
-  # }
+  if(show_some_labels_3D == T){
+    selected <- matrix("", ncol=1, nrow=0)
+    for(i in 1:length(s)){
+      selected <- rbind(selected, as.matrix(annotations_split[s[i],]))
+    }
+    selected <- unique(selected)
+    selected <- selected[!is.na(selected)]
+    selected <- selected[!selected==""]
+    
+    for(i in 1:length(node_names_3D)){
+      if (node_names_3D[i] %in% selected){
+        write(paste("\"",  node_names_3D[i], "\",", sep=""), file = fileConn, append = T, sep="")
+      } else{
+        write(paste("\"\",", sep=""), file = fileConn, append = T, sep="")
+      }
+    }
+  }else{
   for(i in 1:length(node_names_3D)){
     if(i == length(node_names_3D)){
       cat(sprintf(paste("\"", node_names_3D[i], "\"", sep="")), file = fileConn)
     }else{
     cat(sprintf(paste("\"", node_names_3D[i], "\"", ",", sep="")), file = fileConn)
     }
+  }
   }
     
   cat(sprintf(paste("],\n 
