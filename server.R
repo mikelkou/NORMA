@@ -2362,6 +2362,12 @@ shinyServer(function(input, output, session) {
     else  if (input$Dark == F) {
       Dark_mode = F
     }
+    if (input$show_labels_3D == T) {
+      show_labels_3D = T
+    }
+    else  if (input$show_labels_3D == F) {
+      show_labels_3D = F
+    }
     if (input$expressions_3D == T) {
       expression_colors_3D = T
     }

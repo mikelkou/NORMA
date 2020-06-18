@@ -256,15 +256,28 @@ convex_hull_3D <- function() {
     x_nodes <- paste(lay[,1],  collapse=",")
     y_nodes <- paste(lay[,2],  collapse=",")
     z_nodes <- paste(lay[,3],  collapse=",")
+
+    if(show_labels_3D == T){    
+      show_labels <- "markers+text"
+    }else{
+      show_labels <- "markers"
+    }
     
-    # print(x_nodes)
-    
-    cat(sprintf("
+    if(Dark_mode ==T){
+      textColor <-  "textfont: {
+        color: 'white'
+      },"
+    } else{
+      textColor <-  "textfont: {
+        color: 'black'
+      },"
+    }
+    cat(sprintf(paste("
   trace_nodes = {
   uid: 'a2e4a0', 
-  mode: 'markers', 
-  name: 'Nodes', 
-  type: 'scatter3d',"), file = fileConn)
+  mode: '", show_labels , "', 
+  name: 'Nodes',", textColor,"
+  type: 'scatter3d',", sep="")), file = fileConn)
     
     
     
@@ -301,9 +314,14 @@ marker: {
     symbol: 'dot', 
     " , sep=""), file = fileConn, append = T) 
     
+    if(Dark_mode==F){
+      node_colors <- "purple"
+    }else{
+      node_colors <- "#a419bc"
+    }
     
     if(expression_colors_3D == F){
-      write(paste("color:'purple'" , sep=""), file = fileConn, append = T)
+      write(paste("color:'", node_colors, "'" , sep=""), file = fileConn, append = T)
     }else{
       write(paste("color:[", sep = ""), file = fileConn, append = T)
       
@@ -322,7 +340,6 @@ marker: {
               text: [" , sep=""), file = fileConn, append = T)
   
   annotations_split <- str_split(annotation_graph[,2], ",", simplify = T)
-  
   if(show_some_labels_3D == T){
     selected <- matrix("", ncol=1, nrow=0)
     for(i in 1:length(s)){
@@ -407,60 +424,20 @@ marker: {
   if(Dark_mode == T){
     cat(sprintf(paste("var layout = {
 	paper_bgcolor: 'black',
-    plot_bgcolor: '#c7c7c7',
-    scene: {
-      xaxis: {
-      	  range: [",scene_scale_x_min, ",",scene_scale_x_max,"],
-          title: '',
-          autorange: false,
-          showgrid: false,
-          zeroline: false,
-          showline: false,
-          autotick: true,
-          ticks: '',
-          showticklabels: false
-      },
-      yaxis: {
-          range: [",scene_scale_y_min, ",",scene_scale_y_max,"],
-          title: '',
-          autorange: false,
-          showgrid: false,
-          zeroline: false,
-          showline: false,
-          autotick: true,
-          ticks: '',
-          showticklabels: false
-      },
-      zaxis: {
-          range: [",scene_scale_z_min,",", scene_scale_z_max,"],
-          title: '',
-          autorange: false,
-          showgrid: false,
-          zeroline: false,
-          showline: false,
-          autotick: true,
-          ticks: '',
-          showticklabels: false
-      }
-    },
-	 width: 1100,
-  height: 900,
-    margin: {
-        l: 0,
-        r: 0,
-        b: 0,
-        t: 0
-    },
-    showlegend: true,
-    legend: {
-        \"x\": \"0\",
-        \"margin.r\": \"120\"
-    }
-};", sep="")), file = fileConn)
+    plot_bgcolor: '#c7c7c7',", sep="")), file = fileConn)
   }else{
-  cat(sprintf(paste("var layout = {
-    scene: {
+  cat(sprintf(paste("var layout = {", sep="")), file = fileConn)
+  }
+    
+  if(show_labels_3D == T){
+    hovermode <- "hovermode: false,"
+  }else{
+    hovermode <- "hovermode: true,"
+  }
+    cat(sprintf(paste(hovermode,
+    "scene: {
       xaxis: {
+      showspikes: false,
       	  range: [",scene_scale_x_min, ",",scene_scale_x_max,"],
           title: '',
           autorange: false,
@@ -472,6 +449,7 @@ marker: {
           showticklabels: false
       },
       yaxis: {
+      showspikes: false,
           range: [",scene_scale_y_min, ",",scene_scale_y_max,"],
           title: '',
           autorange: false,
@@ -483,6 +461,7 @@ marker: {
           showticklabels: false
       },
       zaxis: {
+      showspikes: false,
           range: [",scene_scale_z_min,",", scene_scale_z_max,"],
           title: '',
           autorange: false,
@@ -508,7 +487,6 @@ marker: {
         \"margin.r\": \"120\"
     }
 };", sep="")), file = fileConn)
-  }     
 
   cat(sprintf(paste("
   data = [trace_edges, trace_nodes,", traces,"]; 

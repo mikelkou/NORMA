@@ -280,7 +280,7 @@ fixedPage(
           br(),
           br(),
           prettyCheckbox(
-            inputId = "show_labels_algorithms_tab",
+            inputId = "show_labels_algorithms_tab",outline = T,fill = T,bigger = T,
             label = "Show Labels",
             thick = T,
             shape = "curve",
@@ -330,7 +330,7 @@ fixedPage(
             multiple = FALSE
           ),
           prettyCheckbox(
-            inputId = "layouts_with_virtual_nodes",
+            inputId = "layouts_with_virtual_nodes",outline = T,fill = T,bigger = T,
             label = "Allow modification of the selected layout taking into account the groups",
             thick = TRUE,
             shape = "curve",
@@ -341,7 +341,7 @@ fixedPage(
           ),
           hr(),
           prettyCheckbox(
-            inputId = "show_labels",
+            inputId = "show_labels",outline = T,fill = T,bigger = T,
             label = "Show Labels",
             thick = TRUE,
             shape = "curve",
@@ -351,7 +351,7 @@ fixedPage(
             value = T
           ),
           prettyCheckbox(
-            inputId = "expressions",
+            inputId = "expressions",outline = T,fill = T,bigger = T,
             label = "Show node - coloring",
             thick = TRUE,
             shape = "curve",
@@ -361,8 +361,8 @@ fixedPage(
             value = F
           ),
           prettyCheckbox(
-            inputId = "some_labels",
-            label = "Show only chosen labels",
+            inputId = "some_labels",outline = T,fill = T,bigger = T,
+            label = "Show only labels of selected annotation groups",
             thick = TRUE,
             shape = "curve",
             animation = "pulse",
@@ -441,7 +441,7 @@ fixedPage(
               multiple = FALSE
             ),
             prettyCheckbox(
-              inputId = "layouts_with_virtual_nodes_pies",
+              inputId = "layouts_with_virtual_nodes_pies",outline = T,fill = T,bigger = T,
               label = "Allow modification of the selected layout taking into account the groups",
               thick = TRUE,
               shape = "curve",
@@ -453,7 +453,7 @@ fixedPage(
             hr(),
             ###############
             prettyCheckbox(
-              inputId = "show_labels_pies",
+              inputId = "show_labels_pies",outline = T,fill = T,bigger = T,
               label = "Show Labels",
               thick = TRUE,
               shape = "curve",
@@ -463,7 +463,7 @@ fixedPage(
               value = T
             ),
             prettyCheckbox(
-              inputId = "expressions_pies",
+              inputId = "expressions_pies",outline = T,fill = T,bigger = T,
               label = "Show node - coloring",
               thick = TRUE,
               shape = "curve",
@@ -473,8 +473,8 @@ fixedPage(
               value = F
             ),
             prettyCheckbox(
-              inputId = "some_labels_pies",
-              label = "Show only chosen labels",
+              inputId = "some_labels_pies",outline = T,fill = T,bigger = T,
+              label = "Show only labels of selected annotation groups",
               thick = TRUE,
               shape = "curve",
               animation = "pulse",
@@ -555,18 +555,8 @@ fixedPage(
             selected = selected_layouts,
             multiple = FALSE
           ),
-          # prettyCheckbox(
-          #   inputId = "layouts_with_virtual_nodes_3D",
-          #   label = "Allow modification of the selected layout taking into account the groups",
-          #   thick = TRUE,
-          #   shape = "curve",
-          #   animation = "pulse",
-          #   status = "info",
-          #   inline = F,
-          #   value = F
-          # ),
           prettyCheckbox(
-            inputId = "Dark",
+            inputId = "Dark",outline = T,fill = T,bigger = T,
             label = "Dark mode",
             thick = TRUE,
             shape = "curve",
@@ -576,8 +566,8 @@ fixedPage(
             value = F
           ),
           prettyCheckbox(
-            inputId = "show_some_labels_3D",
-            label = "Some Labels",
+            inputId = "show_labels_3D",outline = T,fill = T,bigger = T,
+            label = "Show labels on network",
             thick = TRUE,
             shape = "curve",
             animation = "pulse",
@@ -586,7 +576,17 @@ fixedPage(
             value = F
           ),
           prettyCheckbox(
-            inputId = "expressions_3D",
+            inputId = "show_some_labels_3D",outline = T,fill = T,bigger = T,
+            label = "Show only labels of selected annotation groups",
+            thick = TRUE,
+            shape = "curve",
+            animation = "pulse",
+            status = "info",
+            inline = F,
+            value = F
+          ),
+          prettyCheckbox(
+            inputId = "expressions_3D",outline = T,fill = T,bigger = T,
             label = "Show node - coloring",
             thick = TRUE,
             shape = "curve",
@@ -595,7 +595,6 @@ fixedPage(
             inline = F,
             value = F
           ),
-          # plotlyOutput("convex_hull_3D")
           uiOutput("convex_hull_3D"),
           eval(ui_dataTable_panel("chooseGroups_3D")),
           
