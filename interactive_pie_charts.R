@@ -4,6 +4,12 @@ pie_charts<- function(){
   if (is.null(g)) 
     return()
   dataset1<- get.edgelist(g)
+  
+  original_dataset_weighted <- fetchFirstSelectedStoredDataset_annotations_tab()
+  if (is.null(original_dataset_weighted))
+    return(NULL)
+  
+  
   my_network<- as.data.frame(get.edgelist(g))
   my_network<- data.frame(Source = my_network$V1, Target = my_network$V2)
   
@@ -334,10 +340,17 @@ pie_charts<- function(){
     }#for
   }
 
+  
+  
+  
+  if(!(is.weighted(g))){
+    original_dataset_weighted <- cbind(original_dataset_weighted[,1:2],"Weight"=rep(1, nrow(original_dataset_weighted)))
+  }
+  
   cat(sprintf("],\n
 						\"links\":[\n"), file = fileConn)
   for (i in 1:nrowdat){
-    cat(sprintf(paste("{\"source\":", which(node_name_links %in% dataset1[i,1])-1, ",\"target\":", which(node_name_links %in% dataset1[i,2])-1, "},\n",sep="")), file = fileConn
+    cat(sprintf(paste("{\"source\":", which(node_name_links %in% dataset1[i,1])-1, ",\"target\":", which(node_name_links %in% dataset1[i,2])-1, ",\"value_links\":", original_dataset_weighted[i,3] ,"},\n",sep="")), file = fileConn
     )}
   cat(sprintf(
     "]
@@ -433,7 +446,8 @@ pie_charts<- function(){
 		var link = svg.selectAll(\".link\")
 			.data(graph.links)
 			.enter().append(\"line\")
-			.attr(\"class\", \"link\");
+			.attr(\"class\", \"link\")
+			.style(\"stroke-width\", function(d) { return Math.sqrt(d.value_links); });
 
 		var node = svg.selectAll(\".node\")
 			.data(graph.nodes)

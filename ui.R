@@ -1,5 +1,6 @@
 library(shiny)
 
+
 ui_options <- c("ui_table_line_height" = "80%")
 
 ui_css <- paste0(
@@ -47,6 +48,7 @@ ui_dataTable_panel <- function(datasetName, pagination = TRUE) {
   ))
 }
 
+
 fixedPage(
   theme = shinytheme("sandstone"),
   # shinythemes::themeSelector(),  # <--- Add this somewhere in the UI
@@ -85,6 +87,10 @@ fixedPage(
         "Input file instructions as well as downloadable examples can be found in the Help/About page."
       )
       
+      # ,
+      # actionBttn("startHelp", label = "start Help")
+      
+      
     ),# tabPanel 'Welcome'
     tabPanel(
       "Upload",
@@ -109,6 +115,7 @@ fixedPage(
             )
           ),
           uiOutput("uiLoadGraphOptionsOutput"),
+          # checkboxInput("weighted",label = "Weight", value =F),
           div(
             span(
               actionButton(

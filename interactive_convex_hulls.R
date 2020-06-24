@@ -5,6 +5,11 @@ convex_hulls<- function(){
     return()
   dataset1<- get.edgelist(g)
   
+  original_dataset_weighted <- fetchFirstSelectedStoredDataset_annotations_tab()
+  if (is.null(original_dataset_weighted))
+    return(NULL)
+
+  
   my_network<- as.data.frame(get.edgelist(g))
   my_network<- data.frame(Source = my_network$V1, Target = my_network$V2)
   gName <- SelectedStoredNets()$name
@@ -351,12 +356,61 @@ var theGraphData = {
   }
   
   
+  #--------------------------------#
+  # coords_results <- results[[description]]
+  # print(coords_results)
+  # 
+  # graph <- get.edgelist(igraph)
+  # a<- data.frame(V1= n[,1])
+  # b<- data.frame(V1= n[,2])
+  # m<- full_join(a,b)
+  # 
+  # names <- unique(m)
+  # hash_coords <- new.env(hash = TRUE)
+  # for (i in 1:length(V(igraph))) {
+  #   hash_coords[[ as.character(names[i,1]) ]] <- c(coords_results[[i,1]],coords_results[[i,2]])
+  # }
+  
+  # return(hash_coords)
+  
+  # name_as_key <- c()
+  # ConvexHash <- new.env(hash = TRUE , parent=emptyenv())
+  # for(i in 1:length(V(a)))
+  # {
+  #   names <- V(a)
+  #   # name_as_key <- c(name_as_key, names)
+  #   # print(name_as_key)
+  #   ConvexHash[[ as.character( names[i] ) ]] <- i-1
+  #   # hash_coords[[ as.character(names[i,1]) ]] <- c(coords_results[[i,1]],coords_results[[i,2]])
+  # }
+  
+  # ConvexHash <- new.env(hash = TRUE , parent=emptyenv())
+  # for(i in 1:nrow(original_dataset_weighted))
+  # {
+  #   original_dataset_weighted
+  #   ConvexHash[[ as.character( original_dataset_weighted[i,1] ) ]] <- original_dataset_weighted[i,2]
+  #   # hash_coords[[ as.character(names[i,1]) ]] <- c(coords_results[[i,1]],coords_results[[i,2]])
+  # }
+  #------------------------------------#
+  
+  if(!(is.weighted(g))){
+    original_dataset_weighted <- cbind(original_dataset_weighted[,1:2],"Weight"=rep(1, nrow(original_dataset_weighted)))
+  }
+  
+  # links_df_weighted <- original_dataset_weighted[order(match(original_dataset_weighted[,1],dataset1[,1])),]
   
   cat(sprintf("],
   \"links\":[\n"), file= fileConn)
+  
   for (i in 1:nrowdat){
-    cat(sprintf(paste("{\"source\":", which(node_name_links %in% dataset1[i,1])-1, ",\"target\":", which(node_name_links %in% dataset1[i,2])-1, ",\"value\":1},\n",sep="")), file = fileConn
-    )}
+    # print(node_name_links[node_name_links %in% dataset1[i,1]])
+    # print(links_df_weighted[i,3])
+      cat(sprintf(paste("{\"source\":", which(node_name_links %in% dataset1[i,1])-1, 
+                        ",\"target\":", which(node_name_links %in% dataset1[i,2])-1, ",\"value\":", 
+                        original_dataset_weighted[i,3],"},\n",sep="")), file = fileConn)
+  }
+  
+
   
   cat(sprintf(
     "]
