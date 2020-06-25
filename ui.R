@@ -58,6 +58,9 @@ fixedPage(
             )),
   useShinyjs(),
   tags$head(tags$script(src = "cyjs.js")),
+  tags$head(tags$script(src = "intro.js")),
+  tags$head(tags$script(src = "introbutton.js")),
+  tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "intro.css")),
   tags$img(src = b64_1),
   navbarPage(
     "NORMA: The NetwORk Makeup Artist",
@@ -87,11 +90,8 @@ fixedPage(
         "Input file instructions as well as downloadable examples can be found in the Help/About page."
       )
       
-      # ,
-      # actionBttn("startHelp", label = "start Help")
-      
-      
     ),# tabPanel 'Welcome'
+    
     tabPanel(
       "Upload",
       icon = icon("upload"),
@@ -99,6 +99,9 @@ fixedPage(
         sidebarPanel(
           bsAlert("tabUploadSideAlert"),
           bsAlert("tabUpload_up_to_10000_rows"),
+          actionButton("introButton", "Guide Tutorial"),
+          br(),
+          br(),
           helpText("Please follow the steps below:"),
           helpText(tags$ul(
             tags$li("Load your network file in tab delimited format"),

@@ -10,6 +10,10 @@ convex_hull_3D <- function() {
   if (is.null(dataset))
     return()
   
+  original_dataset_weighted <- fetchFirstSelectedStoredDataset_annotations_tab()
+  if (is.null(original_dataset_weighted))
+    return(NULL)
+  
   annotation_graph <- fetchFirstSelectedStoredGroups2_annotations_tab()
   if (is.null(annotation_graph))
     return()
@@ -149,6 +153,11 @@ convex_hull_3D <- function() {
   nrowdat <- nrow(dataset)
   nrowannot <- nrow(annotation_graph)
   
+  
+  if(!(is.weighted(g))){
+    original_dataset_weighted <- cbind(original_dataset_weighted[,1:2],"Weight"=rep(0.5, nrow(original_dataset_weighted)))
+  }
+  
   if (length(s)==0)
   {
     s<-c(1:nrowannot)
@@ -170,46 +179,46 @@ convex_hull_3D <- function() {
 
     edges_for_plotly <- data.frame("Source.x" = source[,1], "Source.y" = source[,2], "Source.z" = source[,3],
                                    "Target.x" = target[,1], "Target.y" = target[,2], "Target.z" = target[,3])
-  x<- c()
-  for(i in 1:nrow(edges_for_plotly)){
-    if(i == nrow(edges_for_plotly)){
-      a <- paste(edges_for_plotly$Source.x[i], edges_for_plotly$Target.x[i], "null", sep = "," )
-    }else{
-      a <- paste(edges_for_plotly$Source.x[i], edges_for_plotly$Target.x[i], "null,", sep = "," )
-
-    }
-    x<- c(x, a)
-  }
-  
-  x <- as.vector(unlist(x))
-  x <- paste(x,  collapse=" ")
-  
-  y<- c()
-  for(i in 1:nrow(edges_for_plotly)){
-    if(i == nrow(edges_for_plotly)){
-      a = paste(edges_for_plotly$Source.y[i], edges_for_plotly$Target.y[i], "null", sep = "," )
-    }else{
-      a = paste(edges_for_plotly$Source.y[i], edges_for_plotly$Target.y[i], "null,", sep = "," )
-    }
-    y<- c(y, a)
-  }
-  
-  y <- as.vector(unlist(y))
-  y <- paste(y,  collapse=" ")
-  
-  
-  z<- c()
-  for(i in 1:nrow(edges_for_plotly)){
-    if(i == nrow(edges_for_plotly)){
-      a = paste(edges_for_plotly$Source.z[i], edges_for_plotly$Target.z[i], "null", sep = "," )
-    }else{
-      a = paste(edges_for_plotly$Source.z[i], edges_for_plotly$Target.z[i], "null,", sep = "," )
-    }
-    z<- c(z, a)
-  }
-  
-  z <- as.vector(unlist(z))
-  z <- paste(z,  collapse=" ")
+  # x<- c()
+  # for(i in 1:nrow(edges_for_plotly)){
+  #   if(i == nrow(edges_for_plotly)){
+  #     a <- paste(edges_for_plotly$Source.x[i], edges_for_plotly$Target.x[i], "null", sep = "," )
+  #   }else{
+  #     a <- paste(edges_for_plotly$Source.x[i], edges_for_plotly$Target.x[i], "null,", sep = "," )
+  # 
+  #   }
+  #   x<- c(x, a)
+  # }
+  # 
+  # x <- as.vector(unlist(x))
+  # x <- paste(x,  collapse=" ")
+  # 
+  # y<- c()
+  # for(i in 1:nrow(edges_for_plotly)){
+  #   if(i == nrow(edges_for_plotly)){
+  #     a = paste(edges_for_plotly$Source.y[i], edges_for_plotly$Target.y[i], "null", sep = "," )
+  #   }else{
+  #     a = paste(edges_for_plotly$Source.y[i], edges_for_plotly$Target.y[i], "null,", sep = "," )
+  #   }
+  #   y<- c(y, a)
+  # }
+  # 
+  # y <- as.vector(unlist(y))
+  # y <- paste(y,  collapse=" ")
+  # 
+  # 
+  # z<- c()
+  # for(i in 1:nrow(edges_for_plotly)){
+  #   if(i == nrow(edges_for_plotly)){
+  #     a = paste(edges_for_plotly$Source.z[i], edges_for_plotly$Target.z[i], "null", sep = "," )
+  #   }else{
+  #     a = paste(edges_for_plotly$Source.z[i], edges_for_plotly$Target.z[i], "null,", sep = "," )
+  #   }
+  #   z<- c(z, a)
+  # }
+  # 
+  # z <- as.vector(unlist(z))
+  # z <- paste(z,  collapse=" ")
   
   #--------------------------------------------------------------------#  
   fileConn <- file(paste("convex_3D_",Sys.getpid(),".html", sep=""), "w")
@@ -225,27 +234,56 @@ convex_hull_3D <- function() {
 
      <script>" ), file = fileConn)
   
-  cat(sprintf("
+  # cat(sprintf("
+  # 
+  # trace_edges = {
+  # uid: 'bcd52d', 
+  # line: {
+  #   color: 'rgb(125,125,125)', 
+  #   width: 0.5
+  # }, 
+  # mode: 'lines', 
+  # name: 'Edges', 
+  # type: 'scatter3d',"), file = fileConn)
   
-  trace_edges = {
+ #---------------------------------------#   
+  for(i in 1:nrow(edges_for_plotly)){
+    x_trial <- paste(edges_for_plotly$Source.x[i], edges_for_plotly$Target.x[i], sep = "," )
+    
+      cat(sprintf(paste("trace_edges_",i," = {
   uid: 'bcd52d', 
   line: {
     color: 'rgb(125,125,125)', 
-    width: 0.5
+    width:", original_dataset_weighted[i,3], "
   }, 
   mode: 'lines', 
   name: 'Edges', 
-  type: 'scatter3d',"), file = fileConn)
+  type: 'scatter3d',
+                        x : [", edges_for_plotly$Source.x[i], ",", edges_for_plotly$Target.x[i], "],\n
+                        y : [", edges_for_plotly$Source.y[i], ",", edges_for_plotly$Target.y[i], "],\n
+                        z : [", edges_for_plotly$Source.z[i], "," ,edges_for_plotly$Target.z[i], "], \n
+    hoverinfo : 'none'};
+                        
+                        " , sep="")), file = fileConn)
     
+  }
   
-    write(paste("
-    x : [", x, "],\n" , sep=""), file = fileConn, append = T)
-    write(paste("
-    y : [", y, "],\n" , sep=""), file = fileConn, append = T)
-    write(paste("
-    z : [", z, "], \n
-    hoverinfo : 'none'
-  };", sep=""), file = fileConn, append = T)
+  traces_edges<- c()
+  for(i in 1:nrow(original_dataset_weighted)){
+    traces_edges_i <- paste("trace_edges_", i, sep = "")
+    traces_edges<- c(traces_edges,traces_edges_i)
+    traces_edges <- paste(traces_edges, collapse=",")
+  }
+  # print(traces_edges)
+    
+    # write(paste("
+    # x : [", x, "],\n" , sep=""), file = fileConn, append = T)
+  #   write(paste("
+  #   y : [", y, "],\n" , sep=""), file = fileConn, append = T)
+  #   write(paste("
+  #   z : [", z, "], \n
+  #   hoverinfo : 'none'
+  # };", sep=""), file = fileConn, append = T)
     
   # print("______________________________")
     
@@ -481,7 +519,7 @@ marker: {
         b: 0,
         t: 0
     },
-    showlegend: true,
+    showlegend: false,
     legend: {
         \"x\": \"0\",
         \"margin.r\": \"120\"
@@ -489,7 +527,7 @@ marker: {
 };", sep="")), file = fileConn)
 
   cat(sprintf(paste("
-  data = [trace_edges, trace_nodes,", traces,"]; 
+  data = [",traces_edges,",trace_nodes,", traces,"]; 
 
 Plotly.plot('plotly-div', {
   data: data,
