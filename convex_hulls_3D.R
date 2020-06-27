@@ -156,8 +156,20 @@ convex_hull_3D <- function() {
   
   if(!(is.weighted(g))){
     original_dataset_weighted <- cbind(original_dataset_weighted[,1:2],"Weight"=rep(0.5, nrow(original_dataset_weighted)))
+  } else{
+    minx <- min(original_dataset_weighted[,3])
+    maxx <- max(original_dataset_weighted[,3])
+    
+    scaling_weight_values<- c()
+    for (i in 1:nrow(original_dataset_weighted)){
+      scaling_weight_values_i <- mapper(original_dataset_weighted[i,3], minx, maxx, 0.5, 20)
+      scaling_weight_values <- c(scaling_weight_values, scaling_weight_values_i)
+    }
+    if(maxx > 50){
+    original_dataset_weighted <- cbind(original_dataset_weighted[,1:2],"Weight"=scaling_weight_values)
+    }
   }
-  
+
   if (length(s)==0)
   {
     s<-c(1:nrowannot)

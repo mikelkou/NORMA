@@ -232,31 +232,4 @@ mapper<-function(value, istart, istop, ostart, ostop)
 }
 
 
-# helpData <- data.frame("Step" = c(1,2,3),"intro" = c("blah blah", "blah blah blah", "blah"), 
-#                        "element" = c("a", "b","c"), "position"= "auto")
-
-
-
-# helpData <- "<div class=\"row\">
-#   <div class=\"col-sm-4 well\" data-step=\"1\" data-intro=\"text step 1\" data-position='bottom'>element 1</div>
-#   <div class=\"col-sm-4 well\" data-step=\"2\" data-intro=\"text step 2\" data-position='bottom'>element 2</div>
-#   <div class=\"col-sm-4 well\" data-step=\"3\" data-intro=\"text step 3\" data-position='bottom'>element 3</div>
-#   </div>
-#   
-#   <div class=\"row\"> 
-#   <div class=\"col-sm-4 well\" data-step=\"4\" data-intro=\"text step 4\" data-position='bottom'>element 4</div>
-#   <div class=\"col-sm-4 well\" data-step=\"5\" data-intro=\"text step 5\" data-position='bottom'>element 5</div>
-#   <div class=\"col-sm-4 well\" data-step=\"6\" data-intro=\"text step 6\" data-position='bottom'>element 6</div>
-#   </div>
-#   
-#   <div class=\"row\">
-#   <div class=\"col-sm-4 well\" data-step=\"7\" data-intro=\"text step 7\" data-position='bottom'>element 7</div>
-#   <div class=\"col-sm-4 well\" data-step=\"8\" data-intro=\"text step 8\" data-position='bottom'>element 8</div>
-#   <div class=\"col-sm-4 well\" data-step=\"9\" data-intro=\"text step 9\" data-position='bottom'>element 9</div>
-#   </div>
-#   
-#   
-#   <div class=\"flexcontainer\">
-#   <button type=\"button\" class=\"btn btn-success\">start</button>
-#   </div>"
   
