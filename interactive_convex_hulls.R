@@ -210,7 +210,6 @@ var theGraphData = {
         expression$color[i] <- "lightgray"
       }
     }
-    
     # expression$color <- gsub("-|\\s+|^$","lightgray", expression$color)
   }
   
@@ -542,5 +541,6 @@ force.on(\"tick\", function() {
 
   close(fileConn)
  
+  
   }#if (length(s)) 
 }#function

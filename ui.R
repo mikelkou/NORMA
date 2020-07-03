@@ -327,7 +327,7 @@ fixedPage(
       br(),
       tabsetPanel(
         tabPanel(
-          "Convex Hull",
+          "Convex Hulls",
           br(),
           # Layouts #
           helpText("Select the layout for the analysis:"),
@@ -436,7 +436,15 @@ fixedPage(
               step = 2
             )
           ),
-          
+          br(),
+          br(),
+          downloadBttn("HTML_convex", "Download HTML file", 
+                       style = "bordered", 
+                       color = "success",
+                       size = "sm",
+                       no_outline = T),
+          br(),
+          br()
         ),
         
         tabPanel(
@@ -551,7 +559,17 @@ fixedPage(
           
           hr(),
           class = 'box-panel-padding',
-          class = 'box-panel'
+          class = 'box-panel',
+          
+          br(),
+          br(),
+          downloadBttn("HTML_pies", "Download HTML file",
+                       style = "bordered", 
+                       color = "success",
+                       size = "sm",
+                       no_outline = T),
+          br(),
+          br()
           
         ),
         
@@ -657,7 +675,17 @@ fixedPage(
               max = 10,
               value = 1
             )
-          )
+          ),
+          
+          br(),
+          br(),
+          downloadBttn("HTML_convex_3D", "Download HTML file",
+                       style = "bordered", 
+                       color = "success",
+                       size = "sm",
+                       no_outline = T),
+          br(),
+          br()
         ),
         
         # tags$a("Large window",target="_blank",href="output_convex_11188.html")

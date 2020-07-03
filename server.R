@@ -1508,6 +1508,48 @@ shinyServer(function(input, output, session) {
     })
   })
   
+  #--- Download HTML files---#
+  
+  
+  
+  output$HTML_convex <- downloadHandler(
+    filename = function() {
+      paste("Convex_hulls_2D_", Sys.getpid(), ".html", sep = "")
+    },
+    content = function(file) {
+      HTML_convex <- paste(readLines(paste("output_convex_", Sys.getpid(), ".html", sep = "")
+                                     ), collapse = '\n')
+      write.table(HTML_convex, file, row.names = F,col.names = F, sep = "\t", quote = F)
+    }
+  ) 
+  
+
+  output$HTML_pies <- downloadHandler(
+    filename = function() {
+      paste("Pie_charts_", Sys.getpid(), ".html", sep = "")
+    },
+    content = function(file) {
+      HTML_pies <- paste(readLines(
+        paste("output_pies_", Sys.getpid(), ".html", sep = "")
+      ), collapse = '\n')
+      write.table(HTML_pies, file, row.names = F,col.names = F, sep = "\t", quote = F)
+    }
+  )
+
+
+  output$HTML_convex_3D <- downloadHandler(
+    filename = function() {
+      paste("Convex_hulls_3D_", Sys.getpid(), ".html", sep = "")
+    },
+    content = function(file) {
+      HTML_convex_3D <- paste(readLines(
+        paste("convex_3D_",Sys.getpid(),".html", sep="")
+      ), collapse = '\n')
+      write.table(HTML_convex_3D, file, row.names = F,col.names = F, sep = "\t", quote = F)
+    }
+  )
+  
+  
   
   #######################################################################
   #Expression
@@ -2427,6 +2469,11 @@ shinyServer(function(input, output, session) {
   
   output$convex_hull_3D<- renderUI({
     s = input$chooseGroups_3D_rows_selected
+    
+    g <- fetchFirstSelectedStoredIgraph_annotations_tab()
+    annoation_graph <- fetchFirstSelectedStoredGroups2_annotations_tab()
+    if (is.null(g) | is.null(annoation_graph))
+      return(NULL)
     
     if (input$Dark == T) {
       Dark_mode = T
