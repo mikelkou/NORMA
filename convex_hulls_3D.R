@@ -343,11 +343,26 @@ convex_hull_3D <- function() {
     if (!is.null(getStoredExpressionChoices())){
       expression<-fetchFirstSelectedStoredExpression()
       colnames(expression) <- c("id", "color")
-      express_order<- as.data.frame(members_with_NA_groups)
-      express_order<- as.data.frame(unique(express_order$id))
+      express_order<- as.data.frame(names(V(g)))
       colnames(express_order) <- "id"
       expression<-left_join(express_order, expression, by = "id")
       expression$color<- as.character(expression$color)
+      for(i in 1:length(expression$color)){
+        if(Dark_mode ==F){
+          if(expression$color[i] == "" || is.na(expression$color[i])){
+            expression$color[i] <- "purple"
+          }
+        } else if (expression$color[i] == "" || is.na(expression$color[i])){
+          expression$color[i] <- "#a419bc"
+        }
+      }
+    }
+    if (is.null(getStoredExpressionChoices())){
+      expression<- as.data.frame(names(V(g)))
+      if(Dark_mode == F){
+        expression$color <- rep(c("purple"))
+      } else expression$color <- rep(c("#a419bc"))
+      colnames(expression) <- c("id", "color")
     }
 
     #---------------------------------------------------#
@@ -538,7 +553,9 @@ marker: {
     }
 };", sep="")), file = fileConn)
 
-  cat(sprintf(paste("
+    # print(traces_edges)
+    # print(traces)
+  write(paste("
   data = [",traces_edges,",trace_nodes,", traces,"]; 
 
 Plotly.plot('plotly-div', {
@@ -548,7 +565,7 @@ Plotly.plot('plotly-div', {
      </script>
    </body>
  </html> 
-                    ", sep="")), file = fileConn)
+                    ", sep = ""), file = fileConn, append = T)
   
   
   

@@ -46,8 +46,8 @@ read_expressions <-
         read.table(datapath,
                    header = header,
                    sep = sep,
-                   quote = quote)
-      
+                   quote = quote,
+                   comment.char="?")
     })
 
 
@@ -1609,6 +1609,7 @@ shinyServer(function(input, output, session) {
     if (!is.null(expression1)) {
       colnames(expression1) <- c("ID", "Color")
     }
+    # print(expression1)
     return(expression1)
   }
   
