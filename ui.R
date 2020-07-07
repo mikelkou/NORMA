@@ -815,7 +815,7 @@ fixedPage(
           strong("The expression file:"),
           helpText(
             "
-The expression file: It is an optional, 2-column, tab-delimited file which contains information about node coloring (e.g. gene expressions). The first column contains the node names and the second column the node colors (e.g. red, green, yellow, blue, orange). Nodes without color assignment will be colored gray. No headers are allowed in this file."
+The expression file: It is an optional, 2-column, tab-delimited file which contains information about node coloring (e.g. gene expressions). The first column contains the node names and the second column the node colors (e.g. red, green, yellow, blue, orange, #00ff00, #ff0000, #ffff00, etc). Nodes without color assignment will be colored gray. No headers are allowed in this file."
           ),
           helpText("
 Examples are shown below:"),
@@ -824,14 +824,14 @@ Examples are shown below:"),
 Network File:             Annotation File:                        Node-coloring file            Warnings!
 
 Source  Target            Group-2 BCL2L1,MDM4,MDM2,CHEK2          CDKN1A  blue                - Network file: Must have headers: Source - Target
-CDKN1A  TP53              Group-5 TP53,EP300                      TP53    blue                - Annotation file: no headers, no spaces
-TP53	MDM2              Group-1 CDKN2A,ATM,TP53BP2,MDM2         MDM4    blue                  only commas (e.g. BCL2L1,MDM4,MDM2)
+CDKN1A  TP53              Group-5 TP53,EP300                      TP53    blue                - Annotation file: no headers, no spaces only commas
+TP53	MDM2              Group-1 CDKN2A,ATM,TP53BP2,MDM2         MDM4    #00ff00              (e.g. BCL2L1,MDM4,MDM2)
 MDM4	TP53              Group-4 CHEK2,CREBBP,MDM2               BCL2L1  red
 BCL2L1	TP53              Group-3 TP53,BCL2L1                     CHEK2   red                 - Node-coloring file: no headers
-CHEK2   ATM               Group-6 MDM4,MDM2                       ATM     red                   Basic colors allowed:
-TP53    EP300                                                     TP53BP2 red                   (e.g. red, green, yellow, blue, orange, purple, gray, etc.)
+CHEK2   ATM               Group-6 MDM4,MDM2                       ATM     red                   Colors can be either color names (e.g. blue, red, etc.) 
+TP53    EP300                                                     TP53BP2 red                   or hex codes (#00ff00, #ff0000, #ffff00, etc.)
 ATM	TP53                                                      CDKN2A  blue
-TP53    CREBBP                                                    EP300   red
+TP53    CREBBP                                                    EP300   #ffff00
 MDM4    MDM2                                                      CREBBP  red
 CHEK2	TP53                                                      MDM2    blue
 TP53BP2	TP53
@@ -1031,7 +1031,7 @@ The Annotation Tab consists of three sub-tabs. These are the: (i) Convex Hull, (
           ),
           br(),
           br(),
-          strong("Convex Hull:"),
+          strong("Convex Hulls:"),
           helpText(
             "In this tab, the selected network is initially visualized after applying any of the offered layout algorithms and shaded convex hulls are then used to highlight communities in a Venn-diagram-like view. A node might belong to more than one group. In this case, NORMA tries to bring closer together the overlapping regions which share common nodes while simultaneously it tries to keep the distinct groups apart. Groups are highlighted using visually distinct colors, whereas transparency is used to efficiently highlight the overlapping regions."
           ),
@@ -1046,6 +1046,17 @@ The Annotation Tab consists of three sub-tabs. These are the: (i) Convex Hull, (
           ),
           br(),
           tags$img(src = b64_8),
+          
+          br(),
+          br(), 
+          
+          strong("Convex Hulls 3D:"),
+          helpText(
+            "In this tab, the selected network is initially visualized after applying any of the offered 3D layout algorithms and 3D shaded convex hulls are then used to highlight communities in a 3D Venn-diagram-like view. A node might belong to more than one group. In this case, NORMA tries to bring closer together the overlapping regions which share common nodes while simultaneously it tries to keep the distinct groups apart. Groups are highlighted using visually distinct colors, whereas transparency is used to efficiently highlight the overlapping regions.
+"
+          ),
+          br(),
+          tags$img(src = b64_3D_convex),
           
           br(),
           br(),
