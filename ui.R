@@ -59,7 +59,7 @@ fixedPage(
   useShinyjs(),
   tags$head(tags$script(src = "cyjs.js")),
   tags$head(tags$script(src = "intro.js")),
-  tags$head(tags$script(src = "introbutton.js")),
+  tags$head(tags$script(src = "introbutton_1.js")),
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "intro.css")),
   tags$img(src = b64_1),
   navbarPage(
@@ -823,7 +823,7 @@ Examples are shown below:"),
             "
 Network File:             Annotation File:                        Node-coloring file            Warnings!
 
-Source    Target                Group-2 BCL2L1,MDM4,MDM2,CHEK2          CDKN1A  blue                - Network file: Must have headers: Source - Target
+Source  Target            Group-2 BCL2L1,MDM4,MDM2,CHEK2          CDKN1A  blue                - Network file: Must have headers: Source - Target
 CDKN1A  TP53              Group-5 TP53,EP300                      TP53    blue                - Annotation file: no headers, no spaces
 TP53	MDM2              Group-1 CDKN2A,ATM,TP53BP2,MDM2         MDM4    blue                  only commas (e.g. BCL2L1,MDM4,MDM2)
 MDM4	TP53              Group-4 CHEK2,CREBBP,MDM2               BCL2L1  red
@@ -922,8 +922,37 @@ Once a network or an annotation file has been named and uploaded, it will appear
           downloadLink('co_express_kegg', "KEGG pathways"),
           br(),
           downloadLink('co_express_mcode', "MCODE Node coloring"),
-          br()
-        ),
+          br(),
+        hr(),
+        br(),
+        strong("COVID-19:"),
+        helpText("Intact Database"),
+        br(),
+        downloadLink('covid_19_net', "COVID-19 Network"),
+        br(),
+        downloadLink('covid_19_interpro', "HomoSapiens Protein Domains - INTERPRO"),
+        br(),
+        downloadLink('covid_19_bp', "HomoSapiens GO Annotation - Biological Process"),
+        br(),
+        downloadLink('covid_19_mf', "HomoSapiens GO Annotation - Molecular Function"),
+        br(),
+        downloadLink('covid_19_cc', "HomoSapiens Protein Domains GO Annotation - Cellular Components"),
+        br(),
+        downloadLink('covid_19_kegg', "HomoSapiens Protein Domains KEGG pathways"),
+        br(),
+        downloadLink('covid_19_smart', "HomoSapiens Protein Domains SMART"),
+        br(),
+        hr(),
+        br(),
+        strong("Chicken Gallus gallus:"),
+        helpText("BioGrid Database"),
+        br(),
+        downloadLink('Gallus_gallus_net', "Gallus gallus Network"),
+        br(),
+        downloadLink('Gallus_gallus_kegg', "BioGrid Chicken Gallus KEGG pathways"),
+        br(),
+        br()
+      ),
         
         tabPanel(
           "The Upload Tab",

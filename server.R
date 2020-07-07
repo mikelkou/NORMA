@@ -223,7 +223,7 @@ shinyServer(function(input, output, session) {
           "text/comma-separated-values,text/plain",
           ".csv"
         )),
-        checkboxInput(inputId = "weighted1", "Weighted", value = FALSE)
+        div(list(div(wellPanel(checkboxInput(inputId = "weighted1", label = "Weighted", value = F)), class = "col-md-6")), class = "row")
   )
     } else {
       div(list(div(wellPanel(checkboxInput(inputId = "weighted1", label = "Weighted", value = F)), class = "col-md-6")), class = "row")
@@ -2756,6 +2756,93 @@ shinyServer(function(input, output, session) {
       write.table(co_express_mcode, file,row.names = F,col.names = F, sep = "\t")
     }
   )
+  #-----------------------------------------------------------------------------#
+  covid_19_net <- read.delim("Examples/IntAct_COVID19/Intact-data_COVID19_no_self_loops.txt", header = T)
+  covid_19_interpro <- read.delim("Examples/IntAct_COVID19/Functional_Annotation_Results/HomoSapiens_Protein_Domains_INTERPRO_FILTERED.txt", header = F)
+  covid_19_bp <- read.delim("Examples/IntAct_COVID19/Functional_Annotation_Results/HomoSapiens_Gene_Ontology_GOTERM_BP_DIRECT_FILTERED.txt", header = F)
+  covid_19_mf <- read.delim("Examples/IntAct_COVID19/Functional_Annotation_Results/HomoSapiens_Gene_Ontology_GOTERM_MF_DIRECT_FILTERED.txt", header = F)
+  covid_19_cc <- read.delim("Examples/IntAct_COVID19/Functional_Annotation_Results/HomoSapiens_Gene_Ontology_GOTERM_CC_DIRECT_FILTERED.txt", header = F)
+  covid_19_kegg <- read.delim("Examples/IntAct_COVID19/Functional_Annotation_Results/HomoSapiens_Pathways_KEGG_PATHWAY_FILTERED.txt", header = F)
+  covid_19_smart <- read.delim("Examples/IntAct_COVID19/Functional_Annotation_Results/HomoSapiens_Protein_Domains_SMART_FILTERED.txt", header = F)
+  
+  output$covid_19_net <- downloadHandler(
+    filename = function() {
+      paste('COVID-19 Network file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(covid_19_net, file, row.names = F, col.names = T, quote = F, sep = "\t")
+    }
+  )
+  output$covid_19_interpro <- downloadHandler(
+    filename = function() {
+      paste('HomoSapiens Protein Domains - INTERPRO file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(covid_19_interpro, file,row.names = F,col.names = F, quote = F, sep = "\t")
+    }
+  )
+  output$covid_19_bp <- downloadHandler(
+    filename = function() {
+      paste('HomoSapiens GO Annotation - Biological Process file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(covid_19_bp, file,row.names = F,col.names = F, quote = F, sep = "\t")
+    }
+  )
+  output$covid_19_mf <- downloadHandler(
+    filename = function() {
+      paste('HomoSapiens GO Annotation - Molecular Function file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(covid_19_mf, file,row.names = F,col.names = F, quote = F, sep = "\t")
+    }
+  )
+  output$covid_19_cc <- downloadHandler(
+    filename = function() {
+      paste('HomoSapiens Protein Domains GO Annotation - Cellular Components file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(covid_19_cc, file,row.names = F,col.names = F, quote = F, sep = "\t")
+    }
+  )
+  output$covid_19_kegg <- downloadHandler(
+    filename = function() {
+      paste('HomoSapiens Protein Domains KEGG pathways file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(covid_19_kegg, file,row.names = F,col.names = F, quote = F, sep = "\t")
+    }
+  )
+  output$covid_19_smart <- downloadHandler(
+    filename = function() {
+      paste('HomoSapiens Protein Domains SMART file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(covid_19_smart, file,row.names = F,col.names = F, quote = F, sep = "\t")
+    }
+  )
+  
+  #-----------------------------------------------------------------------------#
+  Gallus_gallus_net <- read.delim("Examples/BioGrid_Chicken_Gallus/Biogrid_no_self_loops.txt", header = T)
+  Gallus_gallus_kegg <- read.delim("Examples/BioGrid_Chicken_Gallus/BioGrid_Chicken_Gallus_Pathways_KEGG_PATHWAY_FILTERED.txt", header = F)
+  
+  output$Gallus_gallus_net <- downloadHandler(
+    filename = function() {
+      paste('Gallus gallus Network file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(Gallus_gallus_net, file,row.names = F,col.names = T, quote = F, sep = "\t")
+    }
+  )
+  output$Gallus_gallus_kegg <- downloadHandler(
+    filename = function() {
+      paste('BioGrid Chicken Gallus KEGG pathways file', '.txt', sep = '')
+    },
+    content = function(file) {
+      write.table(Gallus_gallus_kegg, file,row.names = F,col.names = F, quote = F, sep = "\t")
+    }
+  )
+  
   ##############################################################################
   R_script <- read.delim("annotation_cleaner.R", header = F)
   
