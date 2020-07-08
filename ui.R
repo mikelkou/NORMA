@@ -59,7 +59,7 @@ fixedPage(
   useShinyjs(),
   tags$head(tags$script(src = "cyjs.js")),
   tags$head(tags$script(src = "intro.js")),
-  tags$head(tags$script(src = "introbutton_1.js")),
+  tags$head(tags$script(src = "introbutton.js")),
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "intro.css")),
   tags$img(src = b64_1),
   navbarPage(
@@ -578,7 +578,7 @@ fixedPage(
           helpText("Select the layout you want in the analysis."),
           selectInput(
             "layouts_3D",
-            "The layouts:",
+            "The 3D layouts:",
             choices = layouts_3D,
             selected = selected_layouts,
             multiple = FALSE
@@ -805,7 +805,7 @@ fixedPage(
           br(),
           strong("The network file:"),
           helpText(
-            "It is an obligatory, 2-column (unweighted), tab-delimited file, containing all network connections of an undirected network. This file must contain headers, namely: 'Source' and 'Target'. Notably, self-loops and multiple-edges are eliminated automatically."
+            "It is an obligatory, 2-column (unweighted) or 3-column (weighted), tab-delimited file, containing all network connections of an undirected network. This file must contain headers, namely: 'Source' and 'Target' (and 'Weight' optionally). Notably, self-loops and multiple-edges are eliminated automatically."
           ),
           strong("The annotation file:"),
           helpText(
@@ -815,33 +815,33 @@ fixedPage(
           strong("The expression file:"),
           helpText(
             "
-The expression file: It is an optional, 2-column, tab-delimited file which contains information about node coloring (e.g. gene expressions). The first column contains the node names and the second column the node colors (e.g. red, green, yellow, blue, orange, #00ff00, #ff0000, #ffff00, etc). Nodes without color assignment will be colored gray. No headers are allowed in this file."
+The expression file: It is an optional, 2-column, tab-delimited file which contains information about node coloring (e.g. gene expressions). The first column contains the node names and the second column the node colors (e.g. red, green, yellow, blue, orange, #00ff00, #ff0000, #ffff00). Nodes without color assignment will be colored gray. No headers are allowed in this file."
           ),
           helpText("
 Examples are shown below:"),
           pre(
             "
-Network File:             Annotation File:                        Node-coloring file            Warnings!
+Network File:               Annotation File:                        Node-coloring file            Warnings!
 
-Source  Target            Group-2 BCL2L1,MDM4,MDM2,CHEK2          CDKN1A  blue                - Network file: Must have headers: Source - Target
-CDKN1A  TP53              Group-5 TP53,EP300                      TP53    blue                - Annotation file: no headers, no spaces only commas
-TP53	MDM2              Group-1 CDKN2A,ATM,TP53BP2,MDM2         MDM4    #00ff00              (e.g. BCL2L1,MDM4,MDM2)
-MDM4	TP53              Group-4 CHEK2,CREBBP,MDM2               BCL2L1  red
-BCL2L1	TP53              Group-3 TP53,BCL2L1                     CHEK2   red                 - Node-coloring file: no headers
-CHEK2   ATM               Group-6 MDM4,MDM2                       ATM     red                   Colors can be either color names (e.g. blue, red, etc.) 
-TP53    EP300                                                     TP53BP2 red                   or hex codes (#00ff00, #ff0000, #ffff00, etc.)
-ATM	TP53                                                      CDKN2A  blue
-TP53    CREBBP                                                    EP300   #ffff00
-MDM4    MDM2                                                      CREBBP  red
-CHEK2	TP53                                                      MDM2    blue
-TP53BP2	TP53
-CDKN2A	TP53
-CDKN2A	MDM2
-ATM	MDM2
-EP300	CREBBP
-  .       .
-  .       .
-  .       .
+Source  Target  Weight      Group-2 BCL2L1,MDM4,MDM2,CHEK2          CDKN1A  blue                - Network file: Must have headers: Source - Target
+CDKN1A  TP53    5           Group-5 TP53,EP300                      TP53    blue                - Annotation file: no headers, no spaces only commas
+TP53	MDM2    1           Group-1 CDKN2A,ATM,TP53BP2,MDM2         MDM4    #00ff00              (e.g. BCL2L1,MDM4,MDM2)
+MDM4	TP53    3           Group-4 CHEK2,CREBBP,MDM2               BCL2L1  red
+BCL2L1	TP53    4           Group-3 TP53,BCL2L1                     CHEK2   red                 - Node-coloring file: no headers
+CHEK2   ATM     2           Group-6 MDM4,MDM2                       ATM     red                   Colors can be either color names (e.g. blue, red) 
+TP53    EP300   1                                                   TP53BP2 red                   or hex codes (#00ff00, #ff0000, #ffff00)
+ATM	TP53    4                                                   CDKN2A  blue
+TP53    CREBBP  1                                                   EP300   #ffff00
+MDM4    MDM2    1                                                   CREBBP  red
+CHEK2	TP53    2                                                   MDM2    blue
+TP53BP2	TP53    8
+CDKN2A	TP53    3
+CDKN2A	MDM2    3
+ATM	MDM2    1
+EP300	CREBBP  2
+  .       .     .
+  .       .     .
+  .       .     .
 "
           ),
           
@@ -944,12 +944,12 @@ Once a network or an annotation file has been named and uploaded, it will appear
         br(),
         hr(),
         br(),
-        strong("Chicken Gallus gallus:"),
+        strong("Gallus gallus:"),
         helpText("BioGrid Database"),
         br(),
         downloadLink('Gallus_gallus_net', "Gallus gallus Network"),
         br(),
-        downloadLink('Gallus_gallus_kegg', "BioGrid Chicken Gallus KEGG pathways"),
+        downloadLink('Gallus_gallus_kegg', "BioGrid Gallus gallus KEGG pathways"),
         br(),
         br()
       ),
@@ -1052,7 +1052,7 @@ The Annotation Tab consists of three sub-tabs. These are the: (i) Convex Hull, (
           
           strong("Convex Hulls 3D:"),
           helpText(
-            "In this tab, the selected network is initially visualized after applying any of the offered 3D layout algorithms and 3D shaded convex hulls are then used to highlight communities in a 3D Venn-diagram-like view. A node might belong to more than one group. In this case, NORMA tries to bring closer together the overlapping regions which share common nodes while simultaneously it tries to keep the distinct groups apart. Groups are highlighted using visually distinct colors, whereas transparency is used to efficiently highlight the overlapping regions.
+            "Like in 2D Convex Hulls, in this tab, the selected network is initially visualized after applying any of the offered 3D layout algorithms and 3D shaded convex hulls are then used to highlight communities in a 3D Venn-diagram-like view. The visualization is fully interactive and a dark mode visualization is also supported.
 "
           ),
           br(),

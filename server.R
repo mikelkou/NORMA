@@ -2584,7 +2584,7 @@ shinyServer(function(input, output, session) {
       paste('Drosophila (TAU) Network file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(dros_net, file, row.names = F, sep = "\t")
+      write.table(dros_net, file, row.names = F, sep = "\t", quote = F)
     }
   )
   output$dros_annot <- downloadHandler(
@@ -2592,7 +2592,7 @@ shinyServer(function(input, output, session) {
       paste('Drosophila KEGG pathways', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(dros_annot, file,row.names = F,col.names = F, sep = "\t")
+      write.table(dros_annot, file,row.names = F, col.names = F, sep = "\t", quote = F)
     }
   )
   output$dros_louvain <- downloadHandler(
@@ -2600,7 +2600,7 @@ shinyServer(function(input, output, session) {
       paste('Drosophila Louvain automated annotation', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(dros_louvain, file,row.names = F,col.names = F, sep = "\t")
+      write.table(dros_louvain, file,row.names = F, col.names = F, sep = "\t", quote = F)
     }
   )
   output$dros_express <- downloadHandler(
@@ -2608,7 +2608,7 @@ shinyServer(function(input, output, session) {
       paste('Drosophila Expressions file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(dros_express, file,row.names = F,col.names = F, sep = "\t")
+      write.table(dros_express, file,row.names = F, col.names = F, sep = "\t", quote = F)
     }
   )
   
@@ -2627,7 +2627,7 @@ shinyServer(function(input, output, session) {
       paste('STRING TP53 Network file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(string_net_tp53, file, row.names = F, sep = "\t")
+      write.table(string_net_tp53, file, row.names = F, sep = "\t", quote = F)
     }
   )
   output$string_annot <- downloadHandler(
@@ -2635,7 +2635,7 @@ shinyServer(function(input, output, session) {
       paste('STRING TP53 Annotation file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(string_annot, file, row.names = F,col.names = F, sep = "\t")
+      write.table(string_annot, file, row.names = F,col.names = F, sep = "\t", quote = F)
     }
   )
   output$string_expr <- downloadHandler(
@@ -2643,7 +2643,7 @@ shinyServer(function(input, output, session) {
       paste('STRING TP53 Expression file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(string_expr, file, row.names = F,col.names = F, sep = "\t")
+      write.table(string_expr, file, row.names = F,col.names = F, sep = "\t", quote = F)
     }
   )
   
@@ -2664,7 +2664,7 @@ shinyServer(function(input, output, session) {
       paste('STRING BCAR3 Network file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(string_net_bcar3, file, row.names = F, sep = "\t")
+      write.table(string_net_bcar3, file, row.names = F, sep = "\t", quote = F)
     }
   )
   output$string_bp <- downloadHandler(
@@ -2672,15 +2672,15 @@ shinyServer(function(input, output, session) {
       paste('STRING BCAR3 GO Biological Processes file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(string_bp, file, row.names = F,col.names = F, sep = "\t")
+      write.table(string_bp, file, row.names = F,col.names = F, sep = "\t", quote = F)
     }
   )
   output$string_mf <- downloadHandler(
     filename = function() {
-      paste('STRING BCAR3 GO Molecura functions file', '.txt', sep = '')
+      paste('STRING BCAR3 GO Molecular functions file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(string_mf, file, row.names = F,col.names = F, sep = "\t")
+      write.table(string_mf, file, row.names = F,col.names = F, sep = "\t", quote = F)
     }
   ) 
   output$string_kegg <- downloadHandler(
@@ -2688,7 +2688,7 @@ shinyServer(function(input, output, session) {
       paste('STRING BCAR3 GO KEGG file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(string_kegg, file, row.names = F,col.names = F, sep = "\t")
+      write.table(string_kegg, file, row.names = F,col.names = F, sep = "\t", quote = F)
     }
   )
   
@@ -2713,7 +2713,7 @@ shinyServer(function(input, output, session) {
       paste('Human Gene Co-expression Network file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(co_express, file, row.names = F, sep = "\t")
+      write.table(co_express, file, row.names = F, sep = "\t", quote = F)
     }
   )
   output$co_express_bp <- downloadHandler(
@@ -2721,7 +2721,7 @@ shinyServer(function(input, output, session) {
       paste('Human Gene Co-expression GO Biological Processes file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(co_express_bp, file,row.names = F,col.names = F, sep = "\t")
+      write.table(co_express_bp, file,row.names = F,col.names = F, sep = "\t", quote = F)
     }
   )
   output$co_express_mf <- downloadHandler(
@@ -2729,7 +2729,7 @@ shinyServer(function(input, output, session) {
       paste('Human Gene Co-expression GO Molecura functions file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(co_express_mf, file,row.names = F,col.names = F, sep = "\t")
+      write.table(co_express_mf, file,row.names = F,col.names = F, sep = "\t", quote = F)
     }
   ) 
   output$co_express_cc <- downloadHandler(
@@ -2737,7 +2737,7 @@ shinyServer(function(input, output, session) {
       paste('Human Gene Co-expression Cellular Componets file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(co_express_cc, file,row.names = F,col.names = F, sep = "\t")
+      write.table(co_express_cc, file,row.names = F,col.names = F, sep = "\t", quote = F)
     }
   )
   output$co_express_kegg <- downloadHandler(
@@ -2745,7 +2745,7 @@ shinyServer(function(input, output, session) {
       paste('Human Gene Co-expression KEGG pathways file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(co_express_kegg, file,row.names = F,col.names = F, sep = "\t")
+      write.table(co_express_kegg, file,row.names = F,col.names = F, sep = "\t", quote = F)
     }
   ) 
   output$co_express_mcode <- downloadHandler(
@@ -2753,7 +2753,7 @@ shinyServer(function(input, output, session) {
       paste('Human Gene Co-expression MCODE node coloring file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(co_express_mcode, file,row.names = F,col.names = F, sep = "\t")
+      write.table(co_express_mcode, file,row.names = F,col.names = F, sep = "\t", quote = F)
     }
   )
   #-----------------------------------------------------------------------------#
@@ -2770,7 +2770,7 @@ shinyServer(function(input, output, session) {
       paste('COVID-19 Network file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(covid_19_net, file, row.names = F, col.names = T, quote = F, sep = "\t")
+      write.table(covid_19_net, file, row.names = F, quote = F, sep = "\t")
     }
   )
   output$covid_19_interpro <- downloadHandler(
@@ -2778,7 +2778,7 @@ shinyServer(function(input, output, session) {
       paste('HomoSapiens Protein Domains - INTERPRO file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(covid_19_interpro, file,row.names = F,col.names = F, quote = F, sep = "\t")
+      write.table(covid_19_interpro, file,row.names = F, quote = F, sep = "\t")
     }
   )
   output$covid_19_bp <- downloadHandler(
@@ -2786,7 +2786,7 @@ shinyServer(function(input, output, session) {
       paste('HomoSapiens GO Annotation - Biological Process file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(covid_19_bp, file,row.names = F,col.names = F, quote = F, sep = "\t")
+      write.table(covid_19_bp, file,row.names = F, quote = F, sep = "\t")
     }
   )
   output$covid_19_mf <- downloadHandler(
@@ -2794,7 +2794,7 @@ shinyServer(function(input, output, session) {
       paste('HomoSapiens GO Annotation - Molecular Function file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(covid_19_mf, file,row.names = F,col.names = F, quote = F, sep = "\t")
+      write.table(covid_19_mf, file,row.names = F, quote = F, sep = "\t")
     }
   )
   output$covid_19_cc <- downloadHandler(
@@ -2802,7 +2802,7 @@ shinyServer(function(input, output, session) {
       paste('HomoSapiens Protein Domains GO Annotation - Cellular Components file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(covid_19_cc, file,row.names = F,col.names = F, quote = F, sep = "\t")
+      write.table(covid_19_cc, file,row.names = F, quote = F, sep = "\t")
     }
   )
   output$covid_19_kegg <- downloadHandler(
@@ -2810,7 +2810,7 @@ shinyServer(function(input, output, session) {
       paste('HomoSapiens Protein Domains KEGG pathways file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(covid_19_kegg, file,row.names = F,col.names = F, quote = F, sep = "\t")
+      write.table(covid_19_kegg, file,row.names = F, quote = F, sep = "\t")
     }
   )
   output$covid_19_smart <- downloadHandler(
@@ -2818,7 +2818,7 @@ shinyServer(function(input, output, session) {
       paste('HomoSapiens Protein Domains SMART file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(covid_19_smart, file,row.names = F,col.names = F, quote = F, sep = "\t")
+      write.table(covid_19_smart, file,row.names = F, quote = F, sep = "\t")
     }
   )
   
@@ -2831,7 +2831,7 @@ shinyServer(function(input, output, session) {
       paste('Gallus gallus Network file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(Gallus_gallus_net, file,row.names = F,col.names = T, quote = F, sep = "\t")
+      write.table(Gallus_gallus_net, file,row.names = F, quote = F, sep = "\t")
     }
   )
   output$Gallus_gallus_kegg <- downloadHandler(
@@ -2839,7 +2839,7 @@ shinyServer(function(input, output, session) {
       paste('BioGrid Chicken Gallus KEGG pathways file', '.txt', sep = '')
     },
     content = function(file) {
-      write.table(Gallus_gallus_kegg, file,row.names = F,col.names = F, quote = F, sep = "\t")
+      write.table(Gallus_gallus_kegg, file,row.names = F, quote = F, sep = "\t")
     }
   )
   
