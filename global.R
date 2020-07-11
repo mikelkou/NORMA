@@ -94,6 +94,12 @@ library(shinyWidgets)
 
 library(jsonlite)
 
+#----#
+devtools::install_github("AdamSpannbauer/snakeLoadR")
+library(snakeLoadR)
+#----#
+
+
 library(d3Network)
 library(lattice)
 library(Cairo)

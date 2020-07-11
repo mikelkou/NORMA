@@ -2506,6 +2506,8 @@ shinyServer(function(input, output, session) {
       show_some_labels_3D = F
     }
     
+    if(!is.null(g) && !is.null(annoation_graph)) Sys.sleep(5)
+    
     withProgress(min = 0, max = 1, {
       incProgress(message = "Plotting",
                   detail = "This may take a while...",
