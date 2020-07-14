@@ -626,11 +626,6 @@ fixedPage(
           uiOutput("convex_hull_3D"),
           eval(ui_dataTable_panel("chooseGroups_3D")),
           
-          
-          snakeLoadR::snake_loader(outputId = "convex_hull_3D",
-                                   header = "Play Snake while you wait!",
-                                   controls = TRUE),
-          
           tags$style(
             HTML(
               ".js-irs-0 .irs-bar {border-top-color: #2C8160; border-bottom-color: #2C8160;} .js-irs-0 .irs-bar-edge {border-color: #2C8160;}
