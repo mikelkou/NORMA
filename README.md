@@ -2,3 +2,5 @@ The Network Makeup Artist (NORMA) is a web tool for interactive network annotati
 
 NORMA service is available at: http://bib.fleming.gr:3838/NORMA
 whereas the code is available at: https://github.com/PavlopoulosLab/NORMA.
+
+If you use NORMA, please cite the paper: https://doi.org/10.1016/j.gpb.2021.02.005 
